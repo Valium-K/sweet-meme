@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-dark">
+<div th:replace="fragments.html :: nav-bar"></div>
+<div class="container">
+    <div class="row mt-5 justify-content-center">
+        <div class="col-3" style="padding: 0px">
+            <div th:replace="fragments.html :: side-bar"></div>
+        </div>
+        <div class="col-9">
+            2 of 3 (wider)
+        </div>
+    </div>
+</div>
+</body>
+</html>

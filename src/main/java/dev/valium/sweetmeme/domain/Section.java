@@ -1,0 +1,30 @@
+package dev.valium.sweetmeme.domain;
+
+import dev.valium.sweetmeme.domain.enums.SectionType;
+import lombok.*;
+import org.hibernate.annotations.Fetch;
+
+import javax.persistence.*;
+import java.util.List;
+
+@Entity
+@Getter @Setter
+@EqualsAndHashCode(of = {"id"})
+@Builder @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Section extends BaseEntity{
+
+    @Id @GeneratedValue
+    @Column(name = "section_id")
+    private Long id;
+
+    @Enumerated(EnumType.ORDINAL)
+    private SectionType sectionType;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "section_info_id")
+    private Info sectionInfo;
+
+    @OneToMany(mappedBy = "section")
+    private List<Post> posts;
+}
