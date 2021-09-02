@@ -1,8 +1,10 @@
 package dev.valium.sweetmeme.controller;
 
 import dev.valium.sweetmeme.controller.dto.SignUpForm;
+import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.service.MemberService;
+import dev.valium.sweetmeme.service.SignUpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,7 @@ public class SignUpController {
 
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final SignUpService service;
 
     @GetMapping("/sign-up")
     public String signUpForm(Model model) {
@@ -40,9 +43,10 @@ public class SignUpController {
             return "member/sign-up";
         }
 
-        Account account = memberService.saveNewAccount();
+        Member member = service.form2Member(signUpForm);
+        Member savedMember = memberService.saveMember(member);
 
-        accountService.login(account);
+        memberService.login(savedMember);
 
         return "redirect:/";
     }
