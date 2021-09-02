@@ -7,52 +7,47 @@
 
     <div class="py-5 text-center">
         <p class="lead">S w e e t M e m e</p>
-        <h2>login</h2>
+        <h2 th:text="#{login}">login</h2>
     </div>
     <div class="row justify-content-center">
 
-        <div th:if="${param.error}" class="alert alert-danger" role="alert">
-            <p>이메일(또는 닉네임)과 패스워드가 정확하지 않습니다.</p>
-            <p>또는 확인되지 않은 이메일을 사용했습니다. 이메일을 확인해 주세요.</p>
-            <p>
-                확인 후 다시 입력하시거나, <a href="#" th:href="@{/find-passsword}">패스워드 찾기</a>를 이용하세요.
-            </p>
-        </div>
+
 
         <form class="needs-validation col-sm-6" action="#" th:action="@{/login}" method="post" novalidate>
 
-<!--            <div class="row justify-content-center">-->
-<!--                <div class="col-6 py-2"><h3><label>Login</label></h3></div>-->
-<!--                <div class="col-6 bg-light"><label><a href="@{/sign-in}"><h3>Sign in</h3></a></label></div>-->
-<!--            </div>-->
-
-            <div class="form-group mb-3">
-                <label for="username">이메일 또는 닉네임</label>
-                <input id="username" type="text" name="username" class="form-control"
-                       placeholder="your@email.com" aria-describedby="emailHelp" required>
-                <small id="emailHelp" class="form-text text-muted">
-                    가입할 때 사용한 이메일 또는 닉네임을 입력하세요.
-                </small>
-                <small class="invalid-feedback">이메일을 입력하세요.</small>
+            <div th:if="${param.error}" class="alert alert-danger" role="alert"
+                 th:text="#{login.error}" style="text-align: center">이메일이나 패스워드가 일치하지 않습니다.
             </div>
 
             <div class="form-group mb-3">
-                <label for="password">패스워드</label>
+                <label for="username" th:text="#{email}">이메일</label>
+                <input id="username" type="text" name="username" class="form-control"
+                       placeholder="your@email.com" aria-describedby="emailHelp" required>
+                <small id="emailHelp" class="form-text text-muted" th:text="#{login.email.help}">
+                    가입할 때 사용한 이메일 또는 닉네임을 입력하세요.
+                </small>
+                <small class="invalid-feedback" th:text="#{login.email.error}">이메일을 입력하세요.</small>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="password" th:text="#{password}">패스워드</label>
                 <input id="password" type="password" name="password" class="form-control"
                        aria-describedby="passwordHelp" required>
-                <small class="invalid-feedback">패스워드를 입력하세요.</small>
+                <small class="invalid-feedback" th:text="#{login.password.error}">패스워드를 입력하세요.</small>
             </div>
 
             <div class="form-group form-check mb-3">
                 <input type="checkbox" class="form-check-input" id="rememberMe" name="remember-me" checked>
-                <label class="form-check-label" for="rememberMe" aria-describedby="rememberMeHelp">로그인 유지</label>
+                <label class="form-check-label" for="rememberMe" aria-describedby="rememberMeHelp"
+                       th:text="#{login.remember-me}">로그인 유지</label>
             </div>
 
             <div class="form-group mb-3 d-grid gap-2">
                 <button class="btn btn-primary" type="submit"
-                        aria-describedby="submitHelp">로그인</button>
+                        aria-describedby="submitHelp" th:text="#{login}">로그인</button>
                 <small id="submitHelp" class="form-text text-muted">
-                    스터디올래에 처음 오신거라면 <a href="#" th:href="@{/signup}">계정을 먼저 만드세요.</a>
+                    <span th:text="#{login.first1}">스윗밈에 처음 오신거라면</span>
+                    <a href="#" th:href="@{/sign-up}" th:text="#{login.first2}">계정을 하나 만드세요</a>!
                 </small>
             </div>
 
