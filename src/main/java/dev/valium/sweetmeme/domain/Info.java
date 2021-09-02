@@ -3,10 +3,7 @@ package dev.valium.sweetmeme.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -18,7 +15,10 @@ public class Info {
     @Column(nullable = false)
     private String head;
 
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
     private String picUrl;
+
     private String description;
 
     public void setHead(String head) {

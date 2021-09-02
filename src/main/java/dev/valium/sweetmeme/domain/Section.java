@@ -2,9 +2,9 @@ package dev.valium.sweetmeme.domain;
 
 import dev.valium.sweetmeme.domain.enums.SectionType;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,7 +12,7 @@ import java.util.List;
 @EqualsAndHashCode(of = {"id"})
 @Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Section extends BaseEntity{
+public class Section extends BaseEntityTime {
 
     @Id @GeneratedValue
     @Column(name = "section_id")
@@ -26,5 +26,5 @@ public class Section extends BaseEntity{
     private Info sectionInfo;
 
     @OneToMany(mappedBy = "section")
-    private List<Post> posts;
+    private List<Post> posts = new ArrayList<>();;
 }

@@ -11,7 +11,7 @@ import java.util.List;
 @EqualsAndHashCode(of = {"id"})
 @Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment extends BaseEntity {
+public class Comment extends BaseEntityTime {
 
     @Id @GeneratedValue
     @Column(name = "comment_id")

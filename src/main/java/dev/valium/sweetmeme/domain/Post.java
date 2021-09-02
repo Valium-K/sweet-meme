@@ -3,6 +3,7 @@ package dev.valium.sweetmeme.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -10,7 +11,7 @@ import java.util.List;
 @EqualsAndHashCode(of = {"id"})
 @Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post extends BaseEntity {
+public class Post extends BaseEntityTime {
 
     @Id @GeneratedValue
     @Column(name = "post_id")
@@ -19,7 +20,7 @@ public class Post extends BaseEntity {
     private String Title;
 
     @OneToMany(mappedBy = "post")
-    private List<Tag> tags;
+    private List<Tag> tags = new ArrayList<>();;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "section_id")
@@ -29,7 +30,7 @@ public class Post extends BaseEntity {
     private Vote vote;
 
     @OneToMany(mappedBy = "post")
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();;
     private int commentCount;
 
     @ManyToOne(fetch = FetchType.LAZY)

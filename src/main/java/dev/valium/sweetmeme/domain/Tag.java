@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Getter @Setter @EqualsAndHashCode(of = {"id"})
 @Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Tag extends BaseEntity{
+public class Tag extends BaseEntityTime {
 
     @Id @GeneratedValue
     @Column(name = "tag_id")
