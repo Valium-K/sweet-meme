@@ -40,6 +40,12 @@ public class MemberService implements UserDetailsService {
         context.setAuthentication(token);
     }
 
+    public Member saveMember(Member member) {
+        memberRepository.save(member);
+
+        return member;
+    }
+
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
