@@ -5,127 +5,73 @@
 <!-------------------------- fragments ---------------------------------------------------->
 <head th:fragment="head">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><!-- Bootstrap CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Sweet Meme</title>
   <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css" />
 
-  <style>
+  <style id="forMobilePage">
     .container {
-      width: 75%;
+      width: 80%;
     }
 
-    @media (max-width: 974px) {
+    /*@media (max-width: 974px) {*/
+    /*  .container {*/
+    /*    width: 100%;*/
+    /*  }*/
+    /*}*/
+
+    @media (max-width: 700px) {
       .container {
         width: 100%;
       }
     }
+  </style>
+  <style id="forOffCanvas">
+    #offcanvas {
+      transition: all 0.2s ease;
+    }
+    #offcanvas {
+      transition: all 0.2s ease;
+    }
+    .nav > .nav-item :hover{
+      background-color: #00000010;
+    }
+    .nav > .nav-item > .nav-link{
+      color: black;
+    }
+  </style>
+  <style id="forNaviBar">
+    #nav-bar {
+      transition: top 0.3s;
+    }
+    #navbar {
+      transition: height 0.3s ease;
+    }
+  </style>
+  <style id="forSideBar">
     #side-bar {
       top: 70px;
       position: sticky;
-    }
-    .navbar-toggler:focus,
-    .navbar-toggler:active,
-    .navbar-toggler-icon:focus {
-      outline: none;
-      box-shadow: none;
-    }
-    a:hover {
-      color: chartreuse;
     }
   </style>
 
   <script src="/node_modules/jquery/dist/jquery.min.js"></script>
   <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
 </head>
-<div th:fragment="content(currentMenu)">
-  <ul class="nav nav-pills flex-column mb-auto" >
-    <li class="nav-item">
-      <a href="#" class="nav-link text-white" th:classappend="${currentMenu == 'hot'}? active">
-        <svg class="bi me-2" width="16" height="16"></svg>
-        H Hot
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="#" class="nav-link text-white" th:classappend="${currentMenu == 'fresh'}? active">
-        <svg class="bi me-2" width="16" height="16"></svg>
-        F Fresh
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="#" class="nav-link text-white" th:classappend="${currentMenu == 'top'}? active">
-        <svg class="bi me-2" width="16" height="16"></svg>
-        T Top
-      </a>
-    </li>
-
-    <hr>
-
-    <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-      <svg class="bi me-2" width="30" height="32"></svg>
-      <span class="fs-4">Section</span>
-    </div>
-
-    <li class="nav-item">
-      <a href="#" class="nav-link text-white" th:classappend="${currentMenu == 'funny'}? active">
-        <svg class="bi me-2" width="16" height="16"></svg>
-        F Funny
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="#" class="nav-link text-white" th:classappend="${currentMenu == 'animals'}? active">
-        <svg class="bi me-2" width="16" height="16"></svg>
-        Animals
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="#" class="nav-link text-white" th:classappend="${currentMenu == 'gif'}? active">
-        <svg class="bi me-2" width="16" height="16"></svg>
-        Gif
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="#" class="nav-link text-white" th:classappend="${currentMenu == 'meme'}? active">
-        <svg class="bi me-2" width="16" height="16"></svg>
-        Meme
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="#" class="nav-link text-white" th:classappend="${currentMenu == 'wholesome'}? active">
-        <svg class="bi me-2" width="16" height="16"></svg>
-        Wholesome
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a href="#" class="nav-link text-white" th:classappend="${currentMenu == 'wallpaper'}? active">
-        <svg class="bi me-2" width="16" height="16"></svg>
-        Wallpaper
-      </a>
-    </li>
-  </ul>
-</div>
-<nav th:fragment="nav-bar" id="nav-bar" class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" aria-label="Eighth navbar example">
+<nav th:fragment="nav-bar" id="nav-bar" class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
-
     <a class="navbar-brand" href="#" th:href="@{/}">SweetMeme</a>
 
     <a class="navbar-toggler btn me-auto" data-bs-toggle="offcanvas"
        href="#offcanvas" role="button" aria-controls="offcanvas">
-      Section
+      <
     </a>
+
     <!-- 작은화면 메뉴 -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+    <button class="navbar-toggler" id="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
             aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-
-
 
     <div class="collapse navbar-collapse" id="navbar">
 
@@ -137,9 +83,9 @@
 
       <!-- 우측 컨텐츠 -->
       <ul class="navbar-nav .justify-content-end">
-        <li class="nav-item">
-          <a class="nav-link" onclick="toggleTheme();">toggleTheme</a>
-        </li>
+<!--        <li class="nav-item">-->
+<!--          <a class="nav-link" onclick="toggleTheme();">toggleTheme</a>-->
+<!--        </li>-->
         <!-- 게스트 -->
         <li class="nav-item" sec:authorize="!isAuthenticated()">
           <a class="nav-link" href="#" th:href="@{/login}">Log in</a>
@@ -148,7 +94,6 @@
         <li class="nav-item" sec:authorize="!isAuthenticated()">
           <a class="nav-link" href="#" th:href="@{/sign-up}">Sign up</a>
         </li>
-
 
 
         <!-- 멤버 -->
@@ -168,7 +113,7 @@
         <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
           <a class="nav-link dropdown-toggle" href="#" id="dropdown07" data-bs-toggle="dropdown"
              aria-expanded="false" sec:authentication="name">UserDropdown</a>
-          <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown07">
+          <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="dropdown07">
 
             <li><a class="dropdown-item" href="#">내 프로필</a></li>
             <li><a class="dropdown-item" href="#">설정</a></li>
@@ -181,13 +126,10 @@
             <li><span style="font-size: 12px">&nbsp;&nbsp;&nbsp;&nbsp; SWEETMEME © 2021</span></li>
           </ul>
         </li>
-
-
-
       </ul>
     </div>
   </div>
-  <script type="application/javascript">
+  <script id="toggleTheme" type="application/javascript">
     var toggleTheme = function toggleTheme() {
       var bodyClassList = document.body.classList;
       var sideBarClassList = document.getElementById('side-bar').classList;
@@ -211,17 +153,108 @@
       }
     }
   </script>
+  <script id="navbarAutoHide" type="application/javascript">
+    var prevScrollpos = window.pageYOffset;
+
+    window.onscroll = function() {
+      var currentScrollPos = window.pageYOffset;
+      var navbar = document.getElementById("nav-bar");
+      var innerNavbar = document.getElementById("navbar");
+
+      if (window.innerWidth <= 991) {
+        if (prevScrollpos > currentScrollPos) {
+          navbar.style.top = "0px";
+        } else {
+          navbar.style.top = "-60px";
+          innerNavbar.classList.remove("show");
+        }
+        prevScrollpos = currentScrollPos;
+      }
+      else {
+        navbar.style.top = "0px";
+      }
+    }
+  </script>
 </nav>
-<div th:fragment="side-bar(currentMenu)" id="side-bar" class="d-flex sticky-top flex-column flex-shrink-0 p-3 text-white bg-dark" >
-  <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-    <svg width="20" height="32"></svg>
-    <span class="fs-4">SweetMeme</span>
+<ul th:fragment="content(currentMenu)" class="nav nav-pills flex-column mb-auto" >
+  <!-- for navigation bar and off-canvas content-->
+  <div class="d-flex align-items-centertext-decoration-none">
+    <svg width="15" height="32"></svg>
+    <span class="fs-4" style="color: black">Home</span>
   </div>
-  <hr>
 
-  <div th:replace="fragments.html :: content(${currentMenu})"></div>
+  <hr style="color: black"/>
 
-  <script type="application/javascript" th:inline="javascript">
+  <li class="nav-item">
+    <a class="nav-link" th:classappend="${currentMenu == 'hot'}? active" th:href="@{/hot}">
+      H Hot
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" th:classappend="${currentMenu == 'fresh'}? active" th:href="@{/fresh}">
+      F Fresh
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a class="nav-link" th:classappend="${currentMenu == 'top'}? active" th:href="@{/top}">
+      T Top
+    </a>
+  </li>
+
+  <div class="mb-3"></div>
+
+  <div class="d-flex align-items-center text-decoration-none">
+    <svg width="15" height="32"></svg>
+    <span class="fs-4" style="color: black">Section</span>
+  </div>
+
+  <hr style="color: black">
+  <li class="nav-item">
+    <a href="#" class="nav-link" th:classappend="${currentMenu == 'funny'}? active">
+      F Funny
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a href="#" class="nav-link" th:classappend="${currentMenu == 'animals'}? active">
+      Animals
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a href="#" class="nav-link" th:classappend="${currentMenu == 'gif'}? active">
+      Gif
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a href="#" class="nav-link" th:classappend="${currentMenu == 'meme'}? active">
+      Meme
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a href="#" class="nav-link" th:classappend="${currentMenu == 'wholesome'}? active">
+      Wholesome
+    </a>
+  </li>
+
+  <li class="nav-item">
+    <a href="#" class="nav-link" th:classappend="${currentMenu == 'wallpaper'}? active">
+      Wallpaper
+    </a>
+  </li>
+</ul>
+<div th:fragment="side-bar(currentMenu)" id="side-bar" class="nav d-flex sticky-top flex-column flex-shrink-0 p-3 bg-light"
+     style="max-width: 200px;">
+
+  <div class="navbar-expand-lg navbar-light">
+    <ul th:replace="fragments.html :: content(${currentMenu})"></ul>
+  </div>
+
+  <script id="gridForMobile" type="application/javascript" th:inline="javascript">
     resizer = function() {
       if(window.innerWidth <= 991) {
         document.getElementById('side-bar').classList.add('d-none');
@@ -235,6 +268,8 @@
 
         document.getElementById('side-bar-col').classList.remove('col-0');
         document.getElementById('side-bar-col').classList.add('col-3');
+
+        document.getElementById("nav-bar").style.top = "0px";
       }
 
     };
@@ -244,19 +279,15 @@
   </script>
 </div>
 <div th:fragment="off-canvas(currentMenu)" id="off-canvas">
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas" style="width: 250px;" aria-labelledby="offcanvasLabel">
 
-
-  <div class="offcanvas offcanvas-start" th:width="25px" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel">
-
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title">SweetMeme</h5>
+    <div class="offcanvas-header bg-dark">
+      <h5 class="offcanvas-title text-light">SweetMeme</h5>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
 
-    <div class="offcanvas-body bg-dark">
-      <ul class="nav nav-pills flex-column mb-auto" >
-        <div th:replace="fragments.html :: content(${currentMenu})"></div>
-      </ul>
+    <div class="offcanvas-body bg-light text-white">
+        <ul th:replace="fragments.html :: content(${currentMenu})"></ul>
     </div>
   </div>
 </div>
@@ -280,6 +311,6 @@
     }, false)
   }())
 </script>
-
 <!----------------------------------------------------------------------------------------->
+
 </html>
