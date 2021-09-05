@@ -1,16 +1,22 @@
 package dev.valium.sweetmeme.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
+@Getter @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Info {
     @Id @GeneratedValue
     @Column(name = "info_id")
     private Long id;
+
+    // Member와 info를 조인시 nickname과 head의 값은 같지만,
+    // post에서 info만 단독으로 쓰는 경우가 많아 추가.
+    private String head;
 
     @Lob
     @Basic(fetch = FetchType.EAGER)
@@ -18,10 +24,10 @@ public class Info {
 
     private String description;
 
-    public void setPicUrl(String picUrl) {
-        this.picImage    = picUrl;
-    }
-    public void setDescription(String description) {
-        this.description = description;
+    public static Info createInfo(String picImage, String description) {
+        return Info.builder()
+                    .picImage(picImage)
+                    .description(description)
+                    .build();
     }
 }

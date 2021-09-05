@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.controller;
 
 import dev.valium.sweetmeme.controller.dto.SignUpForm;
+import dev.valium.sweetmeme.domain.Info;
 import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.service.MemberService;
@@ -20,7 +21,7 @@ public class SignUpController {
 
     private final MemberService memberService;
     private final MemberRepository memberRepository;
-    private final SignUpService service;
+    private final SignUpService signUpService;
 
     @GetMapping("/sign-up")
     public String signUpForm(Model model) {
@@ -43,7 +44,13 @@ public class SignUpController {
             return "member/sign-up";
         }
 
-        Member member = service.form2Member(signUpForm);
+        Member member = signUpService.form2Member(signUpForm);
+        Info info = Info.createInfo(null, member.getNickname() + " description");
+
+        // TODO 적당한 이름 생각나면 메서드로 빼기
+        member.setMemberInfo(info);
+        info.setHead(member.getNickname());
+
         Member savedMember = memberService.saveMember(member);
 
         memberService.login(savedMember);

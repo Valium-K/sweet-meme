@@ -41,21 +41,15 @@ public class LocalDbInit {
         private final String NICKNAME = "test";
         private final String EMAIL = "test@test.test";
         private final String PASSWORD = "testtest";
+        private final String PICURL = null;
+        private final String DESCRIPTION = "test description";
 
         public void initDB() {
-            Info info = new Info();
-            info.setDescription("test description");
-            info.setHead("tes head");
-            info.setPicUrl("test/test.img");
+            Info info = Info.createInfo(PICURL, DESCRIPTION);
+            Member member = Member.createMember(NICKNAME, EMAIL, passwordEncoder.encode(PASSWORD));
+            info.setHead(member.getNickname());
+            member.setMemberInfo(info);
 
-            Member member = Member.builder()
-                    .nickname(NICKNAME)
-                    .email(EMAIL)
-                    .password(passwordEncoder.encode(PASSWORD))
-                    .memberInfo(info)
-                    .build();
-
-            entityManager.persist(info);
             entityManager.persist(member);
 
             entityManager.flush();

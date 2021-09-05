@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter @Setter
@@ -32,7 +33,7 @@ public class Member extends BaseEntityTime {
     @Enumerated(EnumType.STRING)
     private Membership membership;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "info_id")
     private Info memberInfo;
 
@@ -41,17 +42,24 @@ public class Member extends BaseEntityTime {
     @OneToMany(mappedBy = "originalPoster")
     private List<Post> myPosts = new ArrayList<>();
     // member -> post
-    @OneToMany(mappedBy = "")
+    @OneToMany(mappedBy = "postedMember")
     private List<Post> commentedPosts = new ArrayList<>();
     // member -> post
     @OneToMany(mappedBy = "upVotedMember")
     private List<Post> upVotedPosts = new ArrayList<>();;
+
+    public static String createEmailCheckToken() {
+        return UUID.randomUUID().toString();
+    }
 
     public static Member createMember(String nickname, String email, String password) {
         return Member.builder()
                     .nickname(nickname)
                     .email(email)
                     .password(password)
+                    .emailVerified(false)
+                    .membership(Membership.NEW)
+                    .emailCheckToken(createEmailCheckToken())
                     .myPosts(new ArrayList<>())
                     .commentedPosts(new ArrayList<>())
                     .upVotedPosts(new ArrayList<>())

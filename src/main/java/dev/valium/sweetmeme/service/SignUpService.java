@@ -14,8 +14,7 @@ public class SignUpService {
 
     public Member form2Member(SignUpForm form) {
         String encodedPassword = passwordEncoder.encode(form.getPassword());
-        Member member = Member.createMember(form.getNickname(), form.getEmail(), encodedPassword);
 
-        return member;
+        return Member.createMember(form.getNickname(), form.getEmail(), encodedPassword);
     }
 }
