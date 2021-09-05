@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<div th:replace="fragments.html :: nav-bar"></div>
+<div th:replace="fragments.html :: off-canvas(currentMenu='profile')"></div>
+<div class="container">
+  <h1>.</h1>
+  <div class="row justify-content-center">
+    <div class="col-3" id="side-bar-col" style="padding: 0px;">
+      <div th:replace="fragments.html :: side-bar(currentMenu='profile')"></div>
+    </div>
+    <div class="col" id="content-col">
+
+    </div>
+  </div>
+
+  <script>
+
+  </script>
+</div>
+</body>
+</html>
