@@ -12,18 +12,12 @@ public class Info {
     @Column(name = "info_id")
     private Long id;
 
-    @Column(nullable = false)
-    private String head;
-
     @Lob
     @Basic(fetch = FetchType.EAGER)
     private String picImage;
 
     private String description;
 
-    public void setHead(String head) {
-        this.head = head;
-    }
     public void setPicUrl(String picUrl) {
         this.picImage    = picUrl;
     }
