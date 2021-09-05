@@ -19,24 +19,29 @@ public class Post extends BaseEntityTime {
 
     private String Title;
 
-    @OneToMany(mappedBy = "post")
-    private List<Tag> tags = new ArrayList<>();;
+    @Embedded
+    private Vote vote;
 
+    // post -> tag
+    @OneToMany(mappedBy = "post")
+    private List<Tag> tags = new ArrayList<>();
+
+    // post -> comment
+    @OneToMany(mappedBy = "post")
+    private List<Comment> comments = new ArrayList<>();
+    private int commentCount;
+
+    // section -> post
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "section_id")
     private Section section;
 
-    @Embedded
-    private Vote vote;
-
-    @OneToMany(mappedBy = "post")
-    private List<Comment> comments = new ArrayList<>();;
-    private int commentCount;
-
+    // member -> post
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "original_poster_id")
     private Member originalPoster;
 
+    // member -> post
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "up_voted_member_id")
     private Member upVotedMember;

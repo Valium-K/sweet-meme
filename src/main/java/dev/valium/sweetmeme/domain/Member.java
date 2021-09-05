@@ -26,7 +26,6 @@ public class Member extends BaseEntityTime {
     private String email;
     private String password;
 
-    // 이메일 인증
     private boolean emailVerified;
     private String emailCheckToken;
 
@@ -37,24 +36,24 @@ public class Member extends BaseEntityTime {
     @JoinColumn(name = "info_id")
     private Info memberInfo;
 
+
+    // member -> post
     @OneToMany(mappedBy = "originalPoster")
-    private List<Post> posts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "commentMember")
-    private List<Comment> comments = new ArrayList<>();;
-
+    private List<Post> myPosts = new ArrayList<>();
+    // member -> post
+    @OneToMany(mappedBy = "")
+    private List<Post> commentedPosts = new ArrayList<>();
+    // member -> post
     @OneToMany(mappedBy = "upVotedMember")
     private List<Post> upVotedPosts = new ArrayList<>();;
-
-    // TODO 스키마 여기만 새로 추가한 것 -> 나중에 다이어그램에 추가할 것
 
     public static Member createMember(String nickname, String email, String password) {
         return Member.builder()
                     .nickname(nickname)
                     .email(email)
                     .password(password)
-                    .posts(new ArrayList<>())
-                    .comments(new ArrayList<>())
+                    .myPosts(new ArrayList<>())
+                    .commentedPosts(new ArrayList<>())
                     .upVotedPosts(new ArrayList<>())
                     .build();
     }

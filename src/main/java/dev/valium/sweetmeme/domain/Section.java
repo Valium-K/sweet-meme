@@ -18,13 +18,14 @@ public class Section extends BaseEntityTime {
     @Column(name = "section_id")
     private Long id;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private SectionType sectionType;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "section_info_id")
     private Info sectionInfo;
 
+    // section -> post
     @OneToMany(mappedBy = "section")
     private List<Post> posts = new ArrayList<>();;
 }

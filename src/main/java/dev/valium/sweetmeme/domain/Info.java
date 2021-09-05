@@ -17,7 +17,7 @@ public class Info {
 
     @Lob
     @Basic(fetch = FetchType.EAGER)
-    private String picUrl;
+    private String picImage;
 
     private String description;
 
@@ -25,7 +25,7 @@ public class Info {
         this.head = head;
     }
     public void setPicUrl(String picUrl) {
-        this.picUrl = picUrl;
+        this.picImage    = picUrl;
     }
     public void setDescription(String description) {
         this.description = description;
