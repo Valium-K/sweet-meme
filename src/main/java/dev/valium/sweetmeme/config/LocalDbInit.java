@@ -2,6 +2,7 @@ package dev.valium.sweetmeme.config;
 
 import dev.valium.sweetmeme.domain.Info;
 import dev.valium.sweetmeme.domain.Member;
+import dev.valium.sweetmeme.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +38,7 @@ public class LocalDbInit {
          */
         private final EntityManager entityManager;
         private final PasswordEncoder passwordEncoder;
+        private final MemberService memberService;
 
         private final String NICKNAME = "test";
         private final String EMAIL = "test@test.test";
@@ -51,8 +53,6 @@ public class LocalDbInit {
             member.setMemberInfo(info);
 
             entityManager.persist(member);
-
-            entityManager.flush();
         }
     }
 }
