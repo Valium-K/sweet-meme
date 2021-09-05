@@ -45,4 +45,9 @@ public class Post extends BaseEntityTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "up_voted_member_id")
     private Member upVotedMember;
+
+    // member -> post
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "posted_member_id")
+    private Member postedMember;
 }

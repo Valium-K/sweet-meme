@@ -26,7 +26,14 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
     public Member getMember(Long id) {
-        return memberRepository.findById(id).get();
+        return memberRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException(id + "에 해당하는 멤버를 찾을 수 없습니다.")
+        );
+    }
+    public Member getMember(String nickname) {
+        return memberRepository.findByNickname(nickname).orElseThrow(
+                () -> new IllegalArgumentException(nickname + "에 해당하는 멤버를 찾을 수 없습니다.")
+        );
     }
 
     public void login(Member member) {
@@ -50,11 +57,9 @@ public class MemberService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Member member = memberRepository.findByEmail(email);
-
-        if(member == null) {
-            throw new UsernameNotFoundException(email);
-        }
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(email)
+        );
 
         return new MemberUser(member);
     }

@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -64,5 +65,12 @@ public class Member extends BaseEntityTime {
                     .commentedPosts(new ArrayList<>())
                     .upVotedPosts(new ArrayList<>())
                     .build();
+    }
+
+    public int getSpendDate() {
+        return Period.between(
+                LocalDateTime.now().toLocalDate(),
+                this.getCreatedDate().toLocalDate()
+        ).getDays();
     }
 }

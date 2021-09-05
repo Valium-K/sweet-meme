@@ -116,7 +116,7 @@
              aria-expanded="false" sec:authentication="name">UserDropdown</a>
           <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="dropdown07">
 
-            <li><a class="dropdown-item" href="#" th:text="#{myProfile}">내 프로필</a></li>
+            <li><a class="dropdown-item" th:href="@{'/user/' + ${#authentication.name}}" th:text="#{myProfile}">내 프로필</a></li>
             <li><a class="dropdown-item" href="#" th:text="#{settings}">설정</a></li>
             <li>
               <form class="form-inline my-2 my-lg-0" action="#" th:action="@{/logout}" method="post">
@@ -251,7 +251,7 @@
 <div th:fragment="side-bar(currentMenu)" id="side-bar" class="nav d-flex sticky-top flex-column flex-shrink-0 p-3 bg-light"
      style="max-width: 200px;">
 
-  <h1>.</h1>
+  <div style="height: 70px"></div>
   <div class="navbar-expand-lg navbar-light">
     <ul th:replace="fragments.html :: content(${currentMenu})"></ul>
   </div>
