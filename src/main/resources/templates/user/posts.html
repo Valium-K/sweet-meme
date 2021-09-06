@@ -4,23 +4,23 @@
 <body class="bg-light">
 <div id="contentPadding" style="height: 70px"></div>
 <div th:replace="fragments.html :: nav-bar"></div>
-<div th:replace="fragments.html :: off-canvas(currentMenu='hot')"></div>
+<div th:replace="fragments.html :: off-canvas(currentMenu='profile')"></div>
 <div class="container">
-
     <div class="row mt-4 justify-content-center">
         <div class="col-3" id="side-bar-col" style="padding: 0px;">
-            <div th:replace="fragments.html :: side-bar(currentMenu='hot')"></div>
+            <div th:replace="fragments.html :: side-bar(currentMenu='profile')"></div>
         </div>
-        <div class="col" id="content-col" style="background-color: blueviolet">
-            <p>
+        <div class="col" id="content-col">
+            <div th:replace="fragments.html::profileInfo"></div>
 
-            </p>
+            <ul th:replace="fragments.html::profileTab ('posts')"></ul>
+
         </div>
-
-        <script>
-
-        </script>
     </div>
+
+    <script>
+
+    </script>
 </div>
 </body>
 </html>

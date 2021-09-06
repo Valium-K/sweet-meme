@@ -2,28 +2,17 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: head"></head>
 <body class="bg-light">
+<div id="contentPadding" style="height: 70px"></div>
 <div th:replace="fragments.html :: nav-bar"></div>
 <div th:replace="fragments.html :: off-canvas(currentMenu='profile')"></div>
 <div class="container">
-  <div class="row justify-content-center">
+  <div class="row mt-4 justify-content-center">
     <div class="col-3" id="side-bar-col" style="padding: 0px;">
       <div th:replace="fragments.html :: side-bar(currentMenu='profile')"></div>
     </div>
     <div class="col" id="content-col">
-      <div style="height: 70px"></div>
-      <div class="row">
-        <div class="col-2">
-          <span>프로필 이미지</span>
-        </div>
-        <div class="col-10">
-          <div th:text="${member.nickname}"></div>
-          <span th:text="${member.email}"></span> * <span th:text="${spendDate} + ' days'"></span>
-        </div>
-
-      </div>
-
-
-
+      <div th:replace="fragments.html::profileInfo"></div>
+      <div th:replace="fragments.html::profileTab('upvotes')"></div>
     </div>
   </div>
 
