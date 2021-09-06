@@ -49,6 +49,7 @@ public class LocalDbInit {
         public void initDB() {
             Info info = Info.createInfo(PICURL, DESCRIPTION);
             Member member = Member.createMember(NICKNAME, EMAIL, passwordEncoder.encode(PASSWORD));
+            System.out.println("====5====" + member.getMyPosts().isEmpty());
             info.setHead(member.getNickname());
             member.setMemberInfo(info);
 

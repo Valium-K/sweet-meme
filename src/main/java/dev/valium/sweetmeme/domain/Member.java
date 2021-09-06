@@ -37,17 +37,15 @@ public class Member extends BaseEntityTime {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "info_id")
     private Info memberInfo;
-
-
     // member -> post
-    @OneToMany(mappedBy = "originalPoster")
+    @OneToMany(mappedBy = "originalPoster", cascade = CascadeType.ALL)
     private List<Post> myPosts = new ArrayList<>();
     // member -> post
-    @OneToMany(mappedBy = "postedMember")
+    @OneToMany(mappedBy = "postedMember", cascade = CascadeType.ALL)
     private List<Post> commentedPosts = new ArrayList<>();
     // member -> post
-    @OneToMany(mappedBy = "upVotedMember")
-    private List<Post> upVotedPosts = new ArrayList<>();;
+    @OneToMany(mappedBy = "upVotedMember", cascade = CascadeType.ALL)
+    private List<Post> upVotedPosts = new ArrayList<>();
 
     public static String createEmailCheckToken() {
         return UUID.randomUUID().toString();

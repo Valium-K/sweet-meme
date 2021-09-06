@@ -2,7 +2,9 @@ package dev.valium.sweetmeme.service;
 
 import dev.valium.sweetmeme.controller.dto.MemberUser;
 import dev.valium.sweetmeme.domain.Member;
+import dev.valium.sweetmeme.domain.Post;
 import dev.valium.sweetmeme.repository.MemberRepository;
+import dev.valium.sweetmeme.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +17,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -24,13 +30,13 @@ import java.util.List;
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
+    private final PostRepository postRepository;
 
-    public Member getMember(Long id) {
-        return memberRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException(id + "에 해당하는 멤버를 찾을 수 없습니다.")
-        );
+    @Transactional(readOnly = true)
+    public Member findReadOnlyMember(String nickname) {
+        return findMember(nickname);
     }
-    public Member getMember(String nickname) {
+    public Member findMember(String nickname) {
         return memberRepository.findByNickname(nickname).orElseThrow(
                 () -> new IllegalArgumentException(nickname + "에 해당하는 멤버를 찾을 수 없습니다.")
         );
@@ -53,6 +59,13 @@ public class MemberService implements UserDetailsService {
         return member;
     }
 
+
+    @Transactional(readOnly = true)
+    public List<Post> findPostsByNickname(String nickname) {
+        Member foundMember = findMember(nickname);
+
+        return new ArrayList<>(foundMember.getMyPosts());
+    }
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -62,6 +75,16 @@ public class MemberService implements UserDetailsService {
         );
 
         return new MemberUser(member);
+    }
+
+
+    public void uploadPost(Member member, Post post) {
+        Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
+                () -> new IllegalArgumentException("memberId: " + member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
+        );
+
+        foundMember.getMyPosts().add(post);
+        post.setOriginalPoster(foundMember);
     }
 }
 

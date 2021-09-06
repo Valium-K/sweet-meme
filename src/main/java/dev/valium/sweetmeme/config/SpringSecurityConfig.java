@@ -27,7 +27,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 // TODO 임시 permitAll() 나중에 경로 설정하기
-                .mvcMatchers("/**").permitAll()
+                .mvcMatchers("/", "/login", "/sing-up").permitAll()
                 .anyRequest().authenticated();
 
         http.formLogin()
