@@ -9,16 +9,29 @@
   <title>Sweet Meme</title>
   <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css" />
 
+  <style id="commonStyle">
+    body::-webkit-scrollbar-track
+    {
+      -webkit-box-shadow: inset 0 0 3px rgba(255, 255, 255, 0);
+
+    }
+
+    body::-webkit-scrollbar
+    {
+      background-color: rgb(33, 37, 41);
+      width: 3px;
+    }
+
+    body::-webkit-scrollbar-thumb
+    {
+      border-radius: 3px;
+      background-color: rgb(248, 249, 250);
+    }
+  </style>
   <style id="forMobilePage">
     .container {
       width: 80%;
     }
-
-    /*@media (max-width: 974px) {*/
-    /*  .container {*/
-    /*    width: 100%;*/
-    /*  }*/
-    /*}*/
 
     @media (max-width: 700px) {
       .container {
@@ -43,8 +56,28 @@
       color: black;
     }
     #side-bar {
-      top: 70px;
+      top: 80px;
       position: sticky;
+      overflow: auto;
+      height: 500px;
+      max-width: 200px;
+      -webkit-overflow-scrolling: touch;
+    }
+    #side-bar::-webkit-scrollbar-track
+    {
+      -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.22);
+
+    }
+
+    #side-bar::-webkit-scrollbar
+    {
+      width: 2px;
+    }
+
+    #side-bar::-webkit-scrollbar-thumb
+    {
+      border-radius: 2px;
+      background-color: rgba(33, 37, 41, 0.82);
     }
   </style>
   <style id="forNaviBar">
@@ -124,7 +157,7 @@
                   logout
                 </button>
               </form>
-            <li><span style="font-size: 12px">&nbsp;&nbsp;&nbsp;&nbsp; SWEETMEME © 2021</span></li>
+            <li><span style="font-size: 12px">&nbsp;&nbsp;&nbsp;&nbsp;SWEETMEME © 2021</span></li>
           </ul>
         </li>
       </ul>
@@ -206,12 +239,12 @@
 
   <div class="mb-3"></div>
 
-  <div class="d-flex align-items-center text-decoration-none">
+  <div class="d-flex align-items-centertext-decoration-none">
     <svg width="15" height="32"></svg>
     <span class="fs-4" style="color: black">Section</span>
   </div>
 
-  <hr style="color: black">
+  <hr style="color: black"/>
   <li class="nav-item">
     <a href="#" class="nav-link" th:style="${currentMenu == 'funny'}? 'background-color: #11111110;'">
       F Funny
@@ -241,17 +274,46 @@
       Wholesome
     </a>
   </li>
+  <li class="nav-item">
+    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
+      Gif
+    </a>
+  </li>
+  <li class="nav-item">
+    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
+      Gif
+    </a>
+  </li>
+  <li class="nav-item">
+    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
+      Gif
+    </a>
+  </li>
 
   <li class="nav-item">
     <a href="#" class="nav-link"th:style="${currentMenu == 'wallpaper'}? 'background-color: #11111110;'">
       Wallpaper
     </a>
   </li>
+  <li class="nav-item">
+    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
+      Gif
+    </a>
+  </li>
+  <li class="nav-item">
+    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
+      Gif
+    </a>
+  </li>
+  <li class="nav-item">
+    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
+      Gif
+    </a>
+  </li>
 </ul>
-<div th:fragment="side-bar(currentMenu)" id="side-bar" class="nav d-flex sticky-top flex-column flex-shrink-0 p-3 bg-light"
-     style="max-width: 200px;">
+<div th:fragment="side-bar(currentMenu)" id="side-bar" class="nav d-flex sticky-top flex-column flex-shrink-0 p-3 bg-light">
 
-  <div style="height: 70px"></div>
+
   <div class="navbar-expand-lg navbar-light">
     <ul th:replace="fragments.html :: content(${currentMenu})"></ul>
   </div>
@@ -284,7 +346,7 @@
   <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas" style="width: 250px;" aria-labelledby="offcanvasLabel">
 
     <div class="offcanvas-header bg-dark">
-      <h5 class="offcanvas-title text-light">SweetMeme</h5>
+      <h5 class="offcanvas-title text-light" style="height: 24px;">SweetMeme</h5>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
 
@@ -293,6 +355,39 @@
     </div>
   </div>
 </div>
+<div th:fragment="profileInfo">
+  <div class="row">
+    <div class="col-2">
+      <span>프로필 <br/>이미지</span>
+    </div>
+    <div class="col-10">
+      <div th:text="${member.nickname}"></div>
+      <small class="text-muted" th:text="${member.email}"></small> · <small class="text-muted" th:text="${spendDate} + ' days'"></small>
+    </div>
+  </div>
+  <p class="mt-2" th:text="${member.memberInfo.getDescription()}"></p>
+</div>
+<div th:fragment="profileTab(profileMenu)">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link" th:classappend="${profileMenu == 'home'}? active" aria-current="page" href="#"
+         th:href="@{'/user/' + ${member.getNickname()}}">Home</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" th:classappend="${profileMenu == 'posts'}? active" aria-current="page" href="#"
+         th:href="@{'/user/' + ${member.getNickname()} + '/posts'}">Posts</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" th:classappend="${profileMenu == 'comments'}? active" href="#"
+         th:href="@{'/user/' + ${member.getNickname()} + '/comments'}">Comments</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" th:classappend="${profileMenu == 'upvotes'}? active" href="#"
+         th:href="@{'/user/' + ${member.getNickname()} + '/upvotes'}">Upvotes</a>
+    </li>
+  </ul>
+</div>
+
 <script th:fragment="form-validation" type="application/javascript">
   (function () {
     'use strict';
