@@ -11,7 +11,8 @@
       <div th:replace="fragments.html :: side-bar(currentMenu='profile')"></div>
     </div>
     <div class="col" id="content-col">
-      <div th:replace="fragments.html::profileInfo"></div>
+      <div th:replace="fragments.html::profileInfo(${member})"></div>
+
       <div th:replace="fragments.html::profileTab('upvotes')"></div>
     </div>
   </div>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<div th:replace="fragments.html :: nav-bar"></div>
+<div class="container">
+
+  <div class="py-5 text-center">
+    <p class="lead mt-4">S w e e t M e m e</p>
+    <h2>Upload a Post</h2>
+  </div>
+  <div class="row justify-content-center">
+
+    <form class="needs-validation col-sm-6" action="#" th:action="@{/upload}" method="post" novalidate>
+
+      <div th:if="${param.error}" class="alert alert-danger" role="alert"
+           th:text="#{login.error}" style="text-align: center">에러
+      </div>
+
+      <p>업로드 할 이미지를 선택하세요</p>
+      <div>
+        업로드 창
+      </div>
+
+      describe, tag - tagify , sectiontype picker - List:SectionType - tagify
+
+      <input type="submit" th:value="submit" />
+    </form>
+  </div>
+</div>
+<script th:replace="fragments.html :: form-validation"></script>
+</body>
+</html>

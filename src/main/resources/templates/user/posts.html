@@ -11,10 +11,34 @@
             <div th:replace="fragments.html :: side-bar(currentMenu='profile')"></div>
         </div>
         <div class="col" id="content-col">
-            <div th:replace="fragments.html::profileInfo"></div>
-
+            <div th:replace="fragments.html::profileInfo(${member})"></div>
             <ul th:replace="fragments.html::profileTab ('posts')"></ul>
 
+            <section>
+                <article th:each="post : ${posts}">
+                    <header>
+                        <div class="row justify-content-between">
+                            <div class="col-4">
+                                <span>[icon]</span> ·
+                                <span th:text="${post.belongedSectionType}"></span> ·
+                                <span th:text="${member.createdDate}"></span> ·
+                                uploaded
+                            </div>
+                            <div class="col-4">
+                                <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="dropdown07">
+                                    <li><a class="dropdown-item" th:href=""></a>download</li>
+                                    <li><a class="dropdown-item" th:href=""></a>delete</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </header>
+                    <picture>
+                        <source srcset="#" type="image/webp">
+                        <img src="#" loading="lazy">
+                    </picture>
+                </article>
+
+            </section>
         </div>
     </div>
 

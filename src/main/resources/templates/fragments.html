@@ -5,7 +5,7 @@
 <!-------------------------- fragments ---------------------------------------------------->
 <head th:fragment="head">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
   <title>Sweet Meme</title>
   <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css" />
 
@@ -89,8 +89,10 @@
     }
   </style>
 
+  <script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
   <script src="/node_modules/jquery/dist/jquery.min.js"></script>
   <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+
 </head>
 <nav th:fragment="nav-bar" id="nav-bar" class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
@@ -355,39 +357,43 @@
     </div>
   </div>
 </div>
-<div th:fragment="profileInfo">
+<div th:fragment="profileInfo(member)">
   <div class="row">
     <div class="col-2">
-      <span>프로필 <br/>이미지</span>
+      <a th:href="@{/}">
+      <svg th:if="${member?.memberInfo.picImage} == null" th:data-jdenticon-value="${member.nickname}"
+           width="50" height="50" class="rounded border bg-light"></svg>
+      <img th:if="${member?.memberInfo.picImage} != null" th:src="${member.nickname}"
+           width="24" height="24" class="rounded border"/>
+      </a>
     </div>
     <div class="col-10">
       <div th:text="${member.nickname}"></div>
       <small class="text-muted" th:text="${member.email}"></small> · <small class="text-muted" th:text="${spendDate} + ' days'"></small>
     </div>
   </div>
-  <p class="mt-2" th:text="${member.memberInfo.getDescription()}"></p>
+  <p class="mt-2" th:text="${member.memberInfo.description}"></p>
 </div>
 <div th:fragment="profileTab(profileMenu)">
   <ul class="nav nav-tabs">
     <li class="nav-item">
       <a class="nav-link" th:classappend="${profileMenu == 'home'}? active" aria-current="page" href="#"
-         th:href="@{'/user/' + ${member.getNickname()}}">Home</a>
+         th:href="@{'/user/' + ${member.nickname}}">Home</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" th:classappend="${profileMenu == 'posts'}? active" aria-current="page" href="#"
-         th:href="@{'/user/' + ${member.getNickname()} + '/posts'}">Posts</a>
+         th:href="@{'/user/' + ${member.nickname} + '/posts'}">Posts</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" th:classappend="${profileMenu == 'comments'}? active" href="#"
-         th:href="@{'/user/' + ${member.getNickname()} + '/comments'}">Comments</a>
+         th:href="@{'/user/' + ${member.nickname} + '/comments'}">Comments</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" th:classappend="${profileMenu == 'upvotes'}? active" href="#"
-         th:href="@{'/user/' + ${member.getNickname()} + '/upvotes'}">Upvotes</a>
+         th:href="@{'/user/' + ${member.nickname} + '/upvotes'}">Upvotes</a>
     </li>
   </ul>
 </div>
-
 <script th:fragment="form-validation" type="application/javascript">
   (function () {
     'use strict';
