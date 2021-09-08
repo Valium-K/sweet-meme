@@ -21,11 +21,19 @@ public class Section extends BaseEntityTime {
     @Enumerated(EnumType.STRING)
     private SectionType sectionType;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "section_info_id")
     private Info sectionInfo;
 
     // section -> post
     @OneToMany(mappedBy = "section")
-    private List<Post> posts = new ArrayList<>();;
+    private List<Post> posts = new ArrayList<>();
+
+    public static Section createSection(SectionType sectionType, Info info) {
+        return Section.builder()
+                .sectionType(sectionType)
+                .sectionInfo(info)
+                .posts(new ArrayList<>())
+                .build();
+    }
 }

@@ -3,6 +3,8 @@ package dev.valium.sweetmeme.service;
 import dev.valium.sweetmeme.controller.dto.MemberUser;
 import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.domain.Post;
+import dev.valium.sweetmeme.domain.Tag;
+import dev.valium.sweetmeme.domain.enums.SectionType;
 import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -77,14 +79,5 @@ public class MemberService implements UserDetailsService {
         return new MemberUser(member);
     }
 
-
-    public void uploadPost(Member member, Post post) {
-        Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
-                () -> new IllegalArgumentException("memberId: " + member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
-        );
-
-        foundMember.getMyPosts().add(post);
-        post.setOriginalPoster(foundMember);
-    }
 }
 

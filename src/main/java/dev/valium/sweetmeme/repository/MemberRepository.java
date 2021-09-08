@@ -13,7 +13,9 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    Optional<Member> findByEmail(String email);
+    Member findMemberById(Long id);
+    Member findMemberByEmail(String email);
 
+    Optional<Member> findByEmail(String email);
     Optional<Member> findByNickname(String nickname);
 }

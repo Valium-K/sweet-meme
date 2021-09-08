@@ -37,15 +37,15 @@ public class SignUpController {
             return "member/sign-up";
         }
 
-        if(memberRepository.findByEmail(signUpForm.getEmail()) != null) {
-            result.rejectValue("email", "invalid.email", new Object[]{signUpForm.getEmail()},
+        if(memberRepository.findMemberByEmail(signUpForm.getEmail()) != null) {
+            result.rejectValue("email", "duplicated.email", new Object[]{signUpForm.getEmail()},
                     "이미 사용중인 이메일입니다.");
 
             return "member/sign-up";
         }
 
         Member member = signUpService.form2Member(signUpForm);
-        Info info = Info.createInfo(null, member.getNickname() + " description");
+        Info info = Info.createInfo(null, member.getNickname(), member.getNickname() + " description");
 
         // TODO 적당한 이름 생각나면 메서드로 빼기
         member.setMemberInfo(info);

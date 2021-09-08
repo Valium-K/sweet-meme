@@ -2,17 +2,24 @@ package dev.valium.sweetmeme.config;
 
 import dev.valium.sweetmeme.domain.Info;
 import dev.valium.sweetmeme.domain.Member;
+import dev.valium.sweetmeme.domain.Section;
+import dev.valium.sweetmeme.domain.enums.SectionType;
 import dev.valium.sweetmeme.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 @Profile("local")
 @Component
@@ -38,7 +45,7 @@ public class LocalDbInit {
          */
         private final EntityManager entityManager;
         private final PasswordEncoder passwordEncoder;
-        private final MemberService memberService;
+        private final MessageSource messageSource;
 
         private final String NICKNAME = "test";
         private final String EMAIL = "test@test.test";
@@ -47,13 +54,34 @@ public class LocalDbInit {
         private final String DESCRIPTION = "test description";
 
         public void initDB() {
-            Info info = Info.createInfo(PICURL, DESCRIPTION);
+            memberInit();
+            sectionInit();
+
+        }
+
+        private void memberInit() {
+            Info info = Info.createInfo(PICURL, NICKNAME, DESCRIPTION);
             Member member = Member.createMember(NICKNAME, EMAIL, passwordEncoder.encode(PASSWORD));
-            System.out.println("====5====" + member.getMyPosts().isEmpty());
             info.setHead(member.getNickname());
             member.setMemberInfo(info);
 
             entityManager.persist(member);
+        }
+        private void sectionInit() {
+            List<SectionType> sectionTypes = Arrays.asList(SectionType.values());
+
+            Arrays.asList(SectionType.values()).forEach(sectionType -> {
+                Section section = Section.createSection(
+                        sectionType
+                        , Info.createInfo(
+                                null,
+                                sectionType.name(),
+                                messageSource.getMessage("section." + sectionType.name().toLowerCase(Locale.US) + ".description"
+                                                         , new Object[0]
+                                                         , Locale.US)
+                        ));
+                entityManager.persist(section);
+            });
         }
     }
 }

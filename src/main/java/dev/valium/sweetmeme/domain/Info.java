@@ -7,6 +7,7 @@ import javax.persistence.*;
 @Entity
 @Getter @Setter
 @Builder
+@EqualsAndHashCode(of = {"id"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class Info {
@@ -24,9 +25,10 @@ public class Info {
 
     private String description;
 
-    public static Info createInfo(String picImage, String description) {
+    public static Info createInfo(String picImage, String head, String description) {
         return Info.builder()
                     .picImage(picImage)
+                    .head(head)
                     .description(description)
                     .build();
     }
