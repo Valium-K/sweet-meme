@@ -38,7 +38,7 @@ public class UploadController {
     private final TagRepository tagRepository;
     private final ObjectMapper objectMapper;
     private final UploadService uploadService;
-
+    private final PostRepository postRepository;
 
     @GetMapping("/upload")
     public String uploadForm(Model model) throws JsonProcessingException {

@@ -1,12 +1,15 @@
 package dev.valium.sweetmeme.repository;
 
+import dev.valium.sweetmeme.domain.PostTag;
 import dev.valium.sweetmeme.domain.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
-public interface TagRepository extends JpaRepository<Tag, Long> {
+import java.util.List;
+import java.util.Set;
 
-    Tag findByTagName(String name);
+@Transactional(readOnly = true)
+public interface PostTagRepository extends JpaRepository<PostTag, Long> {
+
 
 }

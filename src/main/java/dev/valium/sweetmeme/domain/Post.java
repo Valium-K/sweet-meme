@@ -25,10 +25,9 @@ public class Post extends BaseEntityTime {
     @Embedded
     private Vote vote;
 
-    // post -> tag
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
-    private Set<Tag> tags = new HashSet<>();
+    // post <- post_tag -> tag
+    @OneToMany(mappedBy = "post")
+    private Set<PostTag> postTags = new HashSet<>();
 
     // post -> comment
     @OneToMany(mappedBy = "post")
@@ -75,7 +74,7 @@ public class Post extends BaseEntityTime {
         return Post.builder()
                 .title(title)
                 .vote(new Vote())
-                .tags(new HashSet<>())
+                .postTags(new HashSet<>())
                 .comments(new ArrayList<>())
                 .belongedSectionType(belongedSectionType)
                 .build();

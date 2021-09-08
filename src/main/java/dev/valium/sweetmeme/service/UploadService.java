@@ -1,12 +1,10 @@
 package dev.valium.sweetmeme.service;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
-import dev.valium.sweetmeme.domain.Member;
-import dev.valium.sweetmeme.domain.Post;
-import dev.valium.sweetmeme.domain.Section;
-import dev.valium.sweetmeme.domain.Tag;
+import dev.valium.sweetmeme.domain.*;
 import dev.valium.sweetmeme.domain.enums.SectionType;
 import dev.valium.sweetmeme.repository.MemberRepository;
+import dev.valium.sweetmeme.repository.PostTagRepository;
 import dev.valium.sweetmeme.repository.SectionRepository;
 import dev.valium.sweetmeme.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +28,7 @@ public class UploadService {
     private final MemberRepository memberRepository;
     private final SectionRepository sectionRepository;
     private final TagRepository tagRepository;
+    private final PostTagRepository postTagRepository;
 
     public void uploadPost(Member member, String title, String jsonTags, String jsonSectionType) throws JSONException {
 
@@ -46,10 +45,25 @@ public class UploadService {
         post.setSection(section);
         section.getPosts().add(post);
 
+
+
         // post 조립 2
         Set<Tag> tags = json2TagSet(jsonTags);
-        tags.forEach(tagRepository::save);
-        post.setTags(tags);
+
+        tags.forEach(tag -> {
+            PostTag postTag = new PostTag(post, 0l);
+
+            Tag foundTag = tagRepository.findByTagName(tag.getTagName());
+            System.out.println("==================" + foundTag);
+            if(foundTag == null) {
+                Tag save = tagRepository.save(tag);
+                postTag.setTagId(save.getId());
+            }
+            else {
+                postTag.setTagId(foundTag.getId());
+            }
+            postTagRepository.save(postTag);
+        });
 
         Member foundMember = memberRepository.findMemberById(member.getId());
         post.setOriginalPoster(foundMember);
