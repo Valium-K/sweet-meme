@@ -8,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
   <title>Sweet Meme</title>
   <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css" />
 
   <style id="commonStyle">
     body::-webkit-scrollbar-track
@@ -88,7 +89,30 @@
       transition: height 0.3s ease;
     }
   </style>
+  <style id="tgfy">
 
+
+    .tags-look .tagify__dropdown__item {
+    display: inline-block;
+    border-radius: 3px;
+    padding: .3em .5em;
+    border: 1px solid #CCC;
+    background: #F3F3F3;
+    margin: .2em;
+    font-size: .85em;
+    color: black;
+    transition: 0s;
+  }
+
+  .tags-look .tagify__dropdown__item--active{
+    color: black;
+  }
+
+  .tags-look .tagify__dropdown__item:hover{
+    background: #D3E2E2;
+    border-color: #D3E2E2;
+  }
+  </style>
   <script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
   <script src="/node_modules/jquery/dist/jquery.min.js"></script>
   <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
@@ -413,6 +437,15 @@
       })
     }, false)
   }())
+</script>
+<script type="application/javascript" th:inline="javascript" th:fragment="ajax-csrf-header">
+  $(function() {
+    var csrfToken = /*[[${_csrf.token}]]*/ null;
+    var csrfHeader = /*[[${_csrf.headerName}]]*/ null;
+    $(document).ajaxSend(function (e, xhr, options) {
+      xhr.setRequestHeader(csrfHeader, csrfToken);
+    });
+  });
 </script>
 <!----------------------------------------------------------------------------------------->
 

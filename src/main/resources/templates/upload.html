@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments.html :: head"></head>
+<head th:replace="fragments.html :: head">
+  <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css" />
+</head>
 <body class="bg-light">
 <div th:replace="fragments.html :: nav-bar"></div>
 <div class="container">
@@ -18,17 +20,87 @@
            th:text="#{login.error}" style="text-align: center">에러
       </div>
 
-      <p>업로드 할 이미지를 선택하세요</p>
+
       <div>
-        업로드 창
+        title
+        <input type="text" class="form-control" id="title" name="title" aria-describedby="titleHelp"/>
       </div>
 
-      describe, tag - tagify , sectiontype picker - List:SectionType - tagify
+      <p>업로드 할 이미지를 선택하세요</p>
+      <div>
+        <!--        TODO-->
+      </div>
+
+      <div>
+        tag
+        <input type="text" id="tags" class="form-control" name="tags" aria-describedby="tagHelp"/>
+        <div id="tagWhitelist" th:text="${tagWhitelist}" hidden></div>
+      </div>
+
+      <div>
+        section picker
+        <input type="text" id="sections" class="form-control" name="sections" placeholder="현재 하나의 섹션만 선택 가능합니다."
+               aria-describedby="sectionHelp"/>
+        <div id="sectionWhitelist" th:text="${sectionWhitelist}" hidden></div>
+      </div>
 
       <input type="submit" th:value="submit" />
     </form>
   </div>
 </div>
+<script th:replace="fragments.html :: ajax-csrf-header"></script>
 <script th:replace="fragments.html :: form-validation"></script>
+<script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+<script>
+  var tagInput = document.querySelector('input[name="tags"]');
+  var tagifyForTag = new Tagify(tagInput, {
+    pattern: /^.{0,20}$/,
+    delimiters: ",| |\\n|\\r",
+    whitelist: JSON.parse(document.querySelector("#tagWhitelist").textContent),
+    maxTags: 5,
+    dropdown : {
+      maxItems: 10,
+      classname: "tags-look",
+      enabled: 0,
+      closeOnSelect: false
+    }
+  });
+
+  var sectionInput = document.querySelector('input[name="sections"]');
+  var tagifyForSection = new Tagify(sectionInput, {
+    pattern: /^.{0,20}$/,
+    delimiters: ",| |\\n|\\r",
+    whitelist: JSON.parse(document.querySelector("#sectionWhitelist").textContent),
+    userInput: false,
+    maxTags: 1,
+    dropdown : {
+      classname: "tags-look",
+      enabled: 0,
+      closeOnSelect: true
+    }
+  });
+
+  function sectionRequest(url, sectionName) {
+    $.ajax({
+      dataType: "json",
+      autocomplete: {
+        enabled: true,
+        rightKey: true,
+      },
+      contentType: "application/json; charset=utf-8",
+      method: "POST",
+      url: "/upload/section-tag" + url,
+      data: JSON.stringify({'sectionName': sectionName})
+    }).done(function (data, status) {
+      console.log("${data} and status is ${status}");
+    });
+  }
+
+  function onAdd(e) {
+    sectionRequest("/verify", e.detail.data.value);
+  }
+
+  tagifyForSection.on("add", onAdd);
+</script>
 </body>
 </html>
