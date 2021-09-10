@@ -27,7 +27,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 // TODO 임시 permitAll() 나중에 경로 설정하기
-                .mvcMatchers("/", "/login", "/sing-up").permitAll()
+                .mvcMatchers("/", "/login", "/sign-up", "/user/**").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/members/*", "sections/*").permitAll()
                 .anyRequest().authenticated();
 
         http.formLogin()
@@ -48,7 +49,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .mvcMatchers("/node_modules/**") // 추가필터
+                .mvcMatchers("/node_modules/**", "/sections/**") // 추가필터
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 

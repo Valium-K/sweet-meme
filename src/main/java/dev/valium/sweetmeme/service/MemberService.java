@@ -44,6 +44,13 @@ public class MemberService implements UserDetailsService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public Member findMemberAndInfo(String nickname) {
+        return memberRepository.findMemberAndInfoByNickname(nickname).orElseThrow(
+            () -> new IllegalArgumentException(nickname + "에 해당하는 멤버를 찾을 수 없습니다.")
+        );
+    }
+
     public void login(Member member) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 new MemberUser(member),
@@ -56,9 +63,7 @@ public class MemberService implements UserDetailsService {
     }
 
     public Member saveMember(Member member) {
-        memberRepository.save(member);
-
-        return member;
+        return memberRepository.save(member);
     }
 
 

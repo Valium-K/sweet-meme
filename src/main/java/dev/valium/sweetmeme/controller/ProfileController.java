@@ -20,17 +20,20 @@ public class ProfileController {
     private final MemberService memberService;
     private final MemberRepository memberRepository;
 
-    @GetMapping()
+    @GetMapping("/home")
     public String home(@PathVariable String path, Model model) {
-        setBaseProfile(path, model);
-
+        Member foundMember = memberService.findMemberAndInfo(path);
+        model.addAttribute("spendDate", foundMember.getSpendDate());
+        model.addAttribute("member", foundMember);
 
         return "user/home";
     }
 
     @GetMapping("/posts")
     public String posts(@PathVariable String path, Model model) {
-        setBaseProfile(path, model);
+        Member foundMember = memberService.findMemberAndInfo(path);
+        model.addAttribute("spendDate", foundMember.getSpendDate());
+        model.addAttribute("member", foundMember);
 
         List<Post> foundPosts = memberService.findPostsByNickname(path);
 
@@ -41,21 +44,27 @@ public class ProfileController {
 
     @GetMapping("/comments")
     public String comments(@PathVariable String path, Model model) {
-        setBaseProfile(path, model);
+        Member foundMember = memberService.findMemberAndInfo(path);
+        model.addAttribute("spendDate", foundMember.getSpendDate());
+        model.addAttribute("member", foundMember);
 
         return "user/comments";
     }
 
     @GetMapping("/upvotes")
     public String upvotes(@PathVariable String path, Model model) {
-        setBaseProfile(path, model);
+        Member foundMember = memberService.findMemberAndInfo(path);
+        model.addAttribute("spendDate", foundMember.getSpendDate());
+        model.addAttribute("member", foundMember);
 
         return "user/upvotes";
     }
 
-    private void setBaseProfile(@PathVariable String path, Model model) {
-        Member foundMember = memberService.findReadOnlyMember(path);
+    private Model setBaseProfile(String path, Model model) {
+        Member foundMember = memberService.findMemberAndInfo(path);
         model.addAttribute("spendDate", foundMember.getSpendDate());
         model.addAttribute("member", foundMember);
+
+        return model;
     }
 }

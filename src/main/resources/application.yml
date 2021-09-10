@@ -14,7 +14,12 @@ spring:
     open-in-view: true
   profiles:
     active: local
-
+  servlet:
+    multipart:
+      max-file-size: 104857600
+      max-request-size: 104857600
+      file-size-threshold: 0
+      location: /data/upload_temp
 
 logging:
   level:

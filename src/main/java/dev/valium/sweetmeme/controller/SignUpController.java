@@ -27,21 +27,21 @@ public class SignUpController {
     public String signUpForm(Model model) {
         model.addAttribute(new SignUpForm());
 
-        return "member/sign-up";
+        return "sign-up";
     }
 
     @PostMapping("/sign-up")
     public String signUpFormCreate(@Valid SignUpForm signUpForm, BindingResult result) {
 
         if(result.hasErrors()) {
-            return "member/sign-up";
+            return "sign-up";
         }
 
         if(memberRepository.findMemberByEmail(signUpForm.getEmail()) != null) {
             result.rejectValue("email", "duplicated.email", new Object[]{signUpForm.getEmail()},
                     "이미 사용중인 이메일입니다.");
 
-            return "member/sign-up";
+            return "sign-up";
         }
 
         Member member = signUpService.form2Member(signUpForm);

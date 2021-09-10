@@ -29,14 +29,14 @@ class SignUpControllerTest {
 
     private String nickname = "member1";
     private String email = "email@email.com";
-    private String password = "member";
+    private String password = "membermember";
 
     @DisplayName("회원가입 화면이 보이는지")
     @Test
     public void signUpForm() throws Exception {
         mockMvc.perform(get("/sign-up"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("member/sign-up"))
+                .andExpect(view().name("sign-up"))
                 .andExpect(model().attributeExists("signUpForm"));
     }
 
@@ -45,8 +45,8 @@ class SignUpControllerTest {
     public void 회원가입처리_입력값오류() throws Exception {
 
         String wrongEmail = "worng.email";
-        String wrongNickname = "ln";
-        String wrongPassword = "pw";
+        String wrongNickname = "lnqwfo***i";
+        String wrongPassword = "pwfweoiweno";
 
         mockMvc.perform(post("/sign-up")
                 .param("nickname", wrongNickname)
@@ -54,7 +54,7 @@ class SignUpControllerTest {
                 .param("password", password)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("member/sign-up"))
+                .andExpect(view().name("sign-up"))
                 .andExpect(unauthenticated());
 
         mockMvc.perform(post("/sign-up")
@@ -63,7 +63,7 @@ class SignUpControllerTest {
                 .param("password", password)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("member/sign-up"))
+                .andExpect(view().name("sign-up"))
                 .andExpect(unauthenticated());
 
         mockMvc.perform(post("/sign-up")
@@ -72,8 +72,13 @@ class SignUpControllerTest {
                 .param("password", wrongPassword)
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("member/sign-up"))
+                .andExpect(view().name("sign-up"))
                 .andExpect(unauthenticated());
+
+        // TODO 짧은 길이의 패스워드
+
+        // TODO 잘못된 형식의 닉네임
+
     }
 
     @Test

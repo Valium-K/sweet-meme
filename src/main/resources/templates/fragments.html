@@ -4,11 +4,14 @@
 
 <!-------------------------- fragments ---------------------------------------------------->
 <head th:fragment="head">
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
   <title>Sweet Meme</title>
+
   <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css" />
   <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css" />
+  <script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
 
   <style id="commonStyle">
     body::-webkit-scrollbar-track
@@ -113,10 +116,8 @@
     border-color: #D3E2E2;
   }
   </style>
-  <script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
   <script src="/node_modules/jquery/dist/jquery.min.js"></script>
   <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
-
 </head>
 <nav th:fragment="nav-bar" id="nav-bar" class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
@@ -124,7 +125,7 @@
 
     <a class="navbar-toggler btn me-auto" data-bs-toggle="offcanvas"
        href="#offcanvas" role="button" aria-controls="offcanvas">
-      <
+      Section
     </a>
 
     <!-- 작은화면 메뉴 -->
@@ -143,9 +144,7 @@
 
       <!-- 우측 컨텐츠 -->
       <ul class="navbar-nav .justify-content-end">
-<!--        <li class="nav-item">-->
-<!--          <a class="nav-link" onclick="toggleTheme();">toggleTheme</a>-->
-<!--        </li>-->
+
         <!-- 게스트 -->
         <li class="nav-item" sec:authorize="!isAuthenticated()">
           <a class="nav-link" href="#" th:href="@{/login}">Log in</a>
@@ -170,12 +169,18 @@
         </li>
 
         <!-- 유저 드롭다운 메뉴 -->
-        <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-          <a class="nav-link dropdown-toggle" href="#" id="dropdown07" data-bs-toggle="dropdown"
-             aria-expanded="false" sec:authentication="name">UserDropdown</a>
-          <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="dropdown07">
+        <li  class="nav-item dropdown" sec:authorize="isAuthenticated()">
 
-            <li><a class="dropdown-item" th:href="@{'/user/' + ${#authentication.name}}" th:text="#{myProfile}">내 프로필</a></li>
+          <a class="nav-link dropdown-toggle" href="#" id="dropdown07" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg th:if="${member.memberInfo.picImage} == null" th:data-jdenticon-value="${#authentication.name}"
+                 width="20" height="20" class="rounded border bg-light"></svg>
+            <img th:if="${member.memberInfo.picImage} != null" th:src="${member.memberInfo.picImage}"
+                           width="20" height="20" class="rounded border"/>
+            <span class="ms-1" th:text="${#authentication.name}"></span>
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="dropdown07">
+            <li><a class="dropdown-item" th:href="@{'/user/' + ${#authentication.name} + '/home'}" th:text="#{myProfile}">내 프로필</a></li>
             <li><a class="dropdown-item" href="#" th:text="#{settings}">설정</a></li>
             <li>
               <form class="form-inline my-2 my-lg-0" action="#" th:action="@{/logout}" method="post">
@@ -185,6 +190,7 @@
               </form>
             <li><span style="font-size: 12px">&nbsp;&nbsp;&nbsp;&nbsp;SWEETMEME © 2021</span></li>
           </ul>
+
         </li>
       </ul>
     </div>
@@ -385,10 +391,10 @@
   <div class="row">
     <div class="col-2">
       <a th:href="@{/}">
-      <svg th:if="${member?.memberInfo.picImage} == null" th:data-jdenticon-value="${member.nickname}"
-           width="50" height="50" class="rounded border bg-light"></svg>
-      <img th:if="${member?.memberInfo.picImage} != null" th:src="${member.nickname}"
-           width="24" height="24" class="rounded border"/>
+      <svg th:data-jdenticon-value="${member.nickname}" width="50" height="50" class="rounded border bg-light">
+      </svg>
+<!--      <img th:if="${member.memberInfo.picImage} != null" th:src="${member.nickname}"-->
+<!--           width="24" height="24" class="rounded border"/>-->
       </a>
     </div>
     <div class="col-10">
@@ -402,7 +408,7 @@
   <ul class="nav nav-tabs">
     <li class="nav-item">
       <a class="nav-link" th:classappend="${profileMenu == 'home'}? active" aria-current="page" href="#"
-         th:href="@{'/user/' + ${member.nickname}}">Home</a>
+         th:href="@{'/user/' + ${member.nickname} + '/home'}">Home</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" th:classappend="${profileMenu == 'posts'}? active" aria-current="page" href="#"

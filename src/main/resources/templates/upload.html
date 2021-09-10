@@ -2,7 +2,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: head">
-  <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css" />
+<!--  <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css" />-->
 </head>
 <body class="bg-light">
 <div th:replace="fragments.html :: nav-bar"></div>
@@ -14,37 +14,58 @@
   </div>
   <div class="row justify-content-center">
 
-    <form class="needs-validation col-sm-6" action="#" th:action="@{/upload}" method="post" novalidate>
+    <form class="needs-validation col-sm-6" action="#" th:object="${uploadForm}" th:action="@{/upload}" method="post" enctype="multipart/form-data" novalidate>
 
       <div th:if="${param.error}" class="alert alert-danger" role="alert"
            th:text="#{login.error}" style="text-align: center">에러
       </div>
 
-
-      <div>
-        title
-        <input type="text" class="form-control" id="title" name="title" aria-describedby="titleHelp"/>
+      <div class="mb-3">
+        <label for="title" class="form-label" th:text="#{upload.title}">제목</label>
+        <input type="text" class="form-control" id="title" name="title" th:field="*{title}"
+               aria-describedby="titleHelp" required minlength="5" maxlength="50"/>
+        <small id="titleHelp" class="form-text text-muted" th:text="#{upload.title.help}">
+          5 ~ 50자 이내로 입력하세요.
+        </small>
       </div>
 
-      <p>업로드 할 이미지를 선택하세요</p>
-      <div>
-        <!--        TODO-->
+      <div class="mb-3" id="fileUploadForm">
+        <label for="file" class="form-label" th:text="#{upload.file}">업로드 파일</label>
+        <input type="file" class="form-control" name="file" id="file" accept="image/*"
+               aria-describedby="fileHelp" th:field="*{file}" oninput="thumbnail()" required/>
+
+        <div id="thumbnail" class="md-4" style="display: none; background-color: #CCCCCC; height: 300px">
+          [ 추가된 업로드 이미지 썸네일 ]
+        </div>
+
+        <small id="fileHelp" class="form-text text-muted" th:text="#{upload.file.help}">
+          업로드 할 파일을 선택하세요.
+        </small>
+        <small class="invalid-feedback" th:text="#{upload.file.help}">업로드 할 파일을 선택하세요.</small>
       </div>
 
-      <div>
-        tag
-        <input type="text" id="tags" class="form-control" name="tags" aria-describedby="tagHelp"/>
-        <div id="tagWhitelist" th:text="${tagWhitelist}" hidden></div>
+      <div id="tagWhitelist" th:text="${tagWhitelist}" hidden></div>
+      <div class="mb-3">
+        <label for="tags" class="form-label" th:text="#{upload.tags}">태그</label>
+        <input type="text" id="tags" class="form-control" name="tags" aria-describedby="tagsHelp" th:field="*{tags}"/>
+        <small id="tagsHelp" class="form-text text-muted" th:text="#{upload.tags.help}">
+          태그는 옵션입니다.
+        </small>
       </div>
 
-      <div>
-        section picker
-        <input type="text" id="sections" class="form-control" name="sections" placeholder="현재 하나의 섹션만 선택 가능합니다."
-               aria-describedby="sectionHelp"/>
-        <div id="sectionWhitelist" th:text="${sectionWhitelist}" hidden></div>
+      <div id="sectionWhitelist" th:text="${sectionWhitelist}" hidden></div>
+      <div class="mb-3">
+        <label for="sections" class="form-label" th:text="#{upload.sections}">섹션</label>
+        <input type="text" id="sections" class="form-control" name="sections"
+               placeholder="현재 하나의 섹션만 선택 가능합니다." aria-describedby="sectionsHelp" th:field="*{sections}" required/>
+        <small class="invalid-feedback" th:text="#{upload.sections.help}"></small>
       </div>
 
-      <input type="submit" th:value="submit" />
+      <div class="mt-5"></div>
+      <div class="form-group mb-3 d-grid gap-2">
+        <button class="btn btn-primary" type="submit" th:text="#{upload}">업로드</button>
+      </div>
+
     </form>
   </div>
 </div>
@@ -57,7 +78,7 @@
     pattern: /^.{0,20}$/,
     delimiters: ",| |\\n|\\r",
     whitelist: JSON.parse(document.querySelector("#tagWhitelist").textContent),
-    maxTags: 5,
+    maxTags: 3,
     dropdown : {
       maxItems: 10,
       classname: "tags-look",
@@ -101,6 +122,13 @@
   }
 
   tagifyForSection.on("add", onAdd);
+</script>
+<script>
+  var thumbnail = function () {
+    document.getElementById('thumbnail').style.removeProperty('display');
+    document.getElementById('file').setAttribute('hidden', '');
+    document.getElementById('fileHelp').setAttribute('hidden', '');
+  }
 </script>
 </body>
 </html>

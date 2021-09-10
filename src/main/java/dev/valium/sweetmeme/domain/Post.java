@@ -22,6 +22,8 @@ public class Post extends BaseEntityTime {
 
     private String title;
 
+    private String postImageUrl;
+
     @Embedded
     private Vote vote;
 
@@ -65,7 +67,7 @@ public class Post extends BaseEntityTime {
     ////////////////////////////////////////////////////
 
     /**
-     * create이후 section, op 매핑 필요 + tag가 있을경우 추가로 매핑
+     * create이후 section, op, postImageUrl 매핑 필요 + tag가 있을경우 추가로 매핑
      * @param title
      * @param belongedSectionType
      * @return

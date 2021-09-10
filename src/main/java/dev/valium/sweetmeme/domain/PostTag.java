@@ -17,10 +17,11 @@ public class PostTag {
     @JoinColumn(name = "post_id")
     private Post post;
 
-
     /**
+     * 1:N:1
+     * Post - PostTag -> Tag
+     *
      * Unique한 tagName을 tagId가 multiple 하게 참조함.
-     * 그럴리 없지만 unique 제약조건에 위배될시 확인해볼것.
      */
     private Long tagId;
 

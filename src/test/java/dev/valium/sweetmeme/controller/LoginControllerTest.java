@@ -33,9 +33,9 @@ class LoginControllerTest {
     @Autowired private MemberService memberService;
     @Autowired private SignUpService signUpService;
 
-    private String nickname = "member1";
-    private String email = "email@email.com";
-    private String password = "member";
+    private String nickname = "membersdf1";
+    private String email = "email2@email2.com";
+    private String password = "membermember";
 
     @BeforeEach
     void beforeEach() {
@@ -78,8 +78,8 @@ class LoginControllerTest {
     @DisplayName("로그인 실패")
     public void 로그인_실패() throws Exception {
         mockMvc.perform(post("/login")
-                .param("username", "failfail")
-                .param("password", "failfail")
+                .param("username", "failfails")
+                .param("password", "failfailfail")
                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login?error"))
