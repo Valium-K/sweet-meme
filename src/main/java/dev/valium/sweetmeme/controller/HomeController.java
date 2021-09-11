@@ -21,7 +21,7 @@ public class HomeController {
         if(member == null) {
             model.addAttribute("member", null);
         } else {
-            Member mem = memberRepository.findById(member.getId()).orElse(null);
+            Member mem = memberRepository.findFetchInfoById(member.getId()).orElse(null);
 
             model.addAttribute("member", mem);
         }

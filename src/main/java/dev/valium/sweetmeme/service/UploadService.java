@@ -9,9 +9,7 @@ import dev.valium.sweetmeme.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.json.JSONParser;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.json.JSONArray;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +35,8 @@ public class UploadService {
 
     public void uploadPost(Member member, String title, String jsonTags, String jsonSectionType, MultipartFile file) throws Exception {
 
+        System.out.println("=================== se" + jsonSectionType);
+        System.out.println("================= ta" + jsonTags);
         // 파일생성
         File newFile = createNewFile(UPLOAD_PATH, file);
 
@@ -75,8 +75,8 @@ public class UploadService {
      * @throws Exception
      */
     private File createNewFile(String path, MultipartFile file) throws Exception {
-        String upload_path = UPLOAD_PATH + UUID.randomUUID().toString().replace("-", "");
-        String fileName = file.getOriginalFilename();
+        String upload_path = path + UUID.randomUUID().toString().replace("-", "");
+        String fileName = file.getOriginalFilename().replace(" ", "");
 
         if("".equals(fileName)) {
             throw new Exception("fileName is null");

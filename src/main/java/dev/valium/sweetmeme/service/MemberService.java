@@ -63,7 +63,9 @@ public class MemberService implements UserDetailsService {
     }
 
     public Member saveMember(Member member) {
-        return memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
+
+        return memberRepository.findFetchInfoById(savedMember.getId()).orElse(savedMember);
     }
 
 

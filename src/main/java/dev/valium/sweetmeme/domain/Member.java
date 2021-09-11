@@ -34,7 +34,7 @@ public class Member extends BaseEntityTime {
     @Enumerated(EnumType.STRING)
     private Membership membership;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "info_id")
     private Info memberInfo;
     // member -> post

@@ -4,7 +4,6 @@
 
 <!-------------------------- fragments ---------------------------------------------------->
 <head th:fragment="head">
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
   <title>Sweet Meme</title>
@@ -116,8 +115,10 @@
     border-color: #D3E2E2;
   }
   </style>
+
   <script src="/node_modules/jquery/dist/jquery.min.js"></script>
   <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+
 </head>
 <nav th:fragment="nav-bar" id="nav-bar" class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
   <div class="container">
@@ -172,10 +173,10 @@
         <li  class="nav-item dropdown" sec:authorize="isAuthenticated()">
 
           <a class="nav-link dropdown-toggle" href="#" id="dropdown07" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <svg th:if="${member.memberInfo.picImage} == null" th:data-jdenticon-value="${#authentication.name}"
+            <svg th:if="${#strings.isEmpty(member)}" th:data-jdenticon-value="${#authentication.name}"
                  width="20" height="20" class="rounded border bg-light"></svg>
-            <img th:if="${member.memberInfo.picImage} != null" th:src="${member.memberInfo.picImage}"
-                           width="20" height="20" class="rounded border"/>
+<!--            <img th:if="${member.getMemberInfo().picImage} != null" th:src="${member.memberInfo.picImage}"-->
+<!--                           width="20" height="20" class="rounded border"/>-->
             <span class="ms-1" th:text="${#authentication.name}"></span>
           </a>
 
@@ -344,8 +345,6 @@
   </li>
 </ul>
 <div th:fragment="side-bar(currentMenu)" id="side-bar" class="nav d-flex sticky-top flex-column flex-shrink-0 p-3 bg-light">
-
-
   <div class="navbar-expand-lg navbar-light">
     <ul th:replace="fragments.html :: content(${currentMenu})"></ul>
   </div>
@@ -360,7 +359,9 @@
 
       }
       else {
-        document.getElementById('side-bar').classList.remove('d-none');
+        if(document.getElementById('side-bar').classList.contains('d-none')) {
+          document.getElementById('side-bar').classList.remove('d-none')
+        }
 
         document.getElementById('side-bar-col').classList.remove('col-0');
         document.getElementById('side-bar-col').classList.add('col-3');
