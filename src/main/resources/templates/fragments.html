@@ -33,6 +33,7 @@
   </style>
   <style id="forMobilePage">
     .container {
+      max-width: 1050px;
       width: 80%;
     }
 
@@ -173,10 +174,10 @@
         <li  class="nav-item dropdown" sec:authorize="isAuthenticated()">
 
           <a class="nav-link dropdown-toggle" href="#" id="dropdown07" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <svg th:if="${#strings.isEmpty(member)}" th:data-jdenticon-value="${#authentication.name}"
+            <svg th:if="${member.getMemberInfo().picImage} == null" th:data-jdenticon-value="${#authentication.name}"
                  width="20" height="20" class="rounded border bg-light"></svg>
-<!--            <img th:if="${member.getMemberInfo().picImage} != null" th:src="${member.memberInfo.picImage}"-->
-<!--                           width="20" height="20" class="rounded border"/>-->
+            <img th:if="${member.getMemberInfo().picImage} != null" th:src="${member.memberInfo.picImage}"
+                           width="20" height="20" class="rounded border"/>
             <span class="ms-1" th:text="${#authentication.name}"></span>
           </a>
 
@@ -388,42 +389,45 @@
     </div>
   </div>
 </div>
-<div th:fragment="profileInfo(member)">
+<div th:fragment="profileInfo">
   <div class="row">
     <div class="col-2">
       <a th:href="@{/}">
-      <svg th:data-jdenticon-value="${member.nickname}" width="50" height="50" class="rounded border bg-light">
+      <svg th:data-jdenticon-value="${info.head}" width="50" height="50" class="rounded border bg-light">
       </svg>
 <!--      <img th:if="${member.memberInfo.picImage} != null" th:src="${member.nickname}"-->
 <!--           width="24" height="24" class="rounded border"/>-->
       </a>
     </div>
     <div class="col-10">
-      <div th:text="${member.nickname}"></div>
-      <small class="text-muted" th:text="${member.email}"></small> · <small class="text-muted" th:text="${spendDate} + ' days'"></small>
+      <div th:text="${info.head}"></div>
+      <!-- <small class="text-muted" th:text="${member.email}"></small> -->[뭘 넣을지 고민 중] · <small class="text-muted" th:text="${spendDate} + ' days'"></small>
     </div>
   </div>
-  <p class="mt-2" th:text="${member.memberInfo.description}"></p>
+  <p class="my-3" th:text="${info.description}"></p>
 </div>
 <div th:fragment="profileTab(profileMenu)">
   <ul class="nav nav-tabs">
     <li class="nav-item">
       <a class="nav-link" th:classappend="${profileMenu == 'home'}? active" aria-current="page" href="#"
-         th:href="@{'/user/' + ${member.nickname} + '/home'}">Home</a>
+         th:href="@{'/user/' + ${info.head} + '/home'}">Home</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" th:classappend="${profileMenu == 'posts'}? active" aria-current="page" href="#"
-         th:href="@{'/user/' + ${member.nickname} + '/posts'}">Posts</a>
+         th:href="@{'/user/' + ${info.head} + '/posts'}">Posts</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" th:classappend="${profileMenu == 'comments'}? active" href="#"
-         th:href="@{'/user/' + ${member.nickname} + '/comments'}">Comments</a>
+         th:href="@{'/user/' + ${info.head} + '/comments'}">Comments</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" th:classappend="${profileMenu == 'upvotes'}? active" href="#"
-         th:href="@{'/user/' + ${member.nickname} + '/upvotes'}">Upvotes</a>
+         th:href="@{'/user/' + ${info.head} + '/upvotes'}">Upvotes</a>
     </li>
   </ul>
+</div>
+<div th:fragment="memberShip(membership)">
+  <span th:if="membership == "></span>
 </div>
 <script th:fragment="form-validation" type="application/javascript">
   (function () {

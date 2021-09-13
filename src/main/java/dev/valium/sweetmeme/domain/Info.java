@@ -3,6 +3,8 @@ package dev.valium.sweetmeme.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.Period;
 
 @Entity
 @Getter @Setter
@@ -32,4 +34,5 @@ public class Info {
                     .description(description)
                     .build();
     }
+
 }

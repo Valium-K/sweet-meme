@@ -53,7 +53,6 @@ public class SignUpController {
 
         Member savedMember = memberService.saveMember(member);
 
-
         memberService.login(savedMember);
 
         return "redirect:/";

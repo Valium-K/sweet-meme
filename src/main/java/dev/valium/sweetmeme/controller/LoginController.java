@@ -1,5 +1,7 @@
 package dev.valium.sweetmeme.controller;
 
+import dev.valium.sweetmeme.domain.CurrentMember;
+import dev.valium.sweetmeme.domain.Member;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,4 +14,8 @@ public class LoginController {
         return "login";
     }
 
+    @PostMapping("/postProcess")
+    public String postProcess(@CurrentMember Member member) {
+        return "redirect:/";
+    }
 }

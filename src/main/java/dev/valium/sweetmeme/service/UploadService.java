@@ -35,8 +35,6 @@ public class UploadService {
 
     public void uploadPost(Member member, String title, String jsonTags, String jsonSectionType, MultipartFile file) throws Exception {
 
-        System.out.println("=================== se" + jsonSectionType);
-        System.out.println("================= ta" + jsonTags);
         // 파일생성
         File newFile = createNewFile(UPLOAD_PATH, file);
 

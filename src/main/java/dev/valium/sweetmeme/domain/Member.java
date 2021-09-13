@@ -31,6 +31,9 @@ public class Member extends BaseEntityTime {
     private boolean emailVerified;
     private String emailCheckToken;
 
+    private boolean upvoteAlert;
+    private boolean replyAlert;
+
     @Enumerated(EnumType.STRING)
     private Membership membership;
 
@@ -58,6 +61,8 @@ public class Member extends BaseEntityTime {
                     .password(password)
                     .emailVerified(false)
                     .membership(Membership.NEW)
+                    .upvoteAlert(true)
+                    .replyAlert(true)
                     .emailCheckToken(createEmailCheckToken())
                     .myPosts(new ArrayList<>())
                     .commentedPosts(new ArrayList<>())

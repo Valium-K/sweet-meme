@@ -11,9 +11,15 @@
         <div class="col-3" id="side-bar-col" style="padding: 0px;">
             <div th:replace="fragments.html :: side-bar(currentMenu='profile')"></div>
         </div>
-        <div class="col" id="content-col">
-            <div th:replace="fragments.html::profileInfo(${member})"></div>
+        <div class="col" id="content-col" >
+            <div th:replace="fragments.html::profileInfo"></div>
             <ul th:replace="fragments.html::profileTab ('posts')"></ul>
+
+            <div class="row justify-content-center" style="background-color: black;">
+                <div class="col-md-auto" >
+                    <img th:src="@{file}" style=" width: 100%; height: auto; max-width: 200px; ">
+                </div>
+            </div>
 
             <section>
                 <article th:each="post : ${posts}">
@@ -22,30 +28,32 @@
                             <div class="col-4">
                                 <span>[icon]</span> ·
                                 <span th:text="${post.belongedSectionType}"></span> ·
-                                <span th:text="${member.createdDate}"></span> ·
-                                uploaded
+                                <span th:text="${member.createdDate}"></span> · uploaded
                             </div>
                             <div class="col-4">
+                                <a class="nav-link dropdown-toggle" href="#" id="dropdown07" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="ms-1">...</span>
+                                </a>
+
                                 <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="dropdown07">
-                                    <li><a class="dropdown-item" th:href=""></a>download</li>
-                                    <li><a class="dropdown-item" th:href=""></a>delete</li>
+                                    <li><a class="dropdown-item"></a>download</li>
+                                    <li><a class="dropdown-item"></a>delete</li>
                                 </ul>
                             </div>
                         </div>
                     </header>
                     <picture>
-                        <source srcset="#" type="image/webp">
-                        <img src="#" loading="lazy">
+                        <source srcset="#" type="image/png">
+                        <img th:src="@{file}">
                     </picture>
                 </article>
 
             </section>
+
         </div>
     </div>
 
-    <script>
 
-    </script>
 </div>
 </body>
 </html>

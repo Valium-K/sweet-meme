@@ -85,6 +85,7 @@ class UploadControllerTest {
         MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "image/jpg", "test file".getBytes());
 
         mockMvc.perform(multipart("/upload")
+
                 //.file(file)
                 .param("title", title)
                 .param("sections",sectionType)

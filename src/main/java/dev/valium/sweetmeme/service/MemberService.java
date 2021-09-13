@@ -53,7 +53,7 @@ public class MemberService implements UserDetailsService {
 
     public void login(Member member) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                new MemberUser(member),
+                new MemberUser(memberRepository.findFetchInfoById(member.getId()).orElse(member)),
                 member.getPassword(),
                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
