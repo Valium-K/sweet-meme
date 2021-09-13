@@ -8,46 +8,56 @@
 <div th:replace="fragments.html :: off-canvas(currentMenu='profile')"></div>
 <div class="container">
     <div class="row mt-4 justify-content-center">
-        <div class="col-3" id="side-bar-col" style="padding: 0px;">
+        <div class="col-3 col-md-3" id="side-bar-col" style="padding: 0px;">
             <div th:replace="fragments.html :: side-bar(currentMenu='profile')"></div>
         </div>
-        <div class="col" id="content-col" >
+        <div class="col col-md-9" id="content-col" >
             <div th:replace="fragments.html::profileInfo"></div>
             <ul th:replace="fragments.html::profileTab ('posts')"></ul>
 
-            <div class="row justify-content-center" style="background-color: black;">
-                <div class="col-md-auto" >
-                    <img th:src="@{file}" style=" width: 100%; height: auto; max-width: 200px; ">
-                </div>
-            </div>
 
             <section>
-                <article th:each="post : ${posts}">
+                <article th:each="post : ${posts}" class="mx-1">
                     <header>
-                        <div class="row justify-content-between">
-                            <div class="col-4">
-                                <span>[icon]</span> ·
-                                <span th:text="${post.belongedSectionType}"></span> ·
-                                <span th:text="${member.createdDate}"></span> · uploaded
+                        <div class="row">
+                            <div class="col-10 mt-2">
+                                <span>[icon] </span>
+                                <small th:text="${post.belongedSectionType}"></small><small> · </small>
+                                <small th:text="${member.createdDate}"></small><small> · uploaded</small>
                             </div>
-                            <div class="col-4">
+                            <div class="col-2 text-end">
                                 <a class="nav-link dropdown-toggle" href="#" id="dropdown07" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="ms-1">...</span>
+                                    [...]
                                 </a>
-
                                 <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="dropdown07">
-                                    <li><a class="dropdown-item"></a>download</li>
-                                    <li><a class="dropdown-item"></a>delete</li>
+                                    <li><a class="dropdown-item">download</a></li>
+                                    <li><a class="dropdown-item">delete</a></li>
                                 </ul>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col fw-bold fs-3" style="word-wrap: break-word;" th:text="${post.title}">
                             </div>
                         </div>
                     </header>
                     <picture>
-                        <source srcset="#" type="image/png">
-                        <img th:src="@{file}">
+                        <div class="row justify-content-center rounded" style="background-color: #11111110; margin: 3px">
+                            <div class="col-auto">
+                                <img th:src="@{${post.postImageUrl}}" style="min-width: 460px; width: 100%; height: auto; max-width: 250px; ">
+                            </div>
+                        </div>
                     </picture>
+                    <div class="row justify-content-between">
+                        <div class="col-6 mt-2">
+                            <a>비동기 upvote[<span th:text="${post.getVote().upVote}"></span>]</a>
+                            <a>비동기 downvote[<span th:text="${post.getVote().downVote}"></span>]</a>
+                        </div>
+                        <div class="col-6 mt-2 text-end">
+                            <a>[공유]</a>
+                        </div>
+                    </div>
+                    <hr/>
                 </article>
-
             </section>
 
         </div>

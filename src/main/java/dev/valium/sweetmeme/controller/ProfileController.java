@@ -1,5 +1,6 @@
 package dev.valium.sweetmeme.controller;
 
+import dev.valium.sweetmeme.config.fileConfig;
 import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.domain.Post;
 import dev.valium.sweetmeme.repository.MemberRepository;
@@ -7,6 +8,7 @@ import dev.valium.sweetmeme.repository.PostRepository;
 import dev.valium.sweetmeme.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
+import org.hibernate.annotations.Parameter;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -32,6 +34,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/user/{path}")
 public class ProfileController {
+    private final String ABSOLUTE_UPLOAD_PATH = fileConfig.ABSOLUTE_UPLOAD_PATH;
+
     private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
@@ -54,9 +58,9 @@ public class ProfileController {
         return "user/posts";
     }
 
-    @GetMapping("/file")
-    public ResponseEntity<byte[]> getImageAsByteArray(HttpServletResponse response) throws IOException {
-        InputStream imageStream = new FileInputStream("D:\\sweetmeme\\image\\ae01ab6a1e4b41e88b04e95a8ae1c9d2\\test23.jpg");
+    @GetMapping("/{file}")
+    public ResponseEntity<byte[]> getImageAsByteArray(@PathVariable String file) throws IOException {
+        InputStream imageStream = new FileInputStream(ABSOLUTE_UPLOAD_PATH + "/" + file);
         byte[] imageByteArray = IOUtils.toByteArray(imageStream);
         imageStream.close();
 

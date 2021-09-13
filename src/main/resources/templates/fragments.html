@@ -34,11 +34,13 @@
   <style id="forMobilePage">
     .container {
       max-width: 1050px;
+
       width: 80%;
     }
 
     @media (max-width: 700px) {
       .container {
+        min-width: 500px;
         width: 100%;
       }
     }
@@ -229,7 +231,7 @@
       var navbar = document.getElementById("nav-bar");
       var innerNavbar = document.getElementById("navbar");
 
-      if (window.innerWidth <= 991) {
+      if (window.innerWidth <= 770) {
         if (prevScrollpos > currentScrollPos) {
           navbar.style.top = "0px";
         } else {
@@ -352,7 +354,7 @@
 
   <script id="gridForMobile" type="application/javascript" th:inline="javascript">
     resizer = function() {
-      if(window.innerWidth <= 991) {
+      if(window.innerWidth <= 770) {
         document.getElementById('side-bar').classList.add('d-none');
 
         document.getElementById('side-bar-col').classList.remove('col-3');

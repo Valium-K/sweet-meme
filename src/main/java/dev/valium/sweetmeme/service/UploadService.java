@@ -1,5 +1,6 @@
 package dev.valium.sweetmeme.service;
 
+import dev.valium.sweetmeme.config.fileConfig;
 import dev.valium.sweetmeme.domain.*;
 import dev.valium.sweetmeme.domain.enums.SectionType;
 import dev.valium.sweetmeme.repository.MemberRepository;
@@ -8,6 +9,7 @@ import dev.valium.sweetmeme.repository.SectionRepository;
 import dev.valium.sweetmeme.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONArray;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 public class UploadService {
 
     // TODO 윈도우에서 봐도 \가 아는 /로 보인다. DB상에서만 그런걸수도 있으니 나중에 확인할 것.
-    private final String UPLOAD_PATH = "D:/sweetmeme/image/";
+    private final String ABSOLUTE_UPLOAD_PATH = fileConfig.ABSOLUTE_UPLOAD_PATH;
 
     private final MemberRepository memberRepository;
     private final SectionRepository sectionRepository;
@@ -36,14 +38,14 @@ public class UploadService {
     public void uploadPost(Member member, String title, String jsonTags, String jsonSectionType, MultipartFile file) throws Exception {
 
         // 파일생성
-        File newFile = createNewFile(UPLOAD_PATH, file);
+        File newFile = createNewFile(ABSOLUTE_UPLOAD_PATH, file);
 
         // post - sectionType 설정
         SectionType sectionType = json2SectionTypeList(jsonSectionType).get(0);
         Post post = Post.createPost(title, sectionType);
 
         // post - 파일 url 설정
-        post.setPostImageUrl(newFile.getAbsolutePath());
+        post.setPostImageUrl(newFile.getName());
 
         // post - section 설정
         Section section = sectionRepository.findBySectionType(sectionType);
@@ -64,23 +66,12 @@ public class UploadService {
 
 
 
-    /**
-     * fiel path가 UPLOAD_PATH + UUID가 되어 혼동 될 수 있음에도 file을 UUID로 지정 하지 않은 이유는
-     * path를 참조 엔티티는 post뿐이며, 한 폴더에 크고 많은 파일이 생길경우 탐색기 사용시 느려질것을 우려해서이다.
-     * @param path
-     * @param file
-     * @return
-     * @throws Exception
-     */
-    private File createNewFile(String path, MultipartFile file) throws Exception {
-        String upload_path = path + UUID.randomUUID().toString().replace("-", "");
-        String fileName = file.getOriginalFilename().replace(" ", "");
+    private File createNewFile(String path, MultipartFile file) {
 
-        if("".equals(fileName)) {
-            throw new Exception("fileName is null");
-        }
+        String newFileName = UUID.randomUUID().toString().replace("-", "");
+        String fileType = "." + FilenameUtils.getExtension(file.getOriginalFilename());
 
-        File newFile = new File(upload_path, fileName);
+        File newFile = new File(path, newFileName + fileType);
 
         if(!newFile.exists()){
             newFile.mkdirs();
