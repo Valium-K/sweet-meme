@@ -1,5 +1,6 @@
 package dev.valium.sweetmeme.controller.dto;
 
+import dev.valium.sweetmeme.config.FileConfig;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -11,7 +12,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class UploadForm {
-    public final String ACCEPTABLE_FILE_TYPES = "video/mpeg, video/mp4, image/png, image/jpeg, image/gif";
+    public final String ACCEPTABLE_FILE_TYPES = FileConfig.ACCEPTABLE_FILE_TYPES;
 
     @NotNull
     private MultipartFile file;

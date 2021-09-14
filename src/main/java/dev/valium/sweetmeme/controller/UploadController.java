@@ -35,7 +35,7 @@ public class UploadController {
     private final UploadService uploadService;
     private final UploadFormValidator uploadFormValidator;
 
-    @InitBinder("uploadFormValidator")
+    @InitBinder("uploadForm")
     public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(uploadFormValidator);
     }
@@ -60,29 +60,20 @@ public class UploadController {
     @PostMapping("/upload")
     public String upload(@CurrentMember Member member, @Valid UploadForm form, BindingResult result) throws Exception {
 
+
         if (result.hasErrors()) {
+            if(!result.getFieldErrors("file").isEmpty() ||
+                    !result.getFieldErrors("sections").isEmpty()) {
+                // 악의적 form data는 그냥 더이상의 리소스를 사용 못 하게 처내고 싶었다.
+                return "redirect:/";
+            }
+
             return "upload";
-        }
-        if(!result.getFieldErrors("file").isEmpty() ||
-                !result.getFieldErrors("sections").isEmpty()) {
-            // 악의적 form data는 그냥 더이상의 리소스를 사용 못 하게 처내고 싶었다.
-            return "redirect:/";
         }
 
         uploadService.uploadPost(member, form.getTitle(), form.getTags(), form.getSections(), form.getFile());
 
         return "redirect:/";
-    }
-
-    private boolean validateFile(MultipartFile file, String typesString) {
-        if(file == null) {
-            log.info("file in null");
-            return false;
-        }
-
-        // is file in type or not.
-        return Arrays.stream(typesString.split(", "))
-                .anyMatch(type -> type.equals(file.getContentType()));
     }
 
     @PostMapping("/upload/section-tag/verify")
@@ -93,10 +84,6 @@ public class UploadController {
             return ResponseEntity.badRequest().build();
         else
             return ResponseEntity.ok().build();
-    }
-
-    private List<SectionType> getSectionTypes(String jsonString) throws Exception {
-        return uploadService.json2SectionTypeList(jsonString);
     }
     private boolean isSectionOnType(String sectionName) {
         return Arrays.stream(SectionType.values())

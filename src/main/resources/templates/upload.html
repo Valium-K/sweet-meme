@@ -27,15 +27,18 @@
         </small>
       </div>
 
+      <div id="ACCEPTABLE_FILE_TYPES" th:text="*{ACCEPTABLE_FILE_TYPES}" hidden></div>
       <div class="mb-3 form-group" id="fileUploadForm">
         <label for="file" class="form-label" th:text="#{upload.file}">업로드 파일</label>
         <input type="file" class="form-control" name="file" id="file" th:accept="*{ACCEPTABLE_FILE_TYPES}"
-               aria-describedby="fileHelp" th:field="*{file}" oninput="fileSizeValidation()" required />
-        <small class="invalid-feedback" th:text="#{upload.file.help}">업로드 할 파일을 선택하세요.</small>
-
+               aria-describedby="fileHelp" th:field="*{file}" oninput="fileValidation()" required />
+        <small class="invalid-feedback" th:text="#{upload.file.help}">업로드 할 파일을 선택하세요.(.mp4, .jpg, .gif, .webp 형식만 업로드 가능합니다.)</small>
         <div id="thumbnail" class="md-4" style="display: none; background-color: #CCCCCC; height: 300px">
           [ 추가된 업로드 이미지 썸네일 ]
         </div>
+        <small id="fileHelp" class="form-text text-muted" th:text="#{upload.file.info}">
+          10mb 이하의 .mp4, .jpg, .gif, .webp 형식만 선택가능합니다.
+        </small>
       </div>
 
       <div id="tagWhitelist" th:text="${tagWhitelist}" hidden></div>
@@ -120,7 +123,7 @@
   tagifyForSection.on("add", onAdd);
 
   // file size validation - 10mb
-  function fileSizeValidation() {
+  function fileValidation() {
     var maxSize = 10 * 1024 * 1024;
     fileSize = document.getElementById('file').files[0].size;
 

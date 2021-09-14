@@ -81,4 +81,8 @@ public class Post extends BaseEntityTime {
                 .belongedSectionType(belongedSectionType)
                 .build();
     }
+
+    public String getContentType() {
+        return this.postImageUrl.split("\\.")[1];
+    }
 }

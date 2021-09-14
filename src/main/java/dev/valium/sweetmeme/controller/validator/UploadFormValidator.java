@@ -37,7 +37,6 @@ public class UploadFormValidator implements Validator {
                     new Object[]{}, "섹션이 null 입니다.");
         }
 
-
         String firstSectionName = getSectionTypes(form.getSections()).get(0).name();
 
         if(!isSectionOnType(firstSectionName)) {
@@ -58,6 +57,8 @@ public class UploadFormValidator implements Validator {
             log.info("file in null");
             return false;
         }
+        System.out.println("===============");
+        Arrays.stream(typesString.replace(" ", "").split(",")).forEach(System.out::println);
 
         // is file in type or not.
         return Arrays.stream(typesString.replace(" ", "").split(","))

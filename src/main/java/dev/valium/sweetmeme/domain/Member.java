@@ -72,8 +72,8 @@ public class Member extends BaseEntityTime {
 
     public int getSpendDate() {
         return Period.between(
-                LocalDateTime.now().toLocalDate(),
-                this.getCreatedDate().toLocalDate()
+                this.getCreatedDate().toLocalDate(),
+                LocalDateTime.now().toLocalDate()
         ).getDays();
     }
 }

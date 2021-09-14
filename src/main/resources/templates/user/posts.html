@@ -3,6 +3,7 @@
 <head th:replace="fragments.html :: head"></head>
 <body class="bg-light">
 <script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
+
 <div id="contentPadding" style="height: 70px"></div>
 <div th:replace="fragments.html :: nav-bar"></div>
 <div th:replace="fragments.html :: off-canvas(currentMenu='profile')"></div>
@@ -30,7 +31,7 @@
                                     [...]
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="dropdown07">
-                                    <li><a class="dropdown-item">download</a></li>
+                                    <li><a class="dropdown-item" th:href="@{'download/'+${post.postImageUrl}}">download</a></li>
                                     <li><a class="dropdown-item">delete</a></li>
                                 </ul>
                             </div>
@@ -43,7 +44,9 @@
                     <picture>
                         <div class="row justify-content-center rounded" style="background-color: #11111110; margin: 3px">
                             <div class="col-auto">
-                                <img th:src="@{${post.postImageUrl}}" style="min-width: 460px; width: 100%; height: auto; max-width: 250px; ">
+                                <video preload="metadata" th:if="${post.getContentType()} == 'mp4'" th:src="@{${post.postImageUrl}}"
+                                       style="min-width: 460px; width: 100%; height: auto; max-width: 250px;" onclick="toggleMute(this)"></video>
+                                <img th:if="${post.getContentType()} != 'mp4'"th:src="@{${post.postImageUrl}}" style="min-width: 460px; width: 100%; height: auto; max-width: 250px; ">
                             </div>
                         </div>
                     </picture>
@@ -62,7 +65,43 @@
 
         </div>
     </div>
+    <script id="videoAutoPlay">
+        var videos = document.getElementsByTagName("video");
 
+        function checkScroll() {
+            var fraction = 0.70; // Play when 80% of the player is visible.
+
+            for(var i = 0; i < videos.length; i++) {
+                var video = videos[i];
+
+                var x = video.offsetLeft, y = video.offsetTop, w = video.offsetWidth, h = video.offsetHeight, r = x + w, //right
+                    b = y + h, //bottom
+                    visibleX, visibleY, visible;
+
+                visibleX = Math.max(0, Math.min(w, window.pageXOffset + window.innerWidth - x, r - window.pageXOffset));
+                visibleY = Math.max(0, Math.min(h, window.pageYOffset + window.innerHeight - y, b - window.pageYOffset));
+
+                visible = visibleX * visibleY / (w * h);
+
+                if (visible > fraction) {
+                    video.play();
+                }
+                else { video.pause();}
+            }
+        }
+
+        var toggleMute = function (e) {
+            if(e.getAttribute('muted') == null) {
+                e.setAttribute('muted', '');
+            }
+            else {
+                e.removeAttribute('muted');
+            }
+
+        }
+        window.addEventListener('scroll', checkScroll, false);
+        window.addEventListener('resize', checkScroll, false);
+    </script>
 
 </div>
 </body>
