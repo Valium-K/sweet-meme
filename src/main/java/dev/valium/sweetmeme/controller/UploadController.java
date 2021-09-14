@@ -58,16 +58,19 @@ public class UploadController {
 
 
     @PostMapping("/upload")
-    public String upload(@CurrentMember Member member, @Valid UploadForm form, BindingResult result) throws Exception {
+    public String upload(Model model, @CurrentMember Member member, @Valid UploadForm form, BindingResult result) throws Exception {
 
 
         if (result.hasErrors()) {
-            if(!result.getFieldErrors("file").isEmpty() ||
-                    !result.getFieldErrors("sections").isEmpty()) {
-                // 악의적 form data는 그냥 더이상의 리소스를 사용 못 하게 처내고 싶었다.
-                return "redirect:/";
-            }
+//            if(!result.getFieldErrors("file").isEmpty() ||
+//                    !result.getFieldErrors("sections").isEmpty()) {
+//                log.info("악의적 form data");
+//                // 악의적 form data는 그냥 더이상의 리소스를 사용 못 하게 처내고 싶었다.
+//                return "error/404";
+//            }
 
+
+            model.addAttribute(member);
             return "upload";
         }
 

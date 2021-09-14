@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments.html :: head"></head>
+<head th:replace="fragments.html :: head">
+  <style>
+    small {
+      display: block;
+    }
+  </style>
+</head>
 <body class="bg-light">
 <div th:replace="fragments.html :: nav-bar"></div>
 <div class="container">
@@ -25,6 +31,10 @@
         <small id="titleHelp" class="form-text text-muted" th:text="#{upload.title.help}">
           5 ~ 50자 이내로 입력하세요.
         </small>
+        <small class="invalid-feedback" th:text="#{upload.title.blank}">타이틀을 입력하세요.</small>
+        <small class="form-text text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+          너무 짧거나 길다
+        </small>
       </div>
 
       <div id="ACCEPTABLE_FILE_TYPES" th:text="*{ACCEPTABLE_FILE_TYPES}" hidden></div>
@@ -32,13 +42,19 @@
         <label for="file" class="form-label" th:text="#{upload.file}">업로드 파일</label>
         <input type="file" class="form-control" name="file" id="file" th:accept="*{ACCEPTABLE_FILE_TYPES}"
                aria-describedby="fileHelp" th:field="*{file}" oninput="fileValidation()" required />
-        <small class="invalid-feedback" th:text="#{upload.file.help}">업로드 할 파일을 선택하세요.(.mp4, .jpg, .gif, .webp 형식만 업로드 가능합니다.)</small>
         <div id="thumbnail" class="md-4" style="display: none; background-color: #CCCCCC; height: 300px">
           [ 추가된 업로드 이미지 썸네일 ]
         </div>
         <small id="fileHelp" class="form-text text-muted" th:text="#{upload.file.info}">
           10mb 이하의 .mp4, .jpg, .gif, .webp 형식만 선택가능합니다.
         </small>
+        <small class="invalid-feedback" th:text="#{upload.file.help}">업로드 할 파일을 선택하세요.</small>
+        <small class="form-text text-danger" th:if="${#fields.hasErrors('file')}" th:errors="*{file}">
+          빈파일 | 정의되지 않은 확장자
+        </small>
+
+
+
       </div>
 
       <div id="tagWhitelist" th:text="${tagWhitelist}" hidden></div>
@@ -54,10 +70,13 @@
       <div class="mb-3 form-group">
         <label for="sections" class="form-label" th:text="#{upload.sections}">섹션</label>
         <input type="text" id="sections" class="form-control" name="sections"
-               placeholder="현재 하나의 섹션만 선택 가능합니다." aria-describedby="sectionsHelp" th:field="*{sections}" required/>
-        <small class="invalid-feedback" th:text="#{upload.sections.help}"></small>
-      </div>
+               th:placeholder="#{upload.sections.placeholder}" aria-describedby="sectionsHelp" th:field="*{sections}" required/>
 
+      </div>
+      <small class="invalid-feedback" th:text="#{upload.sections.help}"></small>
+      <small class="form-text text-danger" th:if="${#fields.hasErrors('sections')}" th:errors="*{sections}">
+        빈 섹션 | 정의되지 않은 섹션
+      </small>
       <div class="mt-5 form-group"></div>
       <div class="form-group mb-3 d-grid gap-2">
         <button class="btn btn-primary" type="submit" th:text="#{upload}">업로드</button>
@@ -124,6 +143,24 @@
 
   // file size validation - 10mb
   function fileValidation() {
+    let innerText = document.getElementById('ACCEPTABLE_FILE_TYPES').innerText;
+    let receivedType = document.getElementById('file').files[0].type;
+    let acceptableTypes = innerText.split(', ');
+
+    var isAcceptableType = false;
+
+    acceptableTypes.forEach(type => {
+      if(type === receivedType) {
+        isAcceptableType = true;
+      }
+    })
+
+    if (!isAcceptableType) {
+      alert('업로드 할 수 없는 형식의 확장자입니다.');
+      $('#file').val('');
+      return;
+    }
+
     var maxSize = 10 * 1024 * 1024;
     fileSize = document.getElementById('file').files[0].size;
 

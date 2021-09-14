@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments.html :: head"></head>
+<head th:replace="fragments.html :: head">
+    <style>
+        small {
+            display: block;
+        }
+    </style>
+</head>
 <body class="bg-light">
 <div th:replace="fragments.html :: nav-bar"></div>
 <div class="container">
@@ -22,8 +28,8 @@
                     문자와 숫자로만 3자 이상 20자 이내로 입력하세요.
                 </small>
                 <small class="invalid-feedback" th:text="#{signup.nickname.error.blank}">닉네임을 입력하세요.</small>
-                <small class="form-text text-danger" th:text="#{signup.nickname.error}" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">
-                    Nickname Error
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">
+                    중복 닉네임 혹은 짧은 닉네임 혹은 특수문자 닉네임
                 </small>
             </div>
 
@@ -36,8 +42,10 @@
                     스터디올래는 사용자의 이메일을 공개하지 않습니다.
                 </small>
                 <small class="invalid-feedback" th:text="#{signup.email.error.blank}">이메일을 입력하세요.</small>
-                <small class="form-text text-danger" th:text="#{signup.email.error}"
-                       th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
+                    중복 이메일 혹은 유효하지 않은 이메일형식
+                </small>
+
             </div>
 
             <div class="form-group mb-3">
@@ -48,7 +56,9 @@
                     8자 이상 50자 이내의 영문자, 숫자, 특수기호('-' '_')만 사용가능합니다.
                 </small>
                 <small class="invalid-feedback" th:text="#{signup.password.blank}">패스워드를 입력하세요.</small>
-                <small class="form-text text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                    Password Error
+                </small>
             </div>
 
             <div class="form-group mb-3 d-grid gap-2">

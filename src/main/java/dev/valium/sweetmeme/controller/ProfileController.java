@@ -42,7 +42,12 @@ public class ProfileController {
     public String home(@PathVariable String path, Model model) {
         Member member = setBaseProfile(path, model);
 
-        return "user/home";
+        List<Post> posts = postRepository.findAllByOriginalPoster(member);
+        model.addAttribute("posts", posts);
+
+        model.addAttribute("profileMenu", "home");
+
+        return "user/profile";
     }
 
     @GetMapping(value = "/posts", produces = MediaType.ALL_VALUE)
@@ -52,9 +57,36 @@ public class ProfileController {
         List<Post> posts = postRepository.findAllByOriginalPoster(member);
         model.addAttribute("posts", posts);
 
+        model.addAttribute("profileMenu", "posts");
 
-        return "user/posts";
+        return "user/profile";
     }
+
+
+    @GetMapping("/comments")
+    public String comments(@PathVariable String path, Model model) {
+        Member member = setBaseProfile(path, model);
+
+        List<Post> posts = postRepository.findAllByOriginalPoster(member);
+        model.addAttribute("posts", posts);
+
+        model.addAttribute("profileMenu", "comments");
+
+        return "user/profile";
+    }
+
+    @GetMapping("/upvotes")
+    public String upvotes(@PathVariable String path, Model model) {
+        Member member = setBaseProfile(path, model);
+
+        List<Post> posts = postRepository.findAllByOriginalPoster(member);
+        model.addAttribute("posts", posts);
+
+        model.addAttribute("profileMenu", "upvotes");
+
+        return "user/profile";
+    }
+
 
     @GetMapping("/{file}")
     public ResponseEntity<byte[]> getFile(@PathVariable String file) throws IOException {
@@ -82,26 +114,6 @@ public class ProfileController {
         } catch(Exception e) {
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);
         }
-    }
-    @GetMapping("/comments")
-    public String comments(@PathVariable String path, Model model) {
-        setBaseProfile(path, model);
-        Member foundMember = memberService.findMemberAndInfo(path);
-        model.addAttribute("spendDate", foundMember.getSpendDate());
-        model.addAttribute("member", foundMember);
-
-        return "user/comments";
-    }
-
-    @GetMapping("/upvotes")
-    public String upvotes(@PathVariable String path, Model model) {
-        setBaseProfile(path, model);
-
-        Member foundMember = memberService.findMemberAndInfo(path);
-        model.addAttribute("spendDate", foundMember.getSpendDate());
-        model.addAttribute("member", foundMember);
-
-        return "user/upvotes";
     }
 
     private Member setBaseProfile(String path, Model model) {

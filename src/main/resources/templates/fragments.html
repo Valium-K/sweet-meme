@@ -176,9 +176,9 @@
         <li  class="nav-item dropdown" sec:authorize="isAuthenticated()">
 
           <a class="nav-link dropdown-toggle" href="#" id="dropdown07" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <svg th:if="${member.getMemberInfo().picImage} == null" th:data-jdenticon-value="${#authentication.name}"
+            <svg th:if="${member.memberInfo.picImage} == null" th:data-jdenticon-value="${#authentication.name}"
                  width="20" height="20" class="rounded border bg-light"></svg>
-            <img th:if="${member.getMemberInfo().picImage} != null" th:src="${member.memberInfo.picImage}"
+            <img th:if="${member.memberInfo.picImage} != null" th:src="${member.memberInfo.picImage}"
                            width="20" height="20" class="rounded border"/>
             <span class="ms-1" th:text="${#authentication.name}"></span>
           </a>

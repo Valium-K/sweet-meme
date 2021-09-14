@@ -44,6 +44,13 @@ public class SignUpController {
             return "sign-up";
         }
 
+        if(memberRepository.findMemberByNickname(signUpForm.getNickname()) != null) {
+            result.rejectValue("nickname", "duplicated.nickname", new Object[]{signUpForm.getEmail()},
+                    "이미 사용중인 닉네임입니다.");
+
+            return "sign-up";
+        }
+
         Member member = signUpService.form2Member(signUpForm);
         Info info = Info.createInfo(null, member.getNickname(), member.getNickname() + " description");
 

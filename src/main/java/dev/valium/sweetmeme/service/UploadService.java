@@ -101,7 +101,7 @@ public class UploadService {
     }
     private void postTagSettingsProcess(Post post, String jsonTags) throws Exception {
         // post -> tag 태그 생성 밑 관계설정
-        if(!"".equals(jsonTags)) {
+        if(jsonTags != null && !"".equals(jsonTags)) {
             Set<Tag> tags = json2TagSet(jsonTags);
 
             tags.forEach(tag -> {
@@ -122,7 +122,7 @@ public class UploadService {
     }
 
     public Set<Tag> json2TagSet(String json) throws Exception {
-
+        System.out.println("===========" + json);
         JSONArray jsonArray = new JSONArray(json);
         Set<Tag> outputs = new HashSet<>();
 
@@ -134,7 +134,7 @@ public class UploadService {
 
         return outputs;
     }
-    public List<SectionType> json2SectionTypeList(String json) throws Exception {
+    private List<SectionType> json2SectionTypeList(String json) {
         JSONArray jsonArray = new JSONArray(json);
         List<SectionType> outputs = new ArrayList<>();
 
@@ -144,13 +144,7 @@ public class UploadService {
 
         for(int i = 0; i < jsonArray.length(); i++) {
             String value = (String) jsonArray.getJSONObject(i).get("value");
-
-            if(sectionNames.contains(value))
-                outputs.add(SectionType.valueOf(value));
-            else {
-                // TODO front hacking -> 404
-                throw new IllegalArgumentException(value + "에 해당하는 section을 찾을 수 없습니다.");
-            }
+            outputs.add(SectionType.valueOf(value));
         }
 
         return outputs;

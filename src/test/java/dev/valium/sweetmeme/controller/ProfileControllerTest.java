@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.controller;
 
 import dev.valium.sweetmeme.controller.dto.SignUpForm;
+import dev.valium.sweetmeme.domain.Info;
 import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.service.MemberService;
@@ -36,12 +37,11 @@ class ProfileControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        SignUpForm signUpForm = new SignUpForm();
-        signUpForm.setNickname(nickname);
-        signUpForm.setEmail(email);
-        signUpForm.setPassword(password);
+        Member member = Member.createMember(nickname, email, password);
+        Info info = Info.createInfo(null, "head", "description");
 
-        Member member = signUpService.form2Member(signUpForm);
+        member.setMemberInfo(info);
+
         memberService.saveMember(member);
     }
 
@@ -50,34 +50,24 @@ class ProfileControllerTest {
         memberRepository.deleteAll();
     }
 
-
     @Test
-    @DisplayName("프로필_홈_화면이_보이는지")
-    public void 프로필_홈_화면이_보이는지() throws Exception {
+    @DisplayName("프로필_화면이_보이는지")
+    public void 프로필_화면이_보이는지() throws Exception {
         mockMvc.perform(get("/user/" + nickname + "/home"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("user/home"));
-    }
+                .andExpect(view().name("user/profile"));
 
-    @Test @DisplayName("프로필_포스트_화면이_보이는지")
-    public void 프로필_포스트_화면이_보이는지() throws Exception {
         mockMvc.perform(get("/user/" + nickname + "/posts"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("user/posts"));
-    }
+                .andExpect(view().name("user/profile"));
 
-    @Test @DisplayName("프로필_코멘트_화면이_보이는지")
-    public void 프로필_코멘트_화면이_보이는지() throws Exception {
         mockMvc.perform(get("/user/" + nickname + "/comments"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("user/comments"));
-    }
+                .andExpect(view().name("user/profile"));
 
-    @Test @DisplayName("프로필_업보트_화면이_보이는지")
-    public void 프로필_업보트_화면이_보이는지() throws Exception {
         mockMvc.perform(get("/user/" + nickname + "/upvotes"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("user/upvotes"));
+                .andExpect(view().name("user/profile"));
     }
 
 

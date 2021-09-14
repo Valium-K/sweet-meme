@@ -6,11 +6,10 @@ import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.service.MemberService;
 import dev.valium.sweetmeme.service.SignUpService;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -80,38 +80,81 @@ class UploadControllerTest {
     public void 업로드처리_입력값_정상() throws Exception {
         String title = "this is test title";
         String sectionType = "[{\"value\":\"FUNNY\"}]";
-        JSONArray objects = new JSONArray(sectionType);
 
-        MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "image/jpg", "test file".getBytes());
+        InputStream imageStream = new FileInputStream("D:\\sweetmeme\\test\\images\\file.jpg");
+        byte[] bytes = IOUtils.toByteArray(imageStream);
+        imageStream.close();
+
+        MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "image/jpg", bytes);
 
         mockMvc.perform(multipart("/upload")
-
-                //.file(file)
+                .file(file)
                 .param("title", title)
                 .param("sections",sectionType)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
                 .with(csrf()))
-                .andDo(print())
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("home"))
+                .andExpect(view().name("redirect:/"))
                 .andExpect(authenticated());
     }
 
-    @Test @DisplayName("업로드처리_입력값_오류")
+    @Test @DisplayName("업로드처리_입력값_오류 - 짧은 타이틀")
     public void 업로드처리_입력값_오류() throws Exception {
+        String sectionType = "[{\"value\":\"FUNNY\"}]";
+        MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "image/jpg", "test file".getBytes());
         String wrongTitle_Short = "a";
-        String wrongSectionType = "[{'value'='NOT_FUNNY}]";
-        String wrongSection_null = "";
-        String wrongFileType = "image/icon";
 
-        String title = "this is test title";
-        String SectionType = "[{'value'='FUNNY}]";
-
-        MultipartFile multipartFile = new MockMultipartFile("testFile", new FileInputStream(new File("D:/sweetmeme/test/images/test.jpg")));
-
-
+        mockMvc.perform(multipart("/upload")
+                .file(file)
+                .param("title", wrongTitle_Short)
+                .param("sections",sectionType)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("upload"))
+                .andExpect(authenticated());
     }
 
+    @Test @DisplayName("업로드처리_입력값_오류 - 정의되지 않은 섹션")
+    public void 업로드처리_입력값_오류2() throws Exception {
+        String title = "this is test title";
+        MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "image/jpg", "test file".getBytes());
+        String wrongSectionType = "[{\"value\":\"NOT_FUNNY\"}]";
+
+        mockMvc.perform(multipart("/upload")
+                .file(file)
+                .param("title", title)
+                .param("sections",wrongSectionType)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("upload"))
+                .andExpect(authenticated());
+    }
+
+
+    @Test @DisplayName("업로드처리_입력값_오류 - 정의되지 않은 확장자")
+    public void 업로드처리_입력값_오류3() throws Exception {
+        String title = "this is test title";
+        String sectionType = "[{\"value\":\"FUNNY\"}]";
+        MockMultipartFile wrongFile = new MockMultipartFile("file", "file.jpg", "image/icon", "test test".getBytes());
+
+        mockMvc.perform(multipart("/upload")
+                .file(wrongFile)
+                .param("title", title)
+                .param("sections",sectionType)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("upload"))
+                .andExpect(authenticated());
+    }
 }
