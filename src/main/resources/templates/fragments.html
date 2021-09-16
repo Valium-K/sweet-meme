@@ -94,19 +94,44 @@
       transition: height 0.3s ease;
     }
   </style>
-  <style id="tgfy">
+  <style id="tagifyStyle">
 
+    .tagify__dropdown.extra-properties .tagify__dropdown__item > img{
+      display: inline-block;
+      vertical-align: middle;
+      height: 20px;
+      transform: scale(.75);
+      margin-right: 5px;
+      border-radius: 2px;
+      transition: .12s ease-out;
+    }
+
+    .tagify__dropdown.extra-properties .tagify__dropdown__item--active > img,
+    .tagify__dropdown.extra-properties .tagify__dropdown__item:hover > img{
+      transform: none;
+      margin-right: 12px;
+    }
+
+    .tagify.countries .tagify__input{ min-width:175px; }
+
+    .tagify.countries tag{ white-space:nowrap; }
+    .tagify.countries tag img{
+      display: inline-block;
+      height: 16px;
+      margin-right: 3px;
+      border-radius: 2px;
+    }
 
     .tags-look .tagify__dropdown__item {
-    display: inline-block;
-    border-radius: 3px;
-    padding: .3em .5em;
-    border: 1px solid #CCC;
-    background: #F3F3F3;
-    margin: .2em;
-    font-size: .85em;
-    color: black;
-    transition: 0s;
+      display: inline-block;
+      border-radius: 3px;
+      padding: .3em .5em;
+      border: 1px solid #CCC;
+      background: #F3F3F3;
+      margin: .2em;
+      font-size: .85em;
+      color: black;
+      transition: 0s;
   }
 
   .tags-look .tagify__dropdown__item--active{
@@ -177,15 +202,15 @@
 
           <a class="nav-link dropdown-toggle" href="#" id="dropdown07" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <svg th:if="${member.memberInfo.picImage} == null" th:data-jdenticon-value="${#authentication.name}"
-                 width="20" height="20" class="rounded border bg-light"></svg>
+                 width="1.2rem" height="1.2rem" class="rounded border bg-light"></svg>
             <img th:if="${member.memberInfo.picImage} != null" th:src="${member.memberInfo.picImage}"
                            width="20" height="20" class="rounded border"/>
-            <span class="ms-1" th:text="${#authentication.name}"></span>
+<!--            <span class="ms-1" th:text="${#authentication.name}"></span>-->
           </a>
 
           <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="dropdown07">
             <li><a class="dropdown-item" th:href="@{'/user/' + ${#authentication.name} + '/home'}" th:text="#{myProfile}">내 프로필</a></li>
-            <li><a class="dropdown-item" href="#" th:text="#{settings}">설정</a></li>
+            <li><a class="dropdown-item" th:href="@{'/settings/' + ${#authentication.name} + '/account'}" href="#" th:text="#{settings}">설정</a></li>
             <li>
               <form class="form-inline my-2 my-lg-0" action="#" th:action="@{/logout}" method="post">
                 <button class="dropdown-item" th:text="#{logout}" type="submit">
@@ -383,7 +408,7 @@
 
     <div class="offcanvas-header bg-dark">
       <h5 class="offcanvas-title text-light" style="height: 24px;">SweetMeme</h5>
-      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
 
     <div class="offcanvas-body bg-light text-white">
@@ -395,15 +420,18 @@
   <div class="row">
     <div class="col-2">
       <a th:href="@{/}">
-      <svg th:data-jdenticon-value="${info.head}" width="50" height="50" class="rounded border bg-light">
+      <svg th:data-jdenticon-value="${info.head}" width="4.5rem" height="4.5rem" class="rounded border bg-light">
       </svg>
-<!--      <img th:if="${member.memberInfo.picImage} != null" th:src="${member.nickname}"-->
+<!--      <img th:if="${info.head} != null" th:src="${info.picImage}"-->
 <!--           width="24" height="24" class="rounded border"/>-->
       </a>
     </div>
     <div class="col-10">
-      <div th:text="${info.head}"></div>
-      <!-- <small class="text-muted" th:text="${member.email}"></small> -->[뭘 넣을지 고민 중] · <small class="text-muted" th:text="${spendDate} + ' days'"></small>
+      <h2 th:text="${info.head}" style="display: inline" class="fw-bold "></h2>&nbsp;
+      <img th:if="${info.stateCode} != null" th:src="'https://lipis.github.io/flag-icon-css/flags/4x3/' + ${info.stateCode} + '.svg'"
+           style="width: 2.4rem; height: 1.8rem" class="rounded border">
+      <br/>
+      [뭘 넣을지 고민 중] · <small class="text-muted" th:text="${spendDate} + ' days'"></small>
     </div>
   </div>
   <p class="my-3" th:text="${info.description}"></p>
@@ -425,6 +453,19 @@
     <li class="nav-item">
       <a class="nav-link" th:classappend="${profileMenu == 'upvotes'}? active" href="#"
          th:href="@{'/user/' + ${info.head} + '/upvotes'}">Upvotes</a>
+    </li>
+  </ul>
+</div>
+<div th:fragment="settingsTab(settingsMenu)">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link"
+         th:classappend="${settingsMenu == 'account'}? active" aria-current="page" href="#"
+         th:href="@{'/settings/' + ${#authentication.name} + '/account'}">account</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" th:classappend="${settingsMenu == 'profile'}? active" aria-current="page" href="#"
+         th:href="@{'/settings/' + ${#authentication.name} + '/profile'}">profile</a>
     </li>
   </ul>
 </div>

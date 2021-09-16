@@ -47,11 +47,11 @@ public class LocalDbInit {
         private final PasswordEncoder passwordEncoder;
         private final MessageSource messageSource;
 
-        private final String NICKNAME = "test";
+        private final String NICKNAME = "testtest";
         private final String EMAIL = "test@test.test";
         private final String PASSWORD = "testtest";
         private final String PICURL = null;
-        private final String DESCRIPTION = "test description";
+        private final String DESCRIPTION = "testdescription";
 
         public void initDB() {
             memberInit();
@@ -61,6 +61,7 @@ public class LocalDbInit {
 
         private void memberInit() {
             Info info = Info.createInfo(PICURL, NICKNAME, DESCRIPTION);
+            info.setStateCode("kr");
             Member member = Member.createMember(NICKNAME, EMAIL, passwordEncoder.encode(PASSWORD));
             info.setHead(member.getNickname());
             member.setMemberInfo(info);

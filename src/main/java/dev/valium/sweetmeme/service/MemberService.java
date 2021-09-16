@@ -5,6 +5,7 @@ import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.domain.Post;
 import dev.valium.sweetmeme.domain.Tag;
 import dev.valium.sweetmeme.domain.enums.SectionType;
+import dev.valium.sweetmeme.repository.MemberFetchRepository;
 import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
+    private final MemberFetchRepository memberFetchRepository;
     private final PostRepository postRepository;
 
     @Transactional(readOnly = true)
@@ -53,7 +55,7 @@ public class MemberService implements UserDetailsService {
 
     public void login(Member member) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                new MemberUser(memberRepository.findFetchInfoById(member.getId()).orElse(member)),
+                new MemberUser(memberFetchRepository.findFetchInfoById(member.getId()).orElse(member)),
                 member.getPassword(),
                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
@@ -65,7 +67,7 @@ public class MemberService implements UserDetailsService {
     public Member saveMember(Member member) {
         Member savedMember = memberRepository.save(member);
 
-        return memberRepository.findFetchInfoById(savedMember.getId()).orElse(savedMember);
+        return memberFetchRepository.findFetchInfoById(savedMember.getId()).orElse(savedMember);
     }
 
 

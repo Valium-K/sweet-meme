@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.domain;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,6 +27,8 @@ public class Info {
     private String picImage;
 
     private String description;
+
+    private String stateCode;
 
     public static Info createInfo(String picImage, String head, String description) {
         return Info.builder()

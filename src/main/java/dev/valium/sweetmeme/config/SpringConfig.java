@@ -1,18 +1,14 @@
 package dev.valium.sweetmeme.config;
 
+import dev.valium.sweetmeme.converter.Code2State;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-
-import java.util.Locale;
-import java.util.Optional;
-import java.util.UUID;
 
 @Configuration
 @EnableJpaAuditing
@@ -48,5 +44,10 @@ public class SpringConfig {
         SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
         // sessionLocaleResolver.setDefaultLocale(Locale.US);
         return sessionLocaleResolver;
+    }
+
+    @Bean
+    public Code2State state2Code() {
+        return new Code2State();
     }
 }

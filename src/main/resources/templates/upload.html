@@ -48,7 +48,7 @@
         <small id="fileHelp" class="form-text text-muted" th:text="#{upload.file.info}">
           10mb 이하의 .mp4, .jpg, .gif, .webp 형식만 선택가능합니다.
         </small>
-        <small class="invalid-feedback" th:text="#{upload.file.help}">업로드 할 파일을 선택하세요.</small>
+        <small class="invalid-feedback" th:text="#{common.file.help}">업로드 할 파일을 선택하세요.</small>
         <small class="form-text text-danger" th:if="${#fields.hasErrors('file')}" th:errors="*{file}">
           빈파일 | 정의되지 않은 확장자
         </small>
