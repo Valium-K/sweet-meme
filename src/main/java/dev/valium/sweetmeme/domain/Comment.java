@@ -1,5 +1,6 @@
 package dev.valium.sweetmeme.domain;
 
+import dev.valium.sweetmeme.domain.embeddable.Vote;
 import lombok.*;
 
 import javax.persistence.*;

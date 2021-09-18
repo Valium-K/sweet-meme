@@ -25,7 +25,7 @@ public class Post extends BaseEntityTime {
     private String postImageUrl;
 
     @Embedded
-    private Vote vote;
+    private dev.valium.sweetmeme.domain.embeddable.Vote vote;
 
     // post <- post_tag -> tag
     @OneToMany(mappedBy = "post")
@@ -55,9 +55,14 @@ public class Post extends BaseEntityTime {
     // 1:N 단방향 매핑을 N:1 양방향 매핑으로 해석
     ////////////////////////////////////////////////////
     // member -> post
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "up_voted_member_id")
-    private Member upVotedMember;
+    @OneToMany(mappedBy = "upVotedPost")
+    private List<Vote> upVotedMember;
+
+//    // member -> post
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "down_voted_member_id")
+//    private Member downVotedMember;
+
 
     // member -> post
     // 멤버A 입장에서 봤을 때 이 포스트를 업로드한 사람
@@ -75,7 +80,7 @@ public class Post extends BaseEntityTime {
     public static Post createPost(String title, SectionType belongedSectionType) {
         return Post.builder()
                 .title(title)
-                .vote(new Vote())
+                .vote(new dev.valium.sweetmeme.domain.embeddable.Vote())
                 .postTags(new HashSet<>())
                 .comments(new ArrayList<>())
                 .belongedSectionType(belongedSectionType)

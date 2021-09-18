@@ -1,15 +1,19 @@
 package dev.valium.sweetmeme.service;
 
+import com.zakgof.webp4j.Webp4j;
+import dev.valium.sweetmeme.config.FileConfig;
 import dev.valium.sweetmeme.controller.dto.MemberUser;
+import dev.valium.sweetmeme.controller.dto.SettingsAccountForm;
+import dev.valium.sweetmeme.controller.dto.SettingsProfileForm;
+import dev.valium.sweetmeme.processor.Code2State;
 import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.domain.Post;
-import dev.valium.sweetmeme.domain.Tag;
-import dev.valium.sweetmeme.domain.enums.SectionType;
+import dev.valium.sweetmeme.processor.FileProcessor;
 import dev.valium.sweetmeme.repository.MemberFetchRepository;
 import dev.valium.sweetmeme.repository.MemberRepository;
-import dev.valium.sweetmeme.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -17,14 +21,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -34,12 +41,8 @@ public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final MemberFetchRepository memberFetchRepository;
-    private final PostRepository postRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Transactional(readOnly = true)
-    public Member findReadOnlyMember(String nickname) {
-        return findMember(nickname);
-    }
     public Member findMember(String nickname) {
         return memberRepository.findByNickname(nickname).orElseThrow(
                 () -> new IllegalArgumentException(nickname + "에 해당하는 멤버를 찾을 수 없습니다.")
@@ -61,6 +64,18 @@ public class MemberService implements UserDetailsService {
         );
 
         SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(token);
+    }
+
+    public void updatePrincipal(Member member) {
+        SecurityContext context = SecurityContextHolder.getContext();
+
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                new MemberUser(memberFetchRepository.findFetchInfoById(member.getId()).orElse(member)),
+                member.getPassword(),
+                context.getAuthentication().getAuthorities()
+        );
+
         context.setAuthentication(token);
     }
 
@@ -88,5 +103,49 @@ public class MemberService implements UserDetailsService {
         return new MemberUser(member);
     }
 
+    public Member updatePassword(Member member, String pw) {
+        Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
+                () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
+        );
+
+        foundMember.setPassword(passwordEncoder.encode(pw));
+
+        return foundMember;
+    }
+
+    public Member updateMemberAccount(Member member, SettingsAccountForm form) {
+        Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
+                () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
+        );
+
+        foundMember.setNickname(form.getNickname());
+        foundMember.setReplyAlert(form.isReplyAlert());
+        foundMember.setUpvoteAlert(form.isUpvoteAlert());
+        foundMember.getMemberInfo().setHead(form.getNickname());
+
+        return foundMember;
+    }
+
+    public Member updateProfile(Member member, SettingsProfileForm form) throws IOException {
+        Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
+                () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
+        );
+
+        if(form.getFile().isEmpty()) foundMember.getMemberInfo().setPicImage(null);
+        else {
+
+
+            File newFile = FileProcessor.createNewFile(FileConfig.ABSOLUTE_AVATAR_PATH, form.getFile(), true);
+            foundMember.getMemberInfo().setPicImage(newFile.getName());
+            form.getFile().transferTo(newFile);
+        }
+
+        if("".equals(form.getDescription())) foundMember.getMemberInfo().setDescription(member.getNickname() + "'s description.");
+        else foundMember.getMemberInfo().setDescription(form.getDescription());
+
+        foundMember.getMemberInfo().setStateCode(Code2State.json2Code(form.getState()));
+
+        return foundMember;
+    }
 }
 

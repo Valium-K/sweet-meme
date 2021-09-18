@@ -4,6 +4,7 @@ import com.zakgof.webp4j.Webp4j;
 import dev.valium.sweetmeme.config.FileConfig;
 import dev.valium.sweetmeme.domain.*;
 import dev.valium.sweetmeme.domain.enums.SectionType;
+import dev.valium.sweetmeme.processor.FileProcessor;
 import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.repository.PostTagRepository;
 import dev.valium.sweetmeme.repository.SectionRepository;
@@ -42,7 +43,7 @@ public class UploadService {
     public void uploadPost(Member member, String title, String jsonTags, String jsonSectionType, MultipartFile file) throws Exception {
 
         // 파일생성
-        File newFile = createNewFile(ABSOLUTE_UPLOAD_PATH, file, true);
+        File newFile = FileProcessor.createNewFile(ABSOLUTE_UPLOAD_PATH, file, true);
 
         // post - sectionType 설정
         SectionType sectionType = json2SectionTypeList(jsonSectionType).get(0);
@@ -68,37 +69,6 @@ public class UploadService {
         file.transferTo(newFile);
     }
 
-
-    private File createNewFile(String path, MultipartFile file, boolean encode) throws IOException {
-
-        String newFileName = UUID.randomUUID().toString().replace("-", "");
-        String fileType = FilenameUtils.getExtension(file.getOriginalFilename());
-        File newFile;
-
-        if(encode && !"mp4".equals(fileType)) {
-            newFile = image2webp(file, 80f, path, newFileName);
-        } else {
-            newFile = new File(path, newFileName + "." + fileType);
-        }
-
-        if(!newFile.exists()){
-            newFile.mkdirs();
-        }
-
-        return newFile;
-    }
-    private File image2webp(MultipartFile file, float quality, String path, String fileName) throws IOException {
-        BufferedImage read = ImageIO.read(file.getInputStream());
-
-        byte[] bytes = Webp4j.encode(read, quality);
-
-        File newFile = new File(path, fileName + ".webp");
-        FileOutputStream lFileOutputStream = new FileOutputStream(newFile);
-        lFileOutputStream.write(bytes);
-        lFileOutputStream.close();
-
-        return newFile;
-    }
     private void postTagSettingsProcess(Post post, String jsonTags) throws Exception {
         // post -> tag 태그 생성 밑 관계설정
         if(jsonTags != null && !"".equals(jsonTags)) {
@@ -120,8 +90,7 @@ public class UploadService {
         }
 
     }
-
-    public Set<Tag> json2TagSet(String json) throws Exception {
+    public Set<Tag> json2TagSet(String json) {
         System.out.println("===========" + json);
         JSONArray jsonArray = new JSONArray(json);
         Set<Tag> outputs = new HashSet<>();

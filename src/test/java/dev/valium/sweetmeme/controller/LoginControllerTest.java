@@ -1,12 +1,10 @@
 package dev.valium.sweetmeme.controller;
 
 import dev.valium.sweetmeme.controller.dto.SignUpForm;
-import dev.valium.sweetmeme.domain.CurrentMember;
 import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.service.MemberService;
 import dev.valium.sweetmeme.service.SignUpService;
-import org.checkerframework.checker.units.qual.Current;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

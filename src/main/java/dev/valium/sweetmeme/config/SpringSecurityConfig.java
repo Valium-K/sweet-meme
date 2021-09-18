@@ -35,7 +35,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MemberService memberService;
     private final DataSource dataSource;
-    private final MemberRepository memberRepository;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

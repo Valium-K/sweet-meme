@@ -22,8 +22,6 @@ public class Info {
     // post에서 info만 단독으로 쓰는 경우가 많아 추가.
     private String head;
 
-    @Lob
-    @Basic(fetch = FetchType.EAGER)
     private String picImage;
 
     private String description;

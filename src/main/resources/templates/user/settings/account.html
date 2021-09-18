@@ -16,24 +16,25 @@
       <div th:replace="fragments.html::profileInfo"></div>
       <ul th:replace="fragments.html::settingsTab (${settingsMenu})"></ul>
 
-      <!-- pw 변경, 회원 탈퇴, 맴버십 변경-->
-
-
       <div class="row mt-4 justify-content-center">
         <div class="col-12">
 
           <h3 class="mb-3" th:text="#{settings.account}">계정</h3>
-          <form class="needs-validation" action="#" th:object="${settingsAccountForm}" method="post" novalidate>
+          <form class="needs-validation" th:action="@{/settings/account}" th:object="${settingsAccountForm}" method="post" novalidate>
+
+            <div th:if="${accountChanged}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+              <span th:text="#{settings.account.changed}" style="text-align: center">계정 정보를 수정하였습니다.</span>
+            </div>
 
             <div class="form-group mb-3">
               <label for="nickname" th:text="#{nickname}">닉네임</label>
               <input id="nickname" type="text" th:field="*{nickname}" class="form-control"
-                     th:placeholder="#{signup.nickname.placeholder}" aria-describedby="nicknameHelp" required minlength="3" maxlength="20" />
-              <small id="nicknameHelp" class="form-text text-muted" th:text="#{signup.nickname.help}">
+                     th:placeholder="#{signup.nickname.placeholder}" aria-describedby="nicknameHelp" required min="3" max="20" />
+              <small id="nicknameHelp" class="form-text text-muted" th:text="#{signup.nickname.help}" style="display: block">
                 3자 이상 20자 이내의 영문자, 한글, 숫자, 특수기호('-' '_')만 사용가능합니다.
               </small>
-              <small class="invalid-feedback" th:text="#{signup.nickname.error.blank}">닉네임을 입력하세요.</small>
-              <small class="form-text text-danger" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">
+<!--              <small class="invalid-feedback" th:text="#{signup.nickname.error.blank}" style="display: block">닉네임을 입력하세요.</small>-->
+              <small class="form-text text-danger" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" style="display: block">
                 중복 닉네임 혹은 짧은 닉네임 혹은 특수문자 닉네임
               </small>
             </div>
@@ -53,7 +54,7 @@
                 <input type="checkbox" th:field="*{replyAlert}" class="form-check-input" id="replyAlert">
                 <label class="form-check-label" for="replyAlert" th:text="#{settings.replyAlert}">댓글 알림</label>
               </div>
-              <small class="form-text text-muted" th:text="#{settings.replyAlert.help}">
+              <small class="form-text text-muted" th:text="#{settings.replyAlert.help}" style="display: block">
                 댓글 알림 수신 여부를 변경합니다.
               </small>
             </div>

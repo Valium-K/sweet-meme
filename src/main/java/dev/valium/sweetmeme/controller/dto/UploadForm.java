@@ -18,7 +18,7 @@ public class UploadForm {
     private MultipartFile file;
 
     @NotBlank
-    @Length(min = 5, max = 50)
+    @Length(min = 5, max = 50, message = "{upload.title.help}")
     private String title;
     private String tags;
 

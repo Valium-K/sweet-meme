@@ -17,17 +17,17 @@ import javax.servlet.ServletException;
 @Configuration
 public class OSIVConfig {
 
-//    @Bean
-//    public FilterRegistrationBean registerOpenEntityManagerInViewFilterBean() {
-//        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-//        OpenEntityManagerInViewFilter filter = new OpenEntityManagerInViewFilter();
-//
-//        registrationBean.setFilter(filter);
-//
-//        // TODO url pattern 정의 필요
-//        registrationBean.addUrlPatterns("/*");
-//        //registrationBean.setOrder(5);
-//
-//        return registrationBean;
-//    }
+    @Bean
+    public FilterRegistrationBean registerOpenEntityManagerInViewFilterBean() {
+        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
+        OpenEntityManagerInViewFilter filter = new OpenEntityManagerInViewFilter();
+
+        registrationBean.setFilter(filter);
+
+        // TODO url pattern 정의 필요
+        registrationBean.addUrlPatterns("/**");
+        //registrationBean.setOrder(5);
+
+        return registrationBean;
+    }
 }

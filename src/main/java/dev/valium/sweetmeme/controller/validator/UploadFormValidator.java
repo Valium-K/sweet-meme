@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UploadFormValidator implements Validator {
 
-    private final UploadService uploadService;
-
     @Override
     public boolean supports(Class<?> clazz) {
         return clazz.isAssignableFrom(UploadForm.class);

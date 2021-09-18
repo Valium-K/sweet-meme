@@ -1,4 +1,4 @@
-package dev.valium.sweetmeme.converter;
+package dev.valium.sweetmeme.processor;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -264,7 +264,7 @@ public class Code2State {
         return codeMap;
     }
     public String findStateByCode(String code) throws Exception {
-        if(code == null) throw new Exception("code가 null입니다.");
+        if(code == null) return null;
         if(!isInited) initCodeMap();
 
         String state = codeMap.get(code.toUpperCase());
@@ -282,6 +282,20 @@ public class Code2State {
         }
         catch (Exception e) {
             return false;
+        }
+    }
+    public static String json2Code(String json) {
+        try {
+            return json.split("\"")[7].toLowerCase();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+    public static String json2State(String json) {
+        try {
+            return json.split("\"")[3].toLowerCase();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return null;
         }
     }
 }

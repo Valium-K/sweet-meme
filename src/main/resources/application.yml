@@ -11,7 +11,7 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-    open-in-view: true
+    open-in-view: false
   profiles:
     active: local
   servlet:
@@ -20,6 +20,7 @@ spring:
       max-request-size: 104857600
       file-size-threshold: 0
       location: /data/upload_temp
+
 
 logging:
   level:

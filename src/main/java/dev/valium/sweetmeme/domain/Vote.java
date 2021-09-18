@@ -1,40 +1,35 @@
 package dev.valium.sweetmeme.domain;
 
-import javax.persistence.Embeddable;
-import java.util.Objects;
+import lombok.*;
 
-@Embeddable
+import javax.persistence.*;
+
+@Entity
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Vote {
 
-    private int upVote;
-    private int downVote;
+    @Id
+    @GeneratedValue
+    private Long id;
 
-    public int getUpVote() {
-        return upVote;
-    }
-    public void setUpVote(int upVote) {
-        this.upVote = upVote;
-    }
-    public int getDownVote() {
-        return downVote;
-    }
-    public void setDownVote(int downVote) {
-        this.downVote = downVote;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "upvoted_member_id")
+    private Member upVotedMember;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "upvoted_post_id")
+    private Post upVotedPost;
 
-        Vote vote = (Vote) obj;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "downvoted_member_id")
+    private Member downVotedMember;
 
-        return Objects.equals(getUpVote(), vote.getUpVote()) &&
-                Objects.equals(getDownVote(), vote.getDownVote());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getUpVote(), getDownVote());
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "downvoted_post_id")
+    private Post downVotedPost;
 }

@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.controller;
 
 import dev.valium.sweetmeme.controller.dto.SignUpForm;
+import dev.valium.sweetmeme.controller.validator.SignUpFormValidator;
 import dev.valium.sweetmeme.domain.Info;
 import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.repository.MemberRepository;
@@ -10,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
@@ -20,34 +23,25 @@ import javax.validation.Valid;
 public class SignUpController {
 
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
     private final SignUpService signUpService;
+    private final SignUpFormValidator signUpFormValidator;
+
+    @InitBinder("signUpForm")
+    public void initBinder(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(signUpFormValidator);
+    }
+
 
     @GetMapping("/sign-up")
     public String signUpForm(Model model) {
         model.addAttribute(new SignUpForm());
-
         return "sign-up";
     }
 
     @PostMapping("/sign-up")
-    public String signUpFormCreate(@Valid SignUpForm signUpForm, BindingResult result) {
+    public String signUpFormCreate(@Valid SignUpForm signUpForm, BindingResult result, Model model) {
 
         if(result.hasErrors()) {
-            return "sign-up";
-        }
-
-        if(memberRepository.findMemberByEmail(signUpForm.getEmail()) != null) {
-            result.rejectValue("email", "duplicated.email", new Object[]{signUpForm.getEmail()},
-                    "이미 사용중인 이메일입니다.");
-
-            return "sign-up";
-        }
-
-        if(memberRepository.findMemberByNickname(signUpForm.getNickname()) != null) {
-            result.rejectValue("nickname", "duplicated.nickname", new Object[]{signUpForm.getEmail()},
-                    "이미 사용중인 닉네임입니다.");
-
             return "sign-up";
         }
 

@@ -20,6 +20,13 @@
         <form class="needs-validation col-sm-6" action="#"
               th:action="@{/sign-up}" th:object="${signUpForm}" method="post" novalidate>
 
+            <div th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}" class="alert alert-danger fade show mt-3" role="alert">
+                <span th:text="#{common.passwordConfirm.error}">패드워드와 패스워드 확인이 일치하지 않습니다.</span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
             <div class="form-group mb-3">
                 <label for="nickname" th:text="#{nickname}">닉네임</label>
                 <input id="nickname" type="text" th:field="*{nickname}" class="form-control"
@@ -28,7 +35,7 @@
                     3자 이상 20자 이내의 영문자, 한글, 숫자, 특수기호('-' '_')만 사용가능합니다.
                 </small>
                 <small class="invalid-feedback" th:text="#{signup.nickname.error.blank}">닉네임을 입력하세요.</small>
-                <small class="form-text text-danger" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" style="display: block">
                     중복 닉네임 혹은 짧은 닉네임 혹은 특수문자 닉네임
                 </small>
             </div>
@@ -42,10 +49,9 @@
                     스터디올래는 사용자의 이메일을 공개하지 않습니다.
                 </small>
                 <small class="invalid-feedback" th:text="#{signup.email.error.blank}">이메일을 입력하세요.</small>
-                <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="display: block">
                     중복 이메일 혹은 유효하지 않은 이메일형식
                 </small>
-
             </div>
 
             <div class="form-group mb-3">
@@ -56,9 +62,20 @@
                     8자 이상 50자 이내로 입력하세요.
                 </small>
                 <small class="invalid-feedback" th:text="#{common.password.blank}">패스워드를 입력하세요.</small>
-                <small class="form-text text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="display: block">
                     Password Error
                 </small>
+            </div>
+
+
+            <div class="form-group mb-3">
+                <label for="passwordConfirm" th:text="#{common.passwordConfirm}">패스워드 확인</label>
+                <input id="passwordConfirm" type="password" th:field="*{passwordConfirm}" class="form-control"
+                       aria-describedby="passwordConfirmHelp" required minlength="8" maxlength="50">
+                <small id="passwordConfirmHelp" class="form-text text-muted" th:text="#{common.passwordConfirm.help}">
+                    비밀번호 다시 한번 입력해주세요.
+                </small>
+                <small class="invalid-feedback" th:text="#{common.passwordConfirm.blank}">비밀번호 확인을 입력하세요.</small>
             </div>
 
             <div class="form-group mb-3 d-grid gap-2">

@@ -10,12 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class LoginController {
 
     @GetMapping("/login")
-    public String loginForm() {
-        return "login";
-    }
-
-    @PostMapping("/postProcess")
-    public String postProcess(@CurrentMember Member member) {
-        return "redirect:/";
+    public String loginForm(@CurrentMember Member member) {
+        if(member == null)
+            return "login";
+        else
+            return "redirect:/";
     }
 }

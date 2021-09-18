@@ -1,12 +1,13 @@
 package dev.valium.sweetmeme.config;
 
-import dev.valium.sweetmeme.converter.Code2State;
+import dev.valium.sweetmeme.processor.Code2State;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
@@ -44,6 +45,14 @@ public class SpringConfig {
         SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
         // sessionLocaleResolver.setDefaultLocale(Locale.US);
         return sessionLocaleResolver;
+    }
+
+    @Bean
+    public LocalValidatorFactoryBean localValidatorFactoryBean() {
+        LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
+        localValidatorFactoryBean.setValidationMessageSource(messageSource());
+
+        return localValidatorFactoryBean;
     }
 
     @Bean

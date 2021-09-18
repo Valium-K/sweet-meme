@@ -56,7 +56,6 @@ public class LocalDbInit {
         public void initDB() {
             memberInit();
             sectionInit();
-
         }
 
         private void memberInit() {

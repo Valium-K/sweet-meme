@@ -23,18 +23,22 @@
 
           <div id="ACCEPTABLE_FILE_TYPES" th:text="${ACCEPTABLE_AVATAR_TYPES}" hidden></div>
           <h2 class="mb-3" th:text="#{settings.profile}">프로필</h2>
-          <form class="needs-validation" action="#" th:object="${settingsProfileForm}" method="post" novalidate>
+          <form class="needs-validation" action="#" th:action="@{/settings/profile}" th:object="${settingsProfileForm}" enctype="multipart/form-data" method="post" novalidate>
+
+            <div th:if="${profileChanged}" class="alert alert-info alert-dismissible" role="alert">
+              <span th:text="#{settings.profile.changed}" style="text-align: center">프로필을 변경하였습니다.</span>
+            </div>
 
             <div class="mb-3 form-group">
-              <label for="picImage" class="form-label" th:text="#{settings.info.picImage}">아바타</label>
-              <input type="file" class="form-control" name="picImage" id="picImage" th:accept="${ACCEPTABLE_AVATAR_TYPES}"
-                     aria-describedby="picImageHelp" th:field="*{picImage}" oninput="fileValidation()" required />
-              <small id="picImageHelp" class="form-text text-muted" th:text="#{settings.picImage.info}">
+              <label for="file" class="form-label" th:text="#{settings.info.picImage}">아바타</label>
+              <input type="file" class="form-control" name="file" id="file" th:accept="${ACCEPTABLE_AVATAR_TYPES}"
+                     aria-describedby="fileHelp" th:field="*{file}" oninput="fileValidation()" />
+              <small id="fileHelp" class="form-text text-muted" th:text="#{settings.picImage.info}">
                 10mb 이하의 .jpg, .gif, .webp 형식만 선택가능합니다.
               </small>
               <small class="invalid-feedback" th:text="#{common.file.help}">업로드 할 파일을 선택하세요.</small>
-              <small class="form-text text-danger" th:if="${#fields.hasErrors('picImage')}" th:errors="*{picImage}">
-                빈파일 | 정의되지 않은 확장자
+              <small class="form-text text-danger" th:if="${#fields.hasErrors('file')}" th:errors="*{file}" style="display: block">
+                정의되지 않은 확장자
               </small>
             </div>
 
@@ -42,7 +46,7 @@
             <div class="form-group mb-3">
               <label for="description" th:text="#{settings.info.description}">설명</label>
               <input id="description" type="text" th:field="*{description}" class="form-control"
-                     aria-describedby="descriptionHelp" required maxlength="100"/>
+                     aria-describedby="descriptionHelp" maxlength="100"/>
               <small id="descriptionHelp" class="form-text text-muted" th:text="#{settings.info.description.help}">
                 100자 이내의 설명을 작성가능합니다.
               </small>
@@ -50,7 +54,8 @@
 
             <div class="form-group mb-3">
               <label for="description" th:text="#{settings.info.stateCode}">국가</label>
-              <input name='tags3-1' class='countries' th:placeholder="#{settings.info.stateCode.placeholder}" th:value="*{state}">
+              <input id="state" name='state' class='countries' th:placeholder="#{settings.info.stateCode.placeholder}"
+                     th:value="*{state}" th:field="*{state}">
 
               <small id="stateCodeHelp" class="form-text text-muted" th:text="#{settings.info.stateCode.help}">
                 닉네임과 함께 국기 아이콘이 표시됩니다.
@@ -78,7 +83,7 @@
 <script id="fileValidation">
   function fileValidation() {
     let innerText = document.getElementById('ACCEPTABLE_FILE_TYPES').innerText;
-    let receivedType = document.getElementById('picImage').files[0].type;
+    let receivedType = document.getElementById('file').files[0].type;
     let acceptableTypes = innerText.split(', ');
 
     var isAcceptableType = false;
@@ -90,24 +95,24 @@
     })
 
     if (!isAcceptableType) {
-      $('#picImage').val('');
+      $('#file').val('');
       alert('업로드 할 수 없는 형식의 확장자입니다.');
       return;
     }
 
     var maxSize = 10 * 1024 * 1024;
-    fileSize = document.getElementById('picImage').files[0].size;
+    fileSize = document.getElementById('file').files[0].size;
 
     if (fileSize > maxSize) {
       // TODO 에러추가 현재는 alert
-      $('#picImage').val('');
+      $('#file').val('');
       alert('10mb 이하의 이미지를 선택해주세요.');
     }
   }
 </script>
 <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
 <script>
-  var tagify = new Tagify(document.querySelector('input[name=tags3-1]'), {
+  var tagify = new Tagify(document.querySelector('input[name=state]'), {
     delimiters : null,
     templates : {
       tag : function(tagData){

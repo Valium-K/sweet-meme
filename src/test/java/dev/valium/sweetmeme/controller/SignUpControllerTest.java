@@ -30,6 +30,7 @@ class SignUpControllerTest {
     private String nickname = "member1";
     private String email = "email@email.com";
     private String password = "membermember";
+    private String passwordConfirm = "membermember";
 
     @DisplayName("회원가입 화면이 보이는지")
     @Test
@@ -47,11 +48,13 @@ class SignUpControllerTest {
         String wrongEmail = "worng.email";
         String wrongNickname = "lnqwfo***i";
         String wrongPassword = "pwfweoiweno";
+        String wrongPasswordConfirm = "pwfweoiweno12324";
 
         mockMvc.perform(post("/sign-up")
                 .param("nickname", wrongNickname)
                 .param("email", email)
                 .param("password", password)
+                .param("passwordConfirm", passwordConfirm)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("sign-up"))
@@ -61,6 +64,7 @@ class SignUpControllerTest {
                 .param("nickname", email)
                 .param("email", wrongEmail)
                 .param("password", password)
+                .param("passwordConfirm", passwordConfirm)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("sign-up"))
@@ -70,17 +74,31 @@ class SignUpControllerTest {
                 .param("nickname", email)
                 .param("email", email)
                 .param("password", wrongPassword)
+                .param("passwordConfirm", wrongPassword)
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("sign-up"))
                 .andExpect(unauthenticated());
-
         // TODO 짧은 길이의 패스워드
 
         // TODO 잘못된 형식의 닉네임
 
     }
 
+    @Test
+    @DisplayName("회원 가입 처리 - 비밀번호 != 확인")
+    public void 회원가입처리_비밀번호확인다름() throws Exception {
+
+        mockMvc.perform(post("/sign-up")
+                .param("nickname", nickname)
+                .param("email", email)
+                .param("password", password)
+                .param("passwordConfirm", "asdfwefwefwef")
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("sign-up"))
+                .andExpect(unauthenticated());
+    }
     @Test
     @DisplayName("회원 가입 처리 - 입력값 정상")
     public void 회원가입처리_입력값정상() throws Exception {
@@ -89,6 +107,7 @@ class SignUpControllerTest {
                 .param("nickname", nickname)
                 .param("email", email)
                 .param("password", password)
+                .param("passwordConfirm", passwordConfirm)
                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/"))

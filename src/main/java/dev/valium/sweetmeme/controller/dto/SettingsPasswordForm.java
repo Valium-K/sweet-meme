@@ -9,10 +9,10 @@ import javax.validation.constraints.NotBlank;
 public class SettingsPasswordForm {
 
     @NotBlank
-    @Length(min = 8, max = 50)
+    @Length(min = 8, max = 50, message = "{common.password.help}")
     private String password;
 
     @NotBlank
-    @Length(min = 8, max = 50)
+    @Length(min = 8, max = 50, message = "{common.password.help}")
     private String passwordConfirm;
 }
