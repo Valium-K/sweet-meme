@@ -23,13 +23,8 @@ public class VoteService {
     public boolean votePost(Member member, Long id, boolean vote) throws Exception {
         Post post = postRepository.findById(id).orElseThrow(() -> new Exception("post 없음"));
 
-        Vote upVote = voteRepository.findUpVoteByUpVotedMember(member);
-        Vote downVote = voteRepository.findDownVoteByDownVotedMember(member);
-
-
-        System.out.println("-----------");
-        System.out.println(upVote);
-        System.out.println(downVote);
+        Vote upVote = voteRepository.findUpVoteByUpVotedMemberAndUpVotedPost(member, post);
+        Vote downVote = voteRepository.findDownVoteByDownVotedMemberAndDownVotedPost(member, post);
 
         // 첫 보트
         if(downVote == null && upVote == null) {
@@ -105,5 +100,15 @@ public class VoteService {
         List<Vote> upVotes = voteRepository.findByDownVotedMember(member);
 
         return upVotes.stream().map(Vote::getDownVotedPost).map(Post::getId).collect(Collectors.toList());
+    }
+
+    public List<Post> findUpVotedPosts(Member member) {
+        List<Vote> memberUpVotes = voteRepository.findAllByUpVotedMember(member);
+        List<Post> upVotedPosts = memberUpVotes.stream()
+                                            .map(Vote::getUpVotedPost)
+                                            .collect(Collectors.toList());
+
+        return upVotedPosts;
+
     }
 }

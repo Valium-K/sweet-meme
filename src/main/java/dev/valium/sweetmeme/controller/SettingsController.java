@@ -12,15 +12,19 @@ import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -102,6 +106,15 @@ public class SettingsController {
         attributes.addFlashAttribute("profileChanged", "프로필을 변경하였습니다.");
 
         return "redirect:/settings/profile";
+    }
+
+    @PostMapping("/settings/profile/reset/avatar")
+    @ResponseBody
+    public ResponseEntity resetAvatar(@CurrentMember Member member) {
+        Member updatedMember = memberService.resetProfileAvatar(member);
+        memberService.updatePrincipal(updatedMember);
+
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/settings/password")

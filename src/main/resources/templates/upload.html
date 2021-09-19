@@ -52,9 +52,6 @@
         <small class="form-text text-danger" th:if="${#fields.hasErrors('file')}" th:errors="*{file}">
           빈파일 | 정의되지 않은 확장자
         </small>
-
-
-
       </div>
 
       <div id="tagWhitelist" th:text="${tagWhitelist}" hidden></div>
@@ -71,12 +68,12 @@
         <label for="sections" class="form-label" th:text="#{upload.sections}">섹션</label>
         <input type="text" id="sections" class="form-control" name="sections"
                th:placeholder="#{upload.sections.placeholder}" aria-describedby="sectionsHelp" th:field="*{sections}" required/>
-
+        <small class="invalid-feedback" th:text="#{upload.sections.help}"></small>
+        <small class="form-text text-danger" th:if="${#fields.hasErrors('sections')}" th:errors="*{sections}">
+          빈 섹션 | 정의되지 않은 섹션
+        </small>
       </div>
-      <small class="invalid-feedback" th:text="#{upload.sections.help}"></small>
-      <small class="form-text text-danger" th:if="${#fields.hasErrors('sections')}" th:errors="*{sections}">
-        빈 섹션 | 정의되지 않은 섹션
-      </small>
+
       <div class="mt-5 form-group"></div>
       <div class="form-group mb-3 d-grid gap-2">
         <button class="btn btn-primary" type="submit" th:text="#{upload}">업로드</button>
@@ -87,7 +84,7 @@
 </div>
 <script th:replace="fragments.html :: ajax-csrf-header"></script>
 <script th:replace="fragments.html :: form-validation"></script>
-<script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
+<script th:src="@{/node_modules/@yaireo/tagify/dist/tagify.min.js}"></script>
 <script id="whitelistAndValidation">
 
   // getting whitelist

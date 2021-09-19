@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: head"></head>
-<script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
+
 <body class="bg-light">
 <div id="contentPadding" style="height: 70px"></div>
 <div th:replace="fragments.html :: nav-bar"></div>
@@ -29,7 +29,7 @@
                   [...]
                 </a>
                 <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="dropdown07">
-                  <li><a class="dropdown-item" th:href="@{'download/'+${post.postImageUrl}}">download</a></li>
+                  <li><a class="dropdown-item" th:href="@{${ABSOLUTE_DOWNLOAD_URL} + ${post.postImageUrl}}">download</a></li>
                   <li><a class="dropdown-item">delete</a></li>
                 </ul>
               </div>
@@ -42,18 +42,18 @@
           <picture>
             <div class="row justify-content-center rounded" style="background-color: #11111110; margin: 3px">
               <div class="col-auto">
-                <video preload="metadata" muted th:if="${post.getContentType()} == 'mp4'" th:src="@{${post.postImageUrl}}"
-                       style="min-width: 460px; width: 100%; height: auto; max-width: 250px; cursor: pointer;" onclick="toggleMute(this)"></video>
-                <img th:if="${post.getContentType()} != 'mp4'"th:src="@{${post.postImageUrl}}" style="min-width: 460px; width: 100%; height: auto; max-width: 250px; ">
+                <video preload="metadata" muted autoplay th:if="${post.getContentType()} == 'mp4'" th:src="@{${ABSOLUTE_FILE_URL} + ${post.postImageUrl}}"
+                       style="min-width: 200px; width: 100%; max-width: 400px; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
+                <img th:if="${post.getContentType()} != 'mp4'"th:src="@{${ABSOLUTE_FILE_URL} + ${post.postImageUrl}}" style="min-width: 200px; width: 100%; max-width: 400px; height: auto; ">
               </div>
             </div>
           </picture>
           <div class="row justify-content-between">
-            <div class="col-6 mt-2">
-              <a id="upVoteBtn" th:classappend="${upVotedIds.contains(post.id)} ? clicked"
-                 th:onclick="|vote(${post.id}, true, this.id)|">upvote[<span th:text="${post.getVote().upVote}"></span>]</a>
-              <a id="downVoteBtn" th:classappend="${downVotedIds.contains(post.id)} ? clicked"
-                 th:onclick="|vote(${post.id}, false, this.id)|">downvote[<span th:text="${post.getVote().downVote}"></span>]</a>
+            <div th:id="${post.id}" class="col-6 mt-2">
+              <input type="button" id="upVoteBtn" class="btn" th:classappend="${upVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
+                     th:onclick="|vote(${post.id}, true)|" th:value="'&#129093; ' + ${post.getVote().upVote}" />
+              <input type="button" id="downVoteBtn" class="btn" th:classappend="${downVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
+                     th:onclick="|vote(${post.id}, false)|" th:value="'&#129095; ' + ${post.getVote().downVote}" />
             </div>
             <div class="col-6 mt-2 text-end">
               <a>[공유]</a>
@@ -65,108 +65,10 @@
 
     </div>
   </div>
+  <script th:src="@{/node_modules/jdenticon/dist/jdenticon.min.js}"></script>
   <script th:replace="fragments.html :: ajax-csrf-header"></script>
-  <script id="videoAutoPlay">
-    var videos = document.getElementsByTagName("video");
-    var browserClickInit = false;
-
-    function checkScroll() {
-      var fraction = 0.70;
-
-      for(var i = 0; i < videos.length; i++) {
-        var video = videos[i];
-
-        var x = video.offsetLeft, y = video.offsetTop, w = video.offsetWidth, h = video.offsetHeight, r = x + w, //right
-                b = y + h, //bottom
-                visibleX, visibleY, visible;
-
-        visibleX = Math.max(0, Math.min(w, window.pageXOffset + window.innerWidth - x, r - window.pageXOffset));
-        visibleY = Math.max(0, Math.min(h, window.pageYOffset + window.innerHeight - y, b - window.pageYOffset));
-
-        visible = visibleX * visibleY / (w * h);
-
-        if (visible > fraction) {
-          video.play();
-
-          if(browserClickInit === true) {
-            if(video.getAttribute('userMuted') != null) video.muted = true;
-            else video.muted = false;
-          }
-        }
-        else {
-          video.pause();
-        }
-      }
-    }
-
-    var toggleMute = function (e) {
-      browserClickInit = true;
-
-      if(e.muted == "") {
-        e.muted = true;
-        e.setAttribute('userMuted', '')
-      }
-      else {
-        e.muted = false;
-        e.removeAttribute('userMuted', '')
-      }
-    }
-    window.addEventListener('scroll', checkScroll, false);
-    window.addEventListener('resize', checkScroll, false);
-  </script>
-  <script id="voteAjax">
-    // async vote
-    var vote = function voteRequest(id, vote, tagId) {
-
-      let clicked = "clicked";
-      var upVoteBtn = document.getElementById('upVoteBtn');
-      var downVoteBtn = document.getElementById('downVoteBtn');
-      var upVote = document.getElementById('upVoteBtn').classList.contains(clicked);
-      var downVote = document.getElementById('downVoteBtn').classList.contains(clicked);
-
-      console.log(upVote)
-      console.log(downVote)
-
-      if(!upVote && !downVote) {
-        console.log('1')
-        if(vote) upVoteBtn.classList.add(clicked);
-        else downVoteBtn.classList.add(clicked);
-      }
-      else if(downVote && !upVote) {
-        console.log('2')
-        if(vote) {
-          downVoteBtn.classList.remove(clicked);
-          upVoteBtn.classList.add(clicked);
-        }
-        else {
-          downVoteBtn.classList.remove(clicked);
-        }
-      }
-      else {
-        console.log('3')
-        if(!vote) {
-          upVoteBtn.classList.remove(clicked);
-          downVoteBtn.classList.add(clicked);
-
-        }
-        else {
-          upVoteBtn.classList.remove(clicked);
-        }
-      }
-
-      $.ajax({
-        dataType: "json",
-        autocomplete: {
-          enabled: true,
-          rightKey: true,
-        },
-        contentType: "application/json; charset=utf-8",
-        method: "POST",
-        url: "/post/vote",
-        data: JSON.stringify({id: id, vote: vote})
-      })
-    };
-  </script>
+  <script th:replace="fragments.html :: videoAutoPlay"></script>
+  <script th:replace="fragments.html :: voteAjax"></script>
 </div>
 </body>
 </html>

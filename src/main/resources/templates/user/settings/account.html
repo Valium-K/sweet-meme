@@ -2,7 +2,6 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: head"></head>
 <body class="bg-light">
-<script src="/node_modules/jdenticon/dist/jdenticon.min.js"></script>
 
 <div id="contentPadding" style="height: 70px"></div>
 <div th:replace="fragments.html :: nav-bar"></div>
@@ -19,7 +18,7 @@
       <div class="row mt-4 justify-content-center">
         <div class="col-12">
 
-          <h3 class="mb-3" th:text="#{settings.account}">계정</h3>
+          <h2 class="mb-3" th:text="#{settings.account}">계정</h2>
           <form class="needs-validation" th:action="@{/settings/account}" th:object="${settingsAccountForm}" method="post" novalidate>
 
             <div th:if="${accountChanged}" class="alert alert-info alert-dismissible fade show mt-3" role="alert">
@@ -33,7 +32,6 @@
               <small id="nicknameHelp" class="form-text text-muted" th:text="#{signup.nickname.help}" style="display: block">
                 3자 이상 20자 이내의 영문자, 한글, 숫자, 특수기호('-' '_')만 사용가능합니다.
               </small>
-<!--              <small class="invalid-feedback" th:text="#{signup.nickname.error.blank}" style="display: block">닉네임을 입력하세요.</small>-->
               <small class="form-text text-danger" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" style="display: block">
                 중복 닉네임 혹은 짧은 닉네임 혹은 특수문자 닉네임
               </small>
@@ -67,36 +65,9 @@
                 </div>
               </div>
               <div class="col-6 mt-2 text-end">
-                <div th:text="#{settings.signout}">회원탈퇴</div>
+                <div th:text="#{settings.delete.account}">회원탈퇴</div>
               </div>
             </div>
-
-
-<!--            <div class="form-group mb-3">-->
-<!--              <label for="password" th:text="#{password}">패스워드</label>-->
-<!--              <input id="password" type="password" th:field="*{password}" class="form-control"-->
-<!--                     aria-describedby="passwordHelp" required minlength="8" maxlength="50">-->
-<!--              <small id="passwordHelp" class="form-text text-muted" th:text="#{common.password.help}">-->
-<!--                8자 이상 50자 이내로 입력하세요.-->
-<!--              </small>-->
-<!--              <small class="invalid-feedback" th:text="#{common.password.blank}">패스워드를 입력하세요.</small>-->
-<!--              <small class="form-text text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">-->
-<!--                Password Error-->
-<!--              </small>-->
-<!--            </div>-->
-
-<!--            <div class="form-group mb-3">-->
-<!--              <label for="passwordConfirm" th:text="#{common.passwordConfirm}">패스워드 확인</label>-->
-<!--              <input id="passwordConfirm" type="password" th:field="*{passwordConfirm}" class="form-control"-->
-<!--                     aria-describedby="passwordConfirmHelp" required minlength="8" maxlength="50">-->
-<!--              <small id="passwordConfirmHelp" class="form-text text-muted" th:text="#{common.password.help}">-->
-<!--                8자 이상 50자 이내로 입력하세요.-->
-<!--              </small>-->
-<!--              <small class="invalid-feedback" th:text="#{common.password.blank}">패스워드를 입력하세요.</small>-->
-<!--              <small class="form-text text-danger" th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}">-->
-<!--                Password confirm Error-->
-<!--              </small>-->
-<!--            </div>-->
 
           </form>
         </div>
@@ -112,6 +83,7 @@
     </div>
   </div>
 </div>
+<script th:src="@{/node_modules/jdenticon/dist/jdenticon.min.js}"></script>
 <script th:replace="fragments.html :: form-validation"></script>
 </body>
 </html>

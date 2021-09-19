@@ -131,10 +131,7 @@ public class MemberService implements UserDetailsService {
                 () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
         );
 
-        if(form.getFile().isEmpty()) foundMember.getMemberInfo().setPicImage(null);
-        else {
-
-
+        if(!form.getFile().isEmpty()) {
             File newFile = FileProcessor.createNewFile(FileConfig.ABSOLUTE_AVATAR_PATH, form.getFile(), true);
             foundMember.getMemberInfo().setPicImage(newFile.getName());
             form.getFile().transferTo(newFile);
@@ -144,6 +141,16 @@ public class MemberService implements UserDetailsService {
         else foundMember.getMemberInfo().setDescription(form.getDescription());
 
         foundMember.getMemberInfo().setStateCode(Code2State.json2Code(form.getState()));
+
+        return foundMember;
+    }
+
+    public Member resetProfileAvatar(Member member) {
+        Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
+                () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
+        );
+
+        foundMember.getMemberInfo().setPicImage(null);
 
         return foundMember;
     }

@@ -47,7 +47,6 @@ public class Member extends BaseEntityTime {
     @OneToMany(mappedBy = "postedMember", cascade = CascadeType.ALL)
     private List<Post> commentedPosts = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "upVotedMember", cascade = CascadeType.ALL)
     private List<Vote> upVotedPosts = new ArrayList<>();
 

@@ -2,8 +2,11 @@ package dev.valium.sweetmeme.domain;
 
 import dev.valium.sweetmeme.domain.enums.SectionType;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -13,8 +16,9 @@ import java.util.Set;
 @Getter @Setter
 @EqualsAndHashCode(of = {"id"})
 @Builder @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post extends BaseEntityTime {
+public class Post {
 
     @Id @GeneratedValue
     @Column(name = "post_id")
@@ -39,6 +43,10 @@ public class Post extends BaseEntityTime {
     @Enumerated(EnumType.STRING)
     private SectionType belongedSectionType;
 
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdDate;
+
     ///////////////////////////////
 
     // section -> post
@@ -56,7 +64,7 @@ public class Post extends BaseEntityTime {
     ////////////////////////////////////////////////////
     // member -> post
     @OneToMany(mappedBy = "upVotedPost")
-    private List<Vote> upVotedMember;
+    private List<Vote> upVotedMembers;
 
 //    // member -> post
 //    @ManyToOne(fetch = FetchType.LAZY)

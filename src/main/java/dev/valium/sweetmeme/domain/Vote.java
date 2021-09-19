@@ -1,15 +1,17 @@
 package dev.valium.sweetmeme.domain;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 @EqualsAndHashCode(of = {"id"})
-@Builder
-@AllArgsConstructor
+@Builder @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class Vote {
 
@@ -32,4 +34,8 @@ public class Vote {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "downvoted_post_id")
     private Post downVotedPost;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdDate;
 }

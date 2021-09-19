@@ -26,8 +26,11 @@ logging:
   level:
     org.hibernte.SQL: debug
 
-
 decorator:
   datasource:
     p6spy:
       enable-logging: true
+
+server:
+  servlet:
+    context-path: /valium

@@ -8,15 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
   <title>Sweet Meme</title>
 
-  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css" />
-  <link rel="stylesheet" href="/node_modules/@yaireo/tagify/dist/tagify.css" />
+  <link rel="stylesheet" th:href="@{/node_modules/bootstrap/dist/css/bootstrap.css}" />
+  <link rel="stylesheet" th:href="@{/node_modules/@yaireo/tagify/dist/tagify.css}" />
+  <link id="contextPathHolder" th:data-contextPath="${#httpServletRequest.getContextPath()}"/>
 
   <style id="commonStyle">
-    .clicked {
-      color: white;
-      background-color: blue;
-      text-decoration: none;
-    }
+
+
     body::-webkit-scrollbar-track
     {
       -webkit-box-shadow: inset 0 0 3px rgba(255, 255, 255, 0);
@@ -44,7 +42,7 @@
 
     @media (max-width: 700px) {
       .container {
-        min-width: 500px;
+        /*min-width: 500px;*/
         width: 100%;
       }
     }
@@ -147,9 +145,15 @@
     border-color: #D3E2E2;
   }
   </style>
+  <style id="bs5CustomStyle">
+    .btn:focus, .form-check-input:focus,  .navbar-toggler:focus {
+      outline: none;
+      box-shadow: none;
+    }
+  </style>
 
-  <script src="/node_modules/jquery/dist/jquery.min.js"></script>
-  <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+  <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+  <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.bundle.js}"></script>
 
 </head>
 <nav th:fragment="nav-bar" id="nav-bar" class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
@@ -211,18 +215,19 @@
                            width="30px" height="30px" style="padding: 0px; margin: 5px" class="rounded border"/>
           </a>
 
-          <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="dropdown07">
-            <li><a class="dropdown-item" th:href="@{'/user/' + ${#authentication.name} + '/home'}" th:text="#{myProfile}">내 프로필</a></li>
-            <li><a class="dropdown-item" th:href="@{'/settings/account'}" href="#" th:text="#{settings}">설정</a></li>
+          <ul class="dropdown-menu dropdown-menu-light text-small shadow mt-2" aria-labelledby="dropdown07">
+            <li><a class="dropdown-item my-2" th:href="@{'/user/' + ${#authentication.name} + '/home'}" th:text="#{myProfile}">내 프로필</a></li>
+            <li><a class="dropdown-item my-2" th:href="@{'/settings/account'}" href="#" th:text="#{settings}">설정</a></li>
             <li>
-              <form class="form-inline my-2 my-lg-0" action="#" th:action="@{/logout}" method="post">
+              <form class="form-inline my-2" action="#" th:action="@{/logout}" method="post">
                 <button class="dropdown-item" th:text="#{logout}" type="submit">
                   logout
                 </button>
               </form>
-            <li><span style="font-size: 12px">&nbsp;&nbsp;&nbsp;&nbsp;SWEETMEME © 2021</span></li>
+            <li><span class="my-2" style="font-size: 12px">&nbsp;&nbsp;&nbsp;&nbsp;SWEETMEME © 2021</span></li>
           </ul>
-
+          <!-- dom을 그리기 전 로딩을 마치면 jdenticon이 nickname을 못 찾아서 빈 아마타가 출력되므로 아래쪽에 배치함 -->
+          <script th:src="@{/node_modules/jdenticon/dist/jdenticon.min.js}"></script>
         </li>
       </ul>
     </div>
@@ -284,7 +289,7 @@
   <hr style="color: black"/>
 
   <li class="nav-item">
-    <a class="nav-link" th:style="${currentMenu == 'hot'}? 'background-color: #11111110;'" th:href="@{/hot}">
+    <a class="nav-link" th:style="${currentMenu == 'hot'}? 'background-color: #11111110;'" th:href="@{/}">
       H Hot
     </a>
   </li>
@@ -399,7 +404,6 @@
 
         document.getElementById("nav-bar").style.top = "0px";
       }
-
     };
 
     window.onload = resizer;
@@ -510,6 +514,141 @@
       xhr.setRequestHeader(csrfHeader, csrfToken);
     });
   });
+</script>
+<script th:fragment="videoAutoPlay">
+  var videos = document.getElementsByTagName("video");
+  var browserClickInit = false;
+
+  function checkScroll() {
+    var fraction = 0.78;
+
+    for(var i = 0; i < videos.length; i++) {
+      var video = videos[i];
+
+      var x = video.offsetLeft, y = video.offsetTop, w = video.offsetWidth, h = video.offsetHeight, r = x + w, //right
+              b = y + h, //bottom
+              visibleX, visibleY, visible;
+
+      visibleX = Math.max(0, Math.min(w, window.pageXOffset + window.innerWidth - x, r - window.pageXOffset));
+      visibleY = Math.max(0, Math.min(h, window.pageYOffset + window.innerHeight - y, b - window.pageYOffset));
+
+      visible = visibleX * visibleY / (w * h);
+
+      if (visible > fraction) {
+        try {
+          videos[i-1].pause();
+          videos[i+1].pause();
+        } catch (e) {
+
+        }
+        video.play()
+
+        if(browserClickInit === true) {
+          if(video.getAttribute('userMuted') != null) video.muted = true;
+          else video.muted = false;
+        }
+      }
+      else {
+        video.pause();
+      }
+    }
+  }
+
+
+  var toggleMute = function (e) {
+    browserClickInit = true;
+
+    if(e.muted == "") {
+      e.muted = true;
+      e.setAttribute('userMuted', '')
+    }
+    else {
+      e.muted = false;
+      e.removeAttribute('userMuted', '')
+      if(e.isPaused) e.play();
+    }
+  }
+  window.addEventListener('scroll', checkScroll, false);
+  window.addEventListener('resize', checkScroll, false);
+</script>
+<script th:fragment="voteAjax">
+  // async vote
+  var vote = function voteRequest(id, vote) {
+    let btnClass=  "btn-outline-primary"
+    let clicked = "btn-primary";
+
+    var upVoteBtn = $('#'+id).children().eq(0).get(0);
+    var downVoteBtn = $('#'+id).children().eq(1).get(0);
+    var upVote = upVoteBtn.classList.contains(clicked);
+    var downVote = downVoteBtn.classList.contains(clicked);
+    var upVoteCount = upVoteBtn.value.split(' ')[1];
+    var downVoteCount = downVoteBtn.value.split(' ')[1];
+
+    console.log(upVote)
+    console.log((downVote))
+    if(!upVote && !downVote) {
+      if(vote) {
+        upVoteBtn.classList.remove(btnClass);
+        upVoteBtn.classList.add(clicked);
+
+        var t = Number(upVoteCount) + 1;
+        upVoteBtn.value = '🡅 ' + t;
+      }
+      else {
+        downVoteBtn.classList.remove(btnClass);
+        downVoteBtn.classList.add(clicked);
+
+        var t = Number(downVoteCount) + 1;
+        downVoteBtn.value = '🡇 ' + t;
+      }
+    }
+    if(downVote && !upVote) {
+      var t = Number(downVoteCount) - 1;
+      downVoteBtn.value = '🡇 ' + t;
+
+      downVoteBtn.classList.remove(clicked);
+      downVoteBtn.classList.add(btnClass);
+
+      if(vote) {
+        upVoteBtn.classList.remove(btnClass);
+        upVoteBtn.classList.add(clicked);
+
+        var t = Number(upVoteCount) + 1;
+        upVoteBtn.value = '🡅 ' + t;
+      }
+    }
+    if(!downVote && upVote) {
+      var t = Number(upVoteCount) - 1;
+      upVoteBtn.value = '🡅 ' + t;
+
+      upVoteBtn.classList.remove(clicked);
+      upVoteBtn.classList.add(btnClass);
+
+      if(!vote) {
+        upVoteBtn.classList.remove(clicked);
+        upVoteBtn.classList.add(btnClass);
+        downVoteBtn.classList.remove(btnClass);
+        downVoteBtn.classList.add(clicked);
+
+        var t = Number(downVoteCount) + 1;
+        downVoteBtn.value = '🡇 ' + t;
+      }
+    }
+
+    var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+
+    $.ajax({
+      dataType: "json",
+      autocomplete: {
+        enabled: true,
+        rightKey: true,
+      },
+      contentType: "application/json; charset=utf-8",
+      method: "POST",
+      url: contextPath + "/post/vote",
+      data: JSON.stringify({id: id, vote: vote})
+    })
+  };
 </script>
 <!----------------------------------------------------------------------------------------->
 
