@@ -20,7 +20,6 @@ import static dev.valium.sweetmeme.config.FileConfig.*;
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final VoteService voteService;
 
@@ -54,8 +53,8 @@ public class HomeController {
             model.addAttribute("downVotedIds", downVoteIds);
         }
 
-        model.addAttribute("ABSOLUTE_FILE_URL", ABSOLUTE_FILE_URL);
-        model.addAttribute("ABSOLUTE_DOWNLOAD_URL", ABSOLUTE_DOWNLOAD_URL);
+        model.addAttribute("FILE_URL", FILE_URL);
+        model.addAttribute("DOWNLOAD_URL", DOWNLOAD_URL);
         model.addAttribute("currentMenu", currentMenu);
         model.addAttribute("sectionType", null);
         model.addAttribute("info", currentMenu);

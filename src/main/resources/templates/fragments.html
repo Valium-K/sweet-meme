@@ -5,16 +5,15 @@
 <!-------------------------- fragments ---------------------------------------------------->
 <head th:fragment="head">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, shrink-to-fit=no, user-scalable=no">
   <title>Sweet Meme</title>
 
   <link rel="stylesheet" th:href="@{/node_modules/bootstrap/dist/css/bootstrap.css}" />
   <link rel="stylesheet" th:href="@{/node_modules/@yaireo/tagify/dist/tagify.css}" />
   <link id="contextPathHolder" th:data-contextPath="${#httpServletRequest.getContextPath()}"/>
+  <link rel="stylesheet" th:href="@{/node_modules/font-awesome/css/font-awesome.css}" />
 
   <style id="commonStyle">
-
-
     body::-webkit-scrollbar-track
     {
       -webkit-box-shadow: inset 0 0 3px rgba(255, 255, 255, 0);
@@ -35,15 +34,17 @@
   </style>
   <style id="forMobilePage">
     .container {
-      max-width: 1050px;
-
-      width: 80%;
+      max-width: 1024px;
+      width: 85%;
     }
-
-    @media (max-width: 700px) {
+    @media (max-width: 765px) {
       .container {
-        /*min-width: 500px;*/
-        width: 100%;
+        width: 90%;
+      }
+    }
+    @media (max-width: 572px) {
+      .container {
+        width: 95%;
       }
     }
   </style>
@@ -95,6 +96,7 @@
     #navbar {
       transition: height 0.3s ease;
     }
+
   </style>
   <style id="tagifyStyle">
 
@@ -150,13 +152,25 @@
       outline: none;
       box-shadow: none;
     }
+
+    .bg-light {
+      background-color: blueviolet;
+    }
+
   </style>
 
   <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
   <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.bundle.js}"></script>
+  <script id="gridLazyView">
+    var gridLazyView = function () {
+      if(window.innerWidth > 572)
+        document.getElementById('side-bar-col').classList.remove('d-none');
+      document.getElementById('gridContent').classList.remove('d-none');
+    }
+  </script>
 
 </head>
-<nav th:fragment="nav-bar" id="nav-bar" class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+<nav th:fragment="nav-bar" id="nav-bar" class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
   <div class="container">
     <a class="navbar-brand" href="#" th:href="@{/}">SweetMeme</a>
 
@@ -264,7 +278,7 @@
       var navbar = document.getElementById("nav-bar");
       var innerNavbar = document.getElementById("navbar");
 
-      if (window.innerWidth <= 770) {
+      if (window.innerWidth <= 572) {
         if (prevScrollpos > currentScrollPos) {
           navbar.style.top = "0px";
         } else {
@@ -279,7 +293,55 @@
     }
   </script>
 </nav>
-<ul th:fragment="content(currentMenu)" class="nav nav-pills flex-column mb-auto" >
+
+<div th:fragment="side-bar(currentMenu)" id="side-bar" class="nav d-flex sticky-top flex-column flex-shrink-0 p-3 bg-light">
+  <div class="navbar-expand-lg navbar-light">
+    <ul th:replace="fragments.html :: content(${currentMenu})"></ul>
+  </div>
+
+  <script id="gridForMobile" type="application/javascript" th:inline="javascript">
+    var resizer = function () {
+      if(window.innerWidth <= 572) {
+        if(!document.getElementById('side-bar-col').classList.contains('d-none')) {
+          document.getElementById('side-bar-col').classList.add('d-none');
+        }
+      }
+      else {
+        if(document.getElementById('side-bar-col').classList.contains('d-none')) {
+          document.getElementById('side-bar-col').classList.remove('d-none');
+        }
+      }
+      if(window.innerWidth <= 765) {
+        if(document.getElementById('side-bar-col').classList.contains('col-3')) {
+          document.getElementById('side-bar-col').classList.remove('col-3');
+          document.getElementById('side-bar-col').classList.add('col-4');
+        }
+      }
+      else {
+        if(document.getElementById('side-bar-col').classList.contains('col-4')) {
+          document.getElementById('side-bar-col').classList.remove('col-4');
+          document.getElementById('side-bar-col').classList.add('col-3');
+        }
+      }
+
+    }
+    window.onresize = resizer;
+  </script>
+</div>
+<div th:fragment="off-canvas(currentMenu)" id="off-canvas">
+  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas" style="width: 250px;" aria-labelledby="offcanvasLabel">
+
+    <div class="offcanvas-header bg-dark">
+      <h5 class="offcanvas-title text-light" style="height: 24px;">SweetMeme</h5>
+      <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body bg-light text-white">
+        <ul th:replace="fragments.html :: content(${currentMenu})"></ul>
+    </div>
+  </div>
+</div>
+  <ul th:fragment="content(currentMenu)" class="nav nav-pills flex-column mb-auto" >
   <!-- for navigation bar and off-canvas content-->
   <div class="d-flex align-items-centertext-decoration-none">
     <svg width="15" height="32"></svg>
@@ -380,49 +442,7 @@
     </a>
   </li>
 </ul>
-<div th:fragment="side-bar(currentMenu)" id="side-bar" class="nav d-flex sticky-top flex-column flex-shrink-0 p-3 bg-light">
-  <div class="navbar-expand-lg navbar-light">
-    <ul th:replace="fragments.html :: content(${currentMenu})"></ul>
-  </div>
 
-  <script id="gridForMobile" type="application/javascript" th:inline="javascript">
-    resizer = function() {
-      if(window.innerWidth <= 770) {
-        document.getElementById('side-bar').classList.add('d-none');
-
-        document.getElementById('side-bar-col').classList.remove('col-3');
-        document.getElementById('side-bar-col').classList.add('col-0');
-
-      }
-      else {
-        if(document.getElementById('side-bar').classList.contains('d-none')) {
-          document.getElementById('side-bar').classList.remove('d-none')
-        }
-
-        document.getElementById('side-bar-col').classList.remove('col-0');
-        document.getElementById('side-bar-col').classList.add('col-3');
-
-        document.getElementById("nav-bar").style.top = "0px";
-      }
-    };
-
-    window.onload = resizer;
-    window.onresize = resizer;
-  </script>
-</div>
-<div th:fragment="off-canvas(currentMenu)" id="off-canvas">
-  <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas" style="width: 250px;" aria-labelledby="offcanvasLabel">
-
-    <div class="offcanvas-header bg-dark">
-      <h5 class="offcanvas-title text-light" style="height: 24px;">SweetMeme</h5>
-      <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-
-    <div class="offcanvas-body bg-light text-white">
-        <ul th:replace="fragments.html :: content(${currentMenu})"></ul>
-    </div>
-  </div>
-</div>
 <div th:fragment="profileInfo">
   <div class="row">
     <div class="col-2">
@@ -481,9 +501,11 @@
     </li>
   </ul>
 </div>
+
 <div th:fragment="memberShip(membership)">
   <span th:if="membership == "></span>
 </div>
+
 <script th:fragment="form-validation" type="application/javascript">
   (function () {
     'use strict';
@@ -504,7 +526,7 @@
     }, false)
   }())
 </script>
-<script sec:authorize="isAuthenticated()" type="application/javascript" th:inline="javascript" th:fragment="ajax-csrf-header">
+<script th:fragment="ajax-csrf-header" sec:authorize="isAuthenticated()" type="application/javascript" th:inline="javascript" >
   $(function() {
 
     var csrfToken = /*[[${_csrf.token}]]*/ null;
@@ -515,141 +537,197 @@
     });
   });
 </script>
-<script th:fragment="videoAutoPlay">
-  var videos = document.getElementsByTagName("video");
-  var browserClickInit = false;
 
-  function checkScroll() {
-    var fraction = 0.78;
+<section th:fragment="postSection">
+  <article th:each="post : ${posts}" class="mx-1">
+    <header>
+      <div class="row">
+        <div class="col-10 mt-2">
+          <img th:src="@{'/sections/' + ${post.belongedSectionType}}" width="20px" height="20px" />
+          <small th:text="${post.belongedSectionType}"></small><small> · </small>
+          <small th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></small>
+        </div>
+        <div class="col-2 text-end">
 
-    for(var i = 0; i < videos.length; i++) {
-      var video = videos[i];
+          <div class="dropdown mt-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" id="postDropdownMenuBtn" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="postDropdownMenuBtn">
+              <li><a class="dropdown-item" th:href="@{${DOWNLOAD_URL} + ${post.postImageUrl}}">download</a></li>
+              <li th:if="${profileMenu != null}"><a class="dropdown-item">delete</a></li>
+              <li th:if="${currentMenu != null}"><a href="#" class="dropdown-item">report</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col fw-bold fs-3" style="word-wrap: break-word;" th:text="${post.title}">
+        </div>
+      </div>
+    </header>
+    <picture>
+      <div class="row justify-content-center rounded" style="background-color: #11111110; margin: 3px">
+        <div class="col-auto">
+          <video preload="metadata" muted autoplay loop th:if="${post.getContentType()} == 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}"
+                 style="min-width: 200px; width: 100%; max-width: 400px; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
+          <img th:if="${post.getContentType()} != 'mp4'"th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="min-width: 200px; width: 100%; max-width: 400px; height: auto; ">
+        </div>
+      </div>
+    </picture>
+    <div class="row justify-content-between">
+      <div sec:authorize="isAuthenticated()" th:id="${post.id}" class="col-6 mt-2">
+        <input type="button" id="upVoteBtn" class="btn btn-sm"  th:classappend="${upVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
+               th:onclick="|vote(${post.id}, true)|" th:value="'▲ ' + ${post.getVote().upVote}" />
+        <input type="button" id="downVoteBtn" class="btn btn-sm" th:classappend="${downVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
+               th:onclick="|vote(${post.id}, false)|" th:value="'▼ ' + ${post.getVote().downVote}" />
+      </div>
+      <div sec:authorize="!isAuthenticated()" th:id="${post.id}" class="col-6 mt-2">
+        <input type="button" id="upVoteBtn" class="btn btn-outline-primary btn-sm"
+               onclick="login()" th:value="'▲ ' + ${post.getVote().upVote}" />
+        <input type="button" id="downVoteBtn" class="btn btn-outline-primary btn-sm"
+               onclick="login()" th:value="'▼ ' + ${post.getVote().downVote}" />
+      </div>
+      <div class="col-6 mt-2 text-end">
+        <a>[공유]</a>
+      </div>
+    </div>
+    <hr/>
+  </article>
+</section>
+  <script th:fragment="videoAutoPlay">
+    var videos = document.getElementsByTagName("video");
+    var browserClickInit = false;
 
-      var x = video.offsetLeft, y = video.offsetTop, w = video.offsetWidth, h = video.offsetHeight, r = x + w, //right
-              b = y + h, //bottom
-              visibleX, visibleY, visible;
+    function checkScroll() {
+      var fraction = 0.78;
 
-      visibleX = Math.max(0, Math.min(w, window.pageXOffset + window.innerWidth - x, r - window.pageXOffset));
-      visibleY = Math.max(0, Math.min(h, window.pageYOffset + window.innerHeight - y, b - window.pageYOffset));
+      for(var i = 0; i < videos.length; i++) {
+        var video = videos[i];
 
-      visible = visibleX * visibleY / (w * h);
+        var x = video.offsetLeft, y = video.offsetTop, w = video.offsetWidth, h = video.offsetHeight, r = x + w, //right
+                b = y + h, //bottom
+                visibleX, visibleY, visible;
 
-      if (visible > fraction) {
-        try {
-          videos[i-1].pause();
-          videos[i+1].pause();
-        } catch (e) {
+        visibleX = Math.max(0, Math.min(w, window.pageXOffset + window.innerWidth - x, r - window.pageXOffset));
+        visibleY = Math.max(0, Math.min(h, window.pageYOffset + window.innerHeight - y, b - window.pageYOffset));
 
+        visible = visibleX * visibleY / (w * h);
+
+        if (visible > fraction) {
+          try {
+            videos[i-1].pause();
+            videos[i+1].pause();
+          } catch (e) {
+
+          }
+          video.play()
+
+          if(browserClickInit === true) {
+            if(video.getAttribute('userMuted') != null) video.muted = true;
+            else video.muted = false;
+          }
         }
-        video.play()
-
-        if(browserClickInit === true) {
-          if(video.getAttribute('userMuted') != null) video.muted = true;
-          else video.muted = false;
+        else {
+          video.pause();
         }
+      }
+    }
+
+
+    var toggleMute = function (e) {
+      browserClickInit = true;
+
+      if(e.muted == "") {
+        e.muted = true;
+        e.setAttribute('userMuted', '')
       }
       else {
-        video.pause();
+        e.muted = false;
+        e.removeAttribute('userMuted', '')
+        if(e.isPaused) e.play();
       }
     }
-  }
 
+    window.addEventListener('scroll', checkScroll, false);
+    window.addEventListener('resize', checkScroll, false);
+  </script>
+  <script th:fragment="voteAjax">
+    var vote = function voteRequest(id, vote) {
+      let btnClass=  "btn-outline-primary";
+      let clicked = "btn-primary";
 
-  var toggleMute = function (e) {
-    browserClickInit = true;
+      var upVoteBtn = $('#'+id).children().eq(0).get(0);
+      var downVoteBtn = $('#'+id).children().eq(1).get(0);
+      var upVote = upVoteBtn.classList.contains(clicked);
+      var downVote = downVoteBtn.classList.contains(clicked);
+      var upVoteCount = upVoteBtn.value.split(' ')[1];
+      var downVoteCount = downVoteBtn.value.split(' ')[1];
 
-    if(e.muted == "") {
-      e.muted = true;
-      e.setAttribute('userMuted', '')
-    }
-    else {
-      e.muted = false;
-      e.removeAttribute('userMuted', '')
-      if(e.isPaused) e.play();
-    }
-  }
-  window.addEventListener('scroll', checkScroll, false);
-  window.addEventListener('resize', checkScroll, false);
-</script>
-<script th:fragment="voteAjax">
-  // async vote
-  var vote = function voteRequest(id, vote) {
-    let btnClass=  "btn-outline-primary"
-    let clicked = "btn-primary";
+      if(!upVote && !downVote) {
+        if(vote) {
+          upVoteBtn.classList.remove(btnClass);
+          upVoteBtn.classList.add(clicked);
 
-    var upVoteBtn = $('#'+id).children().eq(0).get(0);
-    var downVoteBtn = $('#'+id).children().eq(1).get(0);
-    var upVote = upVoteBtn.classList.contains(clicked);
-    var downVote = downVoteBtn.classList.contains(clicked);
-    var upVoteCount = upVoteBtn.value.split(' ')[1];
-    var downVoteCount = downVoteBtn.value.split(' ')[1];
+          var t = Number(upVoteCount) + 1;
+          upVoteBtn.value = '▲ ' + t;
+        }
+        else {
+          downVoteBtn.classList.remove(btnClass);
+          downVoteBtn.classList.add(clicked);
 
-    console.log(upVote)
-    console.log((downVote))
-    if(!upVote && !downVote) {
-      if(vote) {
-        upVoteBtn.classList.remove(btnClass);
-        upVoteBtn.classList.add(clicked);
-
-        var t = Number(upVoteCount) + 1;
-        upVoteBtn.value = '🡅 ' + t;
+          var t = Number(downVoteCount) + 1;
+          downVoteBtn.value = '▼ ' + t;
+        }
       }
-      else {
-        downVoteBtn.classList.remove(btnClass);
-        downVoteBtn.classList.add(clicked);
+      if(downVote && !upVote) {
+        var t = Number(downVoteCount) - 1;
+        downVoteBtn.value = '▼ ' + t;
 
-        var t = Number(downVoteCount) + 1;
-        downVoteBtn.value = '🡇 ' + t;
+        downVoteBtn.classList.remove(clicked);
+        downVoteBtn.classList.add(btnClass);
+
+        if(vote) {
+          upVoteBtn.classList.remove(btnClass);
+          upVoteBtn.classList.add(clicked);
+
+          var t = Number(upVoteCount) + 1;
+          upVoteBtn.value = '▲ ' + t;
+        }
       }
-    }
-    if(downVote && !upVote) {
-      var t = Number(downVoteCount) - 1;
-      downVoteBtn.value = '🡇 ' + t;
+      if(!downVote && upVote) {
+        var t = Number(upVoteCount) - 1;
+        upVoteBtn.value = '▲ ' + t;
 
-      downVoteBtn.classList.remove(clicked);
-      downVoteBtn.classList.add(btnClass);
-
-      if(vote) {
-        upVoteBtn.classList.remove(btnClass);
-        upVoteBtn.classList.add(clicked);
-
-        var t = Number(upVoteCount) + 1;
-        upVoteBtn.value = '🡅 ' + t;
-      }
-    }
-    if(!downVote && upVote) {
-      var t = Number(upVoteCount) - 1;
-      upVoteBtn.value = '🡅 ' + t;
-
-      upVoteBtn.classList.remove(clicked);
-      upVoteBtn.classList.add(btnClass);
-
-      if(!vote) {
         upVoteBtn.classList.remove(clicked);
         upVoteBtn.classList.add(btnClass);
-        downVoteBtn.classList.remove(btnClass);
-        downVoteBtn.classList.add(clicked);
 
-        var t = Number(downVoteCount) + 1;
-        downVoteBtn.value = '🡇 ' + t;
+        if(!vote) {
+          upVoteBtn.classList.remove(clicked);
+          upVoteBtn.classList.add(btnClass);
+          downVoteBtn.classList.remove(btnClass);
+          downVoteBtn.classList.add(clicked);
+
+          var t = Number(downVoteCount) + 1;
+          downVoteBtn.value = '▼ ' + t;
+        }
       }
-    }
 
-    var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+      var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
 
-    $.ajax({
-      dataType: "json",
-      autocomplete: {
-        enabled: true,
-        rightKey: true,
-      },
-      contentType: "application/json; charset=utf-8",
-      method: "POST",
-      url: contextPath + "/post/vote",
-      data: JSON.stringify({id: id, vote: vote})
-    })
-  };
-</script>
+      $.ajax({
+        dataType: "json",
+        autocomplete: {
+          enabled: true,
+          rightKey: true,
+        },
+        contentType: "application/json; charset=utf-8",
+        method: "POST",
+        url: contextPath + "/post/vote",
+        data: JSON.stringify({id: id, vote: vote})
+      })
+    };
+  </script>
 <!----------------------------------------------------------------------------------------->
 
 </html>

@@ -87,6 +87,8 @@
 <script th:src="@{/node_modules/@yaireo/tagify/dist/tagify.min.js}"></script>
 <script id="whitelistAndValidation">
 
+  var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+
   // getting whitelist
   var tagInput = document.querySelector('input[name="tags"]');
   var tagifyForTag = new Tagify(tagInput, {
@@ -126,7 +128,7 @@
       },
       contentType: "application/json; charset=utf-8",
       method: "POST",
-      url: "/upload/section-tag" + url,
+      url: contextPath + "/upload/section-tag" + url,
       data: JSON.stringify({'sectionName': sectionName})
     }).done(function (data, status) {
       console.log("${data} and status is ${status}");

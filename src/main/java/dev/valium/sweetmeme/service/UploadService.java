@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static dev.valium.sweetmeme.config.FileConfig.ABSOLUTE_FILE_URL;
+import static dev.valium.sweetmeme.config.FileConfig.FILE_URL;
 
 @Slf4j
 @Service

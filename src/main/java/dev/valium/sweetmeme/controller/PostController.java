@@ -13,10 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,18 +24,19 @@ import static dev.valium.sweetmeme.config.FileConfig.*;
 @RequiredArgsConstructor
 public class PostController {
 
-    @GetMapping(ABSOLUTE_FILE_URL + "{file}")
+    @GetMapping(FILE_URL + "{file}")
     public ResponseEntity<byte[]> getFile(@PathVariable String file) throws IOException {
 
-        InputStream imageStream = new FileInputStream(ABSOLUTE_UPLOAD_PATH + "/" + file);
+        InputStream imageStream = new FileInputStream(ABSOLUTE_UPLOAD_PATH + file);
         byte[] imageByteArray = IOUtils.toByteArray(imageStream);
         imageStream.close();
 
         return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
     }
-    @GetMapping(ABSOLUTE_DOWNLOAD_URL + "{file}")
+
+    @GetMapping(DOWNLOAD_URL + "{file}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String file) {
-        String path = ABSOLUTE_UPLOAD_PATH + "/" + file;
+        String path = ABSOLUTE_UPLOAD_PATH + file;
 
         try {
             Path filePath = Paths.get(path);
@@ -53,5 +51,15 @@ public class PostController {
         } catch(Exception e) {
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);
         }
+    }
+
+    @GetMapping(SECTION_URL + "{sectionName}")
+    public ResponseEntity<byte[]> getSectionPic(@PathVariable String sectionName) throws IOException {
+
+        InputStream imageStream = new FileInputStream(ABSOLUTE_SECTION_PATH + sectionName.toLowerCase() + ".jpg");
+        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
+        imageStream.close();
+
+        return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
     }
 }

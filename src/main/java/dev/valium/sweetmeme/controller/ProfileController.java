@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.controller;
 
 import dev.valium.sweetmeme.config.FileConfig;
+import dev.valium.sweetmeme.controller.dto.PostViewDto;
 import dev.valium.sweetmeme.domain.CurrentMember;
 import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.domain.Post;
@@ -28,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static dev.valium.sweetmeme.config.FileConfig.*;
 
@@ -40,29 +42,25 @@ public class ProfileController {
     private final MemberService memberService;
     private final PostRepository postRepository;
     private final VoteService voteService;
-    private final VoteRepository voteRepository;
 
     @GetMapping("/home")
     public String home(@CurrentMember Member mem, @PathVariable String path, Model model) {
-        Member member = setBaseProfile(path, model, mem);
+        Member member = setBaseProfile(path, model, mem, "home");
 
         // TODO comment, upvote 구현필요
         List<Post> posts = new ArrayList<>();
         model.addAttribute("posts", posts);
-
-        model.addAttribute("profileMenu", "home");
 
         return "user/profile";
     }
 
     @GetMapping(value = "/posts", produces = MediaType.ALL_VALUE)
     public String posts(@CurrentMember Member mem, @PathVariable String path, Model model)  {
-        Member member = setBaseProfile(path, model, mem);
+        Member member = setBaseProfile(path, model, mem, "posts");
 
         List<Post> posts = postRepository.findAllByOriginalPosterOrderByCreatedDateDesc(member);
-        model.addAttribute("posts", posts);
 
-        model.addAttribute("profileMenu", "posts");
+        model.addAttribute("posts", posts);
 
         return "user/profile";
     }
@@ -70,32 +68,28 @@ public class ProfileController {
 
     @GetMapping("/comments")
     public String comments(@CurrentMember Member mem, @PathVariable String path, Model model) {
-        Member member = setBaseProfile(path, model, mem);
+        Member member = setBaseProfile(path, model, mem, "comments");
 
         List<Post> posts = new ArrayList<>();
         model.addAttribute("posts", posts);
-
-        model.addAttribute("profileMenu", "comments");
 
         return "user/profile";
     }
 
     @GetMapping("/upvotes")
     public String upvotes(@CurrentMember Member mem, @PathVariable String path, Model model) {
-        Member member = setBaseProfile(path, model, mem);
+        Member member = setBaseProfile(path, model, mem, "upvotes");
 
         List<Post> posts = voteService.findUpVotedPosts(member);
 
         posts.forEach(System.out::println);
         model.addAttribute("posts", posts);
 
-        model.addAttribute("profileMenu", "upvotes");
-
         return "user/profile";
     }
 
 
-    private Member setBaseProfile(String path, Model model, Member member) {
+    private Member setBaseProfile(String path, Model model, Member member, String profileMenu) {
         Member foundMember = memberService.findMemberAndInfo(path);
 
         model.addAttribute("spendDate", foundMember.getSpendDate());
@@ -109,8 +103,10 @@ public class ProfileController {
             model.addAttribute("downVotedIds", downVoteIds);
         }
 
-        model.addAttribute("ABSOLUTE_FILE_URL", ABSOLUTE_FILE_URL);
-        model.addAttribute("ABSOLUTE_DOWNLOAD_URL", ABSOLUTE_DOWNLOAD_URL);
+        model.addAttribute("FILE_URL", FILE_URL);
+        model.addAttribute("DOWNLOAD_URL", DOWNLOAD_URL);
+
+        model.addAttribute("profileMenu", profileMenu);
 
         return foundMember;
     }

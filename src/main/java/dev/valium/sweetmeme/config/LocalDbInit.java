@@ -10,13 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -74,8 +77,8 @@ public class LocalDbInit {
                 Section section = Section.createSection(
                         sectionType
                         , Info.createInfo(
-                                null,
-                                sectionType.name(),
+                                sectionType.name().toLowerCase(),
+                                sectionType.name().toUpperCase(),
                                 messageSource.getMessage("section." + sectionType.name().toLowerCase(Locale.US) + ".description"
                                                          , new Object[0]
                                                          , Locale.US)

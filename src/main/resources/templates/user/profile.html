@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head th:replace="fragments.html :: head"></head>
 
 <body class="bg-light">
@@ -8,67 +8,29 @@
 <div th:replace="fragments.html :: off-canvas(currentMenu='profile')"></div>
 <div class="container">
   <div class="row mt-4 justify-content-center">
-    <div class="col-3 col-md-3" id="side-bar-col" style="padding: 0px;">
-      <div th:replace="fragments.html :: side-bar(currentMenu='profile')"></div>
-    </div>
-    <div class="col col-md-9" id="content-col" >
-      <div th:replace="fragments.html::profileInfo"></div>
-      <ul th:replace="fragments.html::profileTab (${profileMenu})"></ul>
+    <div>
+      <div class="col-3 col-md-3" id="side-bar-col" style="padding: 0px;">
+        <div th:replace="fragments.html :: side-bar(currentMenu='profile')"></div>
+      </div>
+      <div class="col col-md-9" id="content-col" >
+        <div th:replace="fragments.html::profileInfo"></div>
+        <ul th:replace="fragments.html::profileTab (${profileMenu})"></ul>
 
-      <section>
-        <article th:each="post : ${posts}" class="mx-1">
-          <header>
-            <div class="row">
-              <div class="col-10 mt-2">
-                <span>[icon] </span>
-                <small th:text="${post.belongedSectionType}"></small><small> · </small>
-                <small th:text="${post.createdDate}"></small><small> · uploaded</small>
-              </div>
-              <div class="col-2 text-end">
-                <a class="nav-link dropdown-toggle" href="#" id="dropdown07" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  [...]
-                </a>
-                <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="dropdown07">
-                  <li><a class="dropdown-item" th:href="@{${ABSOLUTE_DOWNLOAD_URL} + ${post.postImageUrl}}">download</a></li>
-                  <li><a class="dropdown-item">delete</a></li>
-                </ul>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col fw-bold fs-3" style="word-wrap: break-word;" th:text="${post.title}">
-              </div>
-            </div>
-          </header>
-          <picture>
-            <div class="row justify-content-center rounded" style="background-color: #11111110; margin: 3px">
-              <div class="col-auto">
-                <video preload="metadata" muted autoplay th:if="${post.getContentType()} == 'mp4'" th:src="@{${ABSOLUTE_FILE_URL} + ${post.postImageUrl}}"
-                       style="min-width: 200px; width: 100%; max-width: 400px; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
-                <img th:if="${post.getContentType()} != 'mp4'"th:src="@{${ABSOLUTE_FILE_URL} + ${post.postImageUrl}}" style="min-width: 200px; width: 100%; max-width: 400px; height: auto; ">
-              </div>
-            </div>
-          </picture>
-          <div class="row justify-content-between">
-            <div th:id="${post.id}" class="col-6 mt-2">
-              <input type="button" id="upVoteBtn" class="btn" th:classappend="${upVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
-                     th:onclick="|vote(${post.id}, true)|" th:value="'&#129093; ' + ${post.getVote().upVote}" />
-              <input type="button" id="downVoteBtn" class="btn" th:classappend="${downVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
-                     th:onclick="|vote(${post.id}, false)|" th:value="'&#129095; ' + ${post.getVote().downVote}" />
-            </div>
-            <div class="col-6 mt-2 text-end">
-              <a>[공유]</a>
-            </div>
-          </div>
-          <hr/>
-        </article>
-      </section>
-
+        <section th:replace="fragments.html :: postSection"></section>
+      </div>
     </div>
   </div>
   <script th:src="@{/node_modules/jdenticon/dist/jdenticon.min.js}"></script>
   <script th:replace="fragments.html :: ajax-csrf-header"></script>
   <script th:replace="fragments.html :: videoAutoPlay"></script>
   <script th:replace="fragments.html :: voteAjax"></script>
+  <script type="text/javascript">
+    var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+
+    var login = function () {
+      location.href = contextPath + '/login';
+    };
+  </script>
 </div>
 </body>
 </html>
