@@ -6,12 +6,24 @@
 <div id="contentPadding" style="height: 70px"></div>
 <div th:replace="fragments.html :: nav-bar"></div>
 <div th:replace="fragments.html :: off-canvas(currentMenu=${currentMenu})"></div>
-<div class="container">
-    <div id="gridContent" class="row justify-content-center row-col-md-auto d-none" >
+<div id="test" class="container">
+    <div id="gridContent" class="row justify-content-center row-col-md-auto d-none mt-4" >
         <div class="col-3 d-none" id="side-bar-col" style="padding: 0px;" >
             <div th:replace="fragments.html :: side-bar(currentMenu=${currentMenu})"></div>
         </div>
         <div class="col" id="content-col">
+            <div th:if="${sectionInfo != null}">
+                <div class="row">
+                    <div class="col-2">
+                        <img th:src="@{'/sections/' + ${sectionInfo.picImage}}" class="rounded" width="100%" style="min-width: 70px"/>
+                    </div>
+                    <div class="col ms-3">
+                        <h2 th:text="${sectionInfo.head}" style="display: inline" class="fw-bold "></h2>
+                        <br/>
+                        <p class="my-3" th:text="#{'section.' + ${sectionInfo.head.toLowerCase()} + '.description'}"></p>
+                    </div>
+                </div>
+            </div>
             <section th:replace="fragments.html :: postSection"></section>
         </div>
     </div>

@@ -68,8 +68,9 @@
       top: 80px;
       position: sticky;
       overflow: auto;
-      height: 500px;
+      /*height: 500px;*/
       max-width: 200px;
+      min-width: 178px;
       -webkit-overflow-scrolling: touch;
     }
     #side-bar::-webkit-scrollbar-track
@@ -153,18 +154,21 @@
       box-shadow: none;
     }
 
-    .bg-light {
-      background-color: blueviolet;
-    }
-
   </style>
 
   <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
   <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.bundle.js}"></script>
   <script id="gridLazyView">
     var gridLazyView = function () {
-      if(window.innerWidth > 572)
+      if(window.innerWidth > 572) {
+        window.removeEventListener("touchstart", startTouch,{ passive: false });
+        window.removeEventListener("touchmove", moveTouch,{ passive: false });
         document.getElementById('side-bar-col').classList.remove('d-none');
+      }
+      else {
+        window.addEventListener("touchstart", startTouch,{ passive: false });
+        window.addEventListener("touchmove", moveTouch,{ passive: false });
+      }
       document.getElementById('gridContent').classList.remove('d-none');
     }
   </script>
@@ -174,7 +178,8 @@
   <div class="container">
     <a class="navbar-brand" href="#" th:href="@{/}">SweetMeme</a>
 
-    <a class="navbar-toggler btn me-auto" data-bs-toggle="offcanvas"
+
+    <a id="offCanvasToggle" class="navbar-toggler btn me-auto d-none" data-bs-toggle="offcanvas"
        href="#offcanvas" role="button" aria-controls="offcanvas">
       Section
     </a>
@@ -214,7 +219,7 @@
         </li>
 
         <li class="nav-item" sec:authorize="isAuthenticated()">
-          <a class="nav-link" href="#" th:href="@{/upload}">
+          <a class="nav-link" href="#" th:href="@{/upload/post}">
             + upload
           </a>
         </li>
@@ -304,11 +309,17 @@
       if(window.innerWidth <= 572) {
         if(!document.getElementById('side-bar-col').classList.contains('d-none')) {
           document.getElementById('side-bar-col').classList.add('d-none');
+
+          window.addEventListener("touchstart", startTouch,{ passive: false });
+          window.addEventListener("touchmove", moveTouch,{ passive: false });
         }
       }
       else {
         if(document.getElementById('side-bar-col').classList.contains('d-none')) {
           document.getElementById('side-bar-col').classList.remove('d-none');
+
+          window.removeEventListener("touchstart", startTouch,{ passive: false });
+          window.removeEventListener("touchmove", moveTouch,{ passive: false });
         }
       }
       if(window.innerWidth <= 765) {
@@ -323,7 +334,6 @@
           document.getElementById('side-bar-col').classList.add('col-3');
         }
       }
-
     }
     window.onresize = resizer;
   </script>
@@ -339,9 +349,59 @@
     <div class="offcanvas-body bg-light text-white">
         <ul th:replace="fragments.html :: content(${currentMenu})"></ul>
     </div>
+
+    <script id="swipeEvent">
+      var swipeEventInit = function () {
+        if(window.innerWidth <= 572) {
+          window.addEventListener("touchstart", startTouch,{ passive: false });
+          window.addEventListener("touchmove", moveTouch,{ passive: false });
+        }
+        else {
+          window.removeEventListener("touchstart", startTouch,{ passive: false });
+          window.removeEventListener("touchmove", moveTouch,{ passive: false });
+        }
+      }
+
+
+      // Swipe Up / Down / Left / Right
+      var initialX = null;
+      var initialY = null;
+
+      function startTouch(e) {
+        initialX = e.touches[0].clientX;
+        initialY = e.touches[0].clientY;
+      }
+
+      function moveTouch(e) {
+        if (initialX === null) {
+          return;
+        }
+
+        if (initialY === null) {
+          return;
+        }
+
+        var currentX = e.touches[0].clientX;
+        var currentY = e.touches[0].clientY;
+
+        var diffX = initialX - currentX;
+        var diffY = initialY - currentY;
+
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+          if (diffX < -15) {
+            document.getElementById('offCanvasToggle').click();
+          }
+        }
+
+        initialX = null;
+        initialY = null;
+
+        e.preventDefault();
+      }
+    </script>
   </div>
 </div>
-  <ul th:fragment="content(currentMenu)" class="nav nav-pills flex-column mb-auto" >
+  <ul th:fragment="content(currentMenu)" class="nav nav-pills flex-column mb-auto">
   <!-- for navigation bar and off-canvas content-->
   <div class="d-flex align-items-centertext-decoration-none">
     <svg width="15" height="32"></svg>
@@ -376,71 +436,19 @@
   </div>
 
   <hr style="color: black"/>
-  <li class="nav-item">
-    <a href="#" class="nav-link" th:style="${currentMenu == 'funny'}? 'background-color: #11111110;'">
-      F Funny
-    </a>
-  </li>
 
-  <li class="nav-item">
-    <a href="#" class="nav-link" th:style="${currentMenu == 'animals'}? 'background-color: #11111110;'">
-      Animals
-    </a>
-  </li>
 
-  <li class="nav-item">
-    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
-      Gif
-    </a>
-  </li>
-
-  <li class="nav-item">
-    <a href="#" class="nav-link" th:style="${currentMenu == 'meme'}? 'background-color: #11111110;'">
-      Meme
-    </a>
-  </li>
-
-  <li class="nav-item">
-    <a href="#" class="nav-link"th:style="${currentMenu == 'wholesome'}? 'background-color: #11111110;'">
-      Wholesome
-    </a>
-  </li>
-  <li class="nav-item">
-    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
-      Gif
-    </a>
-  </li>
-  <li class="nav-item">
-    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
-      Gif
-    </a>
-  </li>
-  <li class="nav-item">
-    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
-      Gif
-    </a>
-  </li>
-
-  <li class="nav-item">
-    <a href="#" class="nav-link"th:style="${currentMenu == 'wallpaper'}? 'background-color: #11111110;'">
-      Wallpaper
-    </a>
-  </li>
-  <li class="nav-item">
-    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
-      Gif
-    </a>
-  </li>
-  <li class="nav-item">
-    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
-      Gif
-    </a>
-  </li>
-  <li class="nav-item">
-    <a href="#" class="nav-link" th:style="${currentMenu == 'gif'}? 'background-color: #11111110;'">
-      Gif
-    </a>
-  </li>
+  <div th:each="sectionType : ${sidebarSectionTypes}">
+    <li class="nav-item">
+      <a th:href="@{'/'+${sectionType}}" class="nav-link"
+         th:style="(${sectionType} == currentMenu) ? 'background-color: #11111110;': ''">
+        <div>
+          <img th:src="@{'/sections/' + ${sectionType}}" width="20px;" height="20px;" class="rounded"/>&nbsp;
+          <span th:text="${sectionType}"style="color: black; padding: 0px; margin: 0px;"></span>
+        </div>
+      </a>
+    </li>
+  </div>
 </ul>
 
 <div th:fragment="profileInfo">
@@ -539,11 +547,12 @@
 </script>
 
 <section th:fragment="postSection">
+
   <article th:each="post : ${posts}" class="mx-1">
     <header>
       <div class="row">
         <div class="col-10 mt-2">
-          <img th:src="@{'/sections/' + ${post.belongedSectionType}}" width="20px" height="20px" />
+          <img th:src="@{'/sections/' + ${post.belongedSectionType}}" class="rounded" width="20px" height="20px" />
           <small th:text="${post.belongedSectionType}"></small><small> · </small>
           <small th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></small>
         </div>
@@ -561,6 +570,7 @@
           </div>
         </div>
       </div>
+
       <div class="row">
         <div class="col fw-bold fs-3" style="word-wrap: break-word;" th:text="${post.title}">
         </div>
@@ -571,7 +581,7 @@
         <div class="col-auto">
           <video preload="metadata" muted autoplay loop th:if="${post.getContentType()} == 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}"
                  style="min-width: 200px; width: 100%; max-width: 400px; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
-          <img th:if="${post.getContentType()} != 'mp4'"th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="min-width: 200px; width: 100%; max-width: 400px; height: auto; ">
+          <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="min-width: 200px; width: 100%; max-width: 400px; height: auto; ">
         </div>
       </div>
     </picture>

@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: head"></head>
-<body class="bg-light">
+<body onload="gridLazyView()" class="bg-light">
 
 <div id="contentPadding" style="height: 70px"></div>
 <div th:replace="fragments.html :: nav-bar"></div>
 <div th:replace="fragments.html :: off-canvas(${settingsMenu})"></div>
 <div class="container">
-  <div class="row mt-4 justify-content-center">
-    <div class="col-3 col-md-3" id="side-bar-col" style="padding: 0px;">
+  <div id="gridContent" class="row justify-content-center row-col-md-auto d-none mt-4" >
+    <div class="col-3 d-none" id="side-bar-col" style="padding: 0px;" >
       <div th:replace="fragments.html :: side-bar(${settingsMenu})"></div>
     </div>
-    <div class="col col-md-9" id="content-col" >
+    <div class="col" id="content-col">
       <div th:replace="fragments.html::profileInfo"></div>
       <ul th:replace="fragments.html::settingsTab (${settingsMenu})"></ul>
 
@@ -85,5 +85,12 @@
 </div>
 <script th:src="@{/node_modules/jdenticon/dist/jdenticon.min.js}"></script>
 <script th:replace="fragments.html :: form-validation"></script>
+<script type="text/javascript">
+  var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+
+  var login = function () {
+    location.href = contextPath + '/login';
+  };
+</script>
 </body>
 </html>

@@ -5,6 +5,7 @@ import dev.valium.sweetmeme.controller.dto.PostViewDto;
 import dev.valium.sweetmeme.domain.CurrentMember;
 import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.domain.Post;
+import dev.valium.sweetmeme.domain.enums.SectionType;
 import dev.valium.sweetmeme.repository.PostRepository;
 import dev.valium.sweetmeme.repository.VoteRepository;
 import dev.valium.sweetmeme.service.MemberService;
@@ -28,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,7 +84,6 @@ public class ProfileController {
 
         List<Post> posts = voteService.findUpVotedPosts(member);
 
-        posts.forEach(System.out::println);
         model.addAttribute("posts", posts);
 
         return "user/profile";
@@ -102,6 +103,9 @@ public class ProfileController {
             List<Long> downVoteIds = voteService.findDownVotedPostsId(member);
             model.addAttribute("downVotedIds", downVoteIds);
         }
+
+        List<String> sectionTypes = Arrays.stream(SectionType.values()).map(s->s.name().toLowerCase()).collect(Collectors.toList());
+        model.addAttribute("sidebarSectionTypes", sectionTypes);
 
         model.addAttribute("FILE_URL", FILE_URL);
         model.addAttribute("DOWNLOAD_URL", DOWNLOAD_URL);

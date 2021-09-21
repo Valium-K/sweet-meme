@@ -4,6 +4,7 @@ import dev.valium.sweetmeme.controller.dto.SignUpForm;
 import dev.valium.sweetmeme.controller.validator.SignUpFormValidator;
 import dev.valium.sweetmeme.domain.Info;
 import dev.valium.sweetmeme.domain.Member;
+import dev.valium.sweetmeme.domain.enums.SectionType;
 import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.service.MemberService;
 import dev.valium.sweetmeme.service.SignUpService;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -35,6 +39,10 @@ public class SignUpController {
     @GetMapping("/sign-up")
     public String signUpForm(Model model) {
         model.addAttribute(new SignUpForm());
+
+        List<String> sectionTypes = Arrays.stream(SectionType.values()).map(s->s.name().toLowerCase()).collect(Collectors.toList());
+        model.addAttribute("sidebarSectionTypes", sectionTypes);
+
         return "sign-up";
     }
 

@@ -5,6 +5,7 @@ import dev.valium.sweetmeme.controller.dto.SettingsAccountForm;
 import dev.valium.sweetmeme.controller.dto.SettingsPasswordForm;
 import dev.valium.sweetmeme.controller.dto.SettingsProfileForm;
 import dev.valium.sweetmeme.controller.validator.SettingsProfileValidator;
+import dev.valium.sweetmeme.domain.enums.SectionType;
 import dev.valium.sweetmeme.processor.Code2State;
 import dev.valium.sweetmeme.domain.CurrentMember;
 import dev.valium.sweetmeme.domain.Member;
@@ -24,7 +25,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -155,6 +159,9 @@ public class SettingsController {
         model.addAttribute("member", member);
         model.addAttribute("info", member.getMemberInfo());
         model.addAttribute("spendDate", member.getSpendDate());
+
+        List<String> sectionTypes = Arrays.stream(SectionType.values()).map(s->s.name().toLowerCase()).collect(Collectors.toList());
+        model.addAttribute("sidebarSectionTypes", sectionTypes);
     }
 
 }

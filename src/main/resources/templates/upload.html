@@ -8,6 +8,7 @@
   </style>
 </head>
 <body class="bg-light">
+<div th:replace="fragments.html :: off-canvas('upload')"></div>
 <div th:replace="fragments.html :: nav-bar"></div>
 <div class="container">
 
@@ -18,7 +19,7 @@
 
   <div class="row justify-content-center">
 
-    <form class="needs-validation col-sm-6" action="#" th:object="${uploadForm}" th:action="@{/upload}" method="post" enctype="multipart/form-data" novalidate>
+    <form class="needs-validation col-sm-6" action="#" th:object="${uploadForm}" th:action="@{/upload/post}" method="post" enctype="multipart/form-data" novalidate>
 
       <div th:if="${param.error}" class="alert alert-danger" role="alert"
            th:text="#{login.error}" style="text-align: center">에러

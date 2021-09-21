@@ -40,7 +40,7 @@ public class UploadController {
         webDataBinder.addValidators(uploadFormValidator);
     }
 
-    @GetMapping("/upload")
+    @GetMapping("/upload/post")
     public String uploadForm(@CurrentMember Member member, Model model) throws Exception {
 
         List<String> tags = tagRepository.findAll().stream()
@@ -52,24 +52,18 @@ public class UploadController {
         model.addAttribute(new UploadForm());
         model.addAttribute("tagWhitelist", objectMapper.writeValueAsString(tags));
         model.addAttribute("sectionWhitelist", objectMapper.writeValueAsString(sectionTypes));
+        
+        model.addAttribute("sidebarSectionTypes", sectionTypes.stream().map(Enum::name).collect(Collectors.toList()));
 
         return "upload";
     }
 
 
-    @PostMapping("/upload")
+    @PostMapping("/upload/post")
     public String upload(Model model, @CurrentMember Member member, @Valid UploadForm form, BindingResult result) throws Exception {
 
 
         if (result.hasErrors()) {
-//            if(!result.getFieldErrors("file").isEmpty() ||
-//                    !result.getFieldErrors("sections").isEmpty()) {
-//                log.info("악의적 form data");
-//                // 악의적 form data는 그냥 더이상의 리소스를 사용 못 하게 처내고 싶었다.
-//                return "error/404";
-//            }
-
-
             model.addAttribute(member);
             return "upload";
         }

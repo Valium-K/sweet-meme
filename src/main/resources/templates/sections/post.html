@@ -1,20 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: head"></head>
 
 <body onload="gridLazyView()" class="bg-light">
 <div id="contentPadding" style="height: 70px"></div>
 <div th:replace="fragments.html :: nav-bar"></div>
-<div th:replace="fragments.html :: off-canvas(currentMenu=${profileMenu})"></div>
+<div th:replace="fragments.html :: off-canvas(currentMenu=${currentMenu})"></div>
 <div class="container">
-  <div id="gridContent" class="row justify-content-center row-col-md-auto d-none mt-4" >
+  <div id="gridContent" class="row justify-content-center row-col-md-auto d-none" >
     <div class="col-3 d-none" id="side-bar-col" style="padding: 0px;" >
-      <div th:replace="fragments.html :: side-bar(currentMenu=${profileMenu})"></div>
+      <div th:replace="fragments.html :: side-bar(currentMenu=${currentMenu})"></div>
     </div>
-    <div class="col" id="content-col">
-      <div th:replace="fragments.html::profileInfo"></div>
-      <ul th:replace="fragments.html::profileTab (${profileMenu})"></ul>
-
+    <div class="col" id="content-col" style="background-color: blueviolet">
       <section th:replace="fragments.html :: postSection"></section>
     </div>
   </div>
@@ -30,5 +27,6 @@
     };
   </script>
 </div>
+
 </body>
 </html>

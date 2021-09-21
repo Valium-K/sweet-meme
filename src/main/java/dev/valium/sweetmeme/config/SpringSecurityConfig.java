@@ -28,8 +28,7 @@ import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 import java.io.IOException;
 
-import static dev.valium.sweetmeme.config.FileConfig.FILE_URL;
-import static dev.valium.sweetmeme.config.FileConfig.SECTION_URL;
+import static dev.valium.sweetmeme.config.FileConfig.*;
 
 @Configuration
 @EnableWebSecurity
@@ -43,8 +42,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 // TODO 임시 permitAll() 나중에 경로 설정하기
-                .mvcMatchers("/*", "/login", "/sign-up", "/user/**").permitAll()
-                .mvcMatchers(HttpMethod.GET, "/members/*", SECTION_URL+"*", FILE_URL+"*").permitAll()
+                .mvcMatchers("/*", "/user/**").permitAll()
+                .mvcMatchers(HttpMethod.GET, SECTION_URL+"*", FILE_URL+"*", DOWNLOAD_URL+"*",
+                                "/avatar/*").permitAll()
                 .anyRequest().authenticated();
 
         http.formLogin()
