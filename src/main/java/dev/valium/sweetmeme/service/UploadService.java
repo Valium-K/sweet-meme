@@ -1,6 +1,5 @@
 package dev.valium.sweetmeme.service;
 
-import com.zakgof.webp4j.Webp4j;
 import dev.valium.sweetmeme.config.FileConfig;
 import dev.valium.sweetmeme.domain.*;
 import dev.valium.sweetmeme.domain.enums.SectionType;
@@ -44,15 +43,15 @@ public class UploadService {
 
     public void uploadPost(Member member, String title, String jsonTags, String jsonSectionType, MultipartFile file) throws Exception {
 
-        // 파일생성
-        File newFile = FileProcessor.createNewFile(ABSOLUTE_UPLOAD_PATH, file, true);
+        // 파일전송
+        String fileName = FileProcessor.transferFile(ABSOLUTE_UPLOAD_PATH, file, true);
 
         // post - sectionType 설정
         SectionType sectionType = json2SectionTypeList(jsonSectionType).get(0);
         Post post = Post.createPost(title, sectionType);
 
         // post - 파일 url 설정
-        post.setPostImageUrl(newFile.getName());
+        post.setPostImageUrl(fileName);
 
         // post - section 설정
         Section section = sectionRepository.findBySectionType(sectionType);
@@ -68,7 +67,7 @@ public class UploadService {
         foundMember.getMyPosts().add(post);
 
         // file 전송
-        file.transferTo(newFile);
+        // file.transferTo(newFile);
     }
 
     private void postTagSettingsProcess(Post post, String jsonTags) throws Exception {

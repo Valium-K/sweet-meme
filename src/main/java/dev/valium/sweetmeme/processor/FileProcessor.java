@@ -1,44 +1,60 @@
 package dev.valium.sweetmeme.processor;
 
-import com.zakgof.webp4j.Webp4j;
+import com.luciad.imageio.webp.WebPWriteParam;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
 public class FileProcessor {
-    public static File createNewFile(String path, MultipartFile file, boolean encode) throws IOException {
+    public static String transferFile(String path, MultipartFile file, boolean encode) throws IOException {
         String newFileName = UUID.randomUUID().toString().replace("-", "");
         String fileType = FilenameUtils.getExtension(file.getOriginalFilename());
-        File newFile;
 
         if(encode && !"mp4".equals(fileType)) {
-            newFile = image2webp(file, 80f, path, newFileName);
-        } else {
-            newFile = new File(path, newFileName + "." + fileType);
-        }
+            image2webp(file,  path, newFileName);
 
-        if(!newFile.exists()){
-            newFile.mkdir();
+            return newFileName + ".webp";
         }
+        else {
+            File newFile = new File(path, newFileName + "." + fileType);
 
-        return newFile;
+            if(!newFile.exists()){
+                newFile.mkdir();
+            }
+            file.transferTo(newFile);
+
+            return newFile.getName();
+        }
     }
-    public static File image2webp(MultipartFile file, float quality, String path, String fileName) throws IOException {
-        BufferedImage read = ImageIO.read(file.getInputStream());
+    public static void image2webp(MultipartFile file, String path, String fileName) throws IOException {
 
-        byte[] bytes = Webp4j.encode(read, quality);
-
+        // BufferedImage read = ImageIO.read(file.getInputStream());
         File newFile = new File(path, fileName + ".webp");
-        FileOutputStream lFileOutputStream = new FileOutputStream(newFile);
-        lFileOutputStream.write(bytes);
-        lFileOutputStream.close();
 
-        return newFile;
+        // Obtain an image to encode from somewhere
+        BufferedImage image = ImageIO.read(file.getInputStream());
+
+        // Obtain a WebP ImageWriter instance
+        ImageWriter writer = ImageIO.getImageWritersByMIMEType("image/webp").next();
+
+        // Configure encoding parameters
+        WebPWriteParam writeParam = new WebPWriteParam(writer.getLocale());
+        writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        writeParam.setCompressionType(writeParam.getCompressionTypes()[WebPWriteParam.LOSSY_COMPRESSION]);
+
+        // Configure the output on the ImageWriter
+        writer.setOutput(new FileImageOutputStream(newFile));
+
+        // Encode
+        writer.write(null, new IIOImage(image, null, null), writeParam);
     }
 }

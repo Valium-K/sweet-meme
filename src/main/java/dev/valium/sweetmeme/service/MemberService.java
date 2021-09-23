@@ -1,6 +1,5 @@
 package dev.valium.sweetmeme.service;
 
-import com.zakgof.webp4j.Webp4j;
 import dev.valium.sweetmeme.config.FileConfig;
 import dev.valium.sweetmeme.controller.dto.MemberUser;
 import dev.valium.sweetmeme.controller.dto.SettingsAccountForm;
@@ -132,9 +131,9 @@ public class MemberService implements UserDetailsService {
         );
 
         if(!form.getFile().isEmpty()) {
-            File newFile = FileProcessor.createNewFile(FileConfig.ABSOLUTE_AVATAR_PATH, form.getFile(), true);
-            foundMember.getMemberInfo().setPicImage(newFile.getName());
-            form.getFile().transferTo(newFile);
+            String newFile = FileProcessor.transferFile(FileConfig.ABSOLUTE_AVATAR_PATH, form.getFile(), true);
+            foundMember.getMemberInfo().setPicImage(newFile);
+//             form.getFile().transferTo(newFile);
         }
 
         if("".equals(form.getDescription())) foundMember.getMemberInfo().setDescription(member.getNickname() + "'s description.");
