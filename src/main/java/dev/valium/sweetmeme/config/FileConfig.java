@@ -18,6 +18,10 @@ public class FileConfig {
     public static final String ABSOLUTE_SECTION_PATH = ABSOLUTE_PATH + "sections/";
     public static final String SECTION_URL = "/sections/";
 
+    // comment image files
+    public static final String ABSOLUTE_COMMENT_IMAGE_PATH = ABSOLUTE_PATH + "comment/";
+    public static final String COMMENT_IMAGE_URL = "/comment/";
+
 
 
 }

@@ -64,6 +64,7 @@ public class UploadController {
 
 
         if (result.hasErrors()) {
+            log.error("error");
             model.addAttribute(member);
             return "upload";
         }

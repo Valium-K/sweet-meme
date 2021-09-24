@@ -98,4 +98,10 @@ public class Post {
     public String getContentType() {
         return this.postImageUrl.split("\\.")[1];
     }
+    public void addCommentCount() {
+        this.commentCount++;
+    }
+    public void subCommentCount() {
+        this.commentCount--;
+    }
 }

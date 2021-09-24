@@ -6,7 +6,6 @@ import dev.valium.sweetmeme.domain.Member;
 import dev.valium.sweetmeme.domain.Post;
 import dev.valium.sweetmeme.domain.enums.SectionType;
 import dev.valium.sweetmeme.repository.InfoRepository;
-import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.repository.PostRepository;
 import dev.valium.sweetmeme.service.VoteService;
 import lombok.RequiredArgsConstructor;
@@ -14,21 +13,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static dev.valium.sweetmeme.config.FileConfig.*;
 
 @Controller
-@RequiredArgsConstructor
-public class HomeController {
+public class HomeController extends BaseController {
 
     private final PostRepository postRepository;
-    private final VoteService voteService;
     private final InfoRepository infoRepository;
+
+
+    public HomeController(VoteService voteService, PostRepository postRepository, InfoRepository infoRepository) {
+        super(voteService);
+        this.postRepository = postRepository;
+        this.infoRepository = infoRepository;
+    }
+
 
     @GetMapping
     public String home(@CurrentMember Member member, Model model) {
@@ -143,26 +142,5 @@ public class HomeController {
         model.addAttribute("posts", posts);
 
         return "home/home";
-    }
-
-    private void setBaseAttributes(Member member, Model model, String currentMenu) {
-        if(member == null) {
-            model.addAttribute("member", null);
-        } else {
-            model.addAttribute("member", member);
-
-            List<Long> upVoteIds = voteService.findUpVotedPostsId(member);
-            model.addAttribute("upVotedIds", upVoteIds);
-            List<Long> downVoteIds = voteService.findDownVotedPostsId(member);
-            model.addAttribute("downVotedIds", downVoteIds);
-        }
-
-        List<String> sectionTypes = Arrays.stream(SectionType.values()).map(s->s.name().toLowerCase()).collect(Collectors.toList());
-        model.addAttribute("sidebarSectionTypes", sectionTypes);
-
-        model.addAttribute("FILE_URL", FILE_URL);
-        model.addAttribute("DOWNLOAD_URL", DOWNLOAD_URL);
-
-        model.addAttribute("currentMenu", currentMenu);
     }
 }

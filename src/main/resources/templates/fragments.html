@@ -572,34 +572,48 @@
       </div>
 
       <div class="row">
-        <div class="col fw-bold fs-3" style="word-wrap: break-word;" th:text="${post.title}">
+        <a >
+          <span class="col fw-bold fs-3 m-1" style="word-wrap: break-word;" th:text="${post.title}"></span>
+        </a>
         </div>
-      </div>
     </header>
     <picture>
       <div class="row justify-content-center rounded" style="background-color: #11111110; margin: 3px">
         <div class="col-auto">
           <video preload="metadata" muted autoplay loop th:if="${post.getContentType()} == 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}"
                  style="min-width: 200px; width: 100%; max-width: 400px; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
-          <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="min-width: 200px; width: 100%; max-width: 400px; height: auto; ">
+          <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="min-width: 200px; width: 100%; max-width: 400px; height: auto;">
         </div>
       </div>
     </picture>
     <div class="row justify-content-between">
-      <div sec:authorize="isAuthenticated()" th:id="${post.id}" class="col-6 mt-2">
-        <input type="button" id="upVoteBtn" class="btn btn-sm"  th:classappend="${upVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
-               th:onclick="|vote(${post.id}, true)|" th:value="'▲ ' + ${post.getVote().upVote}" />
-        <input type="button" id="downVoteBtn" class="btn btn-sm" th:classappend="${downVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
-               th:onclick="|vote(${post.id}, false)|" th:value="'▼ ' + ${post.getVote().downVote}" />
+      <div class="col-8 mt-2">
+        <!-- div > input 구조는 하나로 묶여있어야함. -->
+        <div sec:authorize="isAuthenticated()" th:id="${post.id}" style="display: inline">
+          <input type="button" id="upVoteBtn" class="btn btn-sm ms-1"  th:classappend="${upVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
+                 th:onclick="|vote('post', ${post.id}, true)|" th:value="'▲ ' + ${post.getVote().upVote}" />
+          <input type="button" id="downVoteBtn" class="btn btn-sm ms-1" th:classappend="${downVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
+                 th:onclick="|vote('post', ${post.id}, false)|" th:value="'▼ ' + ${post.getVote().downVote}" />
+        </div>
+        <div sec:authorize="!isAuthenticated()" th:id="${post.id}" style="display: inline">
+          <input type="button" id="upVoteBtn" class="btn btn-outline-primary btn-sm ms-1"
+                 th:onclick="|window.location.href = @{/} + 'login'|" th:value="'▲ ' + ${post.getVote().upVote}" />
+          <input type="button" id="downVoteBtn" class="btn btn-outline-primary btn-sm ms-1"
+                 th:onclick="|window.location.href = @{/} + 'login'|" th:value="'▼ ' + ${post.getVote().downVote}" />
+        </div>
+        <div style="display: inline">
+          <button type="button" class="btn btn-outline-primary btn-sm ms-1" th:onclick="|window.open(@{/} + 'post/' + ${post.id}, '_blank').focus()|">
+            <i class="fa fa-commenting" aria-hidden="true"></i>&nbsp;<span th:text="${post.commentCount}"></span>
+          </button>
+        </div>
       </div>
-      <div sec:authorize="!isAuthenticated()" th:id="${post.id}" class="col-6 mt-2">
-        <input type="button" id="upVoteBtn" class="btn btn-outline-primary btn-sm"
-               onclick="login()" th:value="'▲ ' + ${post.getVote().upVote}" />
-        <input type="button" id="downVoteBtn" class="btn btn-outline-primary btn-sm"
-               onclick="login()" th:value="'▼ ' + ${post.getVote().downVote}" />
-      </div>
-      <div class="col-6 mt-2 text-end">
-        <a>[공유]</a>
+
+
+      <div class="col-2 mt-2 me-1 text-end">
+        <!-- TODO 공유기능 추가 -->
+        <button type="button" class="btn btn-outline-primary btn-sm">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </button>
       </div>
     </div>
     <hr/>
@@ -663,7 +677,7 @@
     window.addEventListener('resize', checkScroll, false);
   </script>
   <script th:fragment="voteAjax">
-    var vote = function voteRequest(id, vote) {
+    var vote = function (type, id, vote) {
       let btnClass=  "btn-outline-primary";
       let clicked = "btn-primary";
 
@@ -733,11 +747,12 @@
         },
         contentType: "application/json; charset=utf-8",
         method: "POST",
-        url: contextPath + "/post/vote",
+        url: contextPath + "/" + type +"/" + id + "/vote",
         data: JSON.stringify({id: id, vote: vote})
       })
     };
   </script>
+
 <!----------------------------------------------------------------------------------------->
 
 </html>

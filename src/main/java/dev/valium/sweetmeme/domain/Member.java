@@ -49,9 +49,13 @@ public class Member extends BaseEntityTime {
 
     @OneToMany(mappedBy = "upVotedMember", cascade = CascadeType.ALL)
     private List<Vote> upVotedPosts = new ArrayList<>();
-
     @OneToMany(mappedBy = "downVotedMember", cascade = CascadeType.ALL)
     private List<Vote> downVotedPosts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "upVotedMember", cascade = CascadeType.ALL)
+    private List<CommentVote> upVotedComments = new ArrayList<>();
+    @OneToMany(mappedBy = "downVotedMember", cascade = CascadeType.ALL)
+    private List<CommentVote> downVotedComments = new ArrayList<>();
 
     public static String createEmailCheckToken() {
         return UUID.randomUUID().toString();

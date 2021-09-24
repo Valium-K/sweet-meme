@@ -18,7 +18,7 @@ public class VoteController {
 
     private final VoteService voteService;
 
-    @PostMapping("/post/vote")
+    @PostMapping("/post/{id}/vote")
     @ResponseBody
     public ResponseEntity votePost(@CurrentMember Member member, @RequestBody Map<String, String> params) throws Exception {
         Long id = Long.valueOf(params.get("id"));

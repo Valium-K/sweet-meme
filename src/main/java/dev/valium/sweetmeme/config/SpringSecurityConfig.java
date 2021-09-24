@@ -15,12 +15,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,19 +39,20 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MemberService memberService;
     private final DataSource dataSource;
-
+    private final ServletContext context;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 // TODO 임시 permitAll() 나중에 경로 설정하기
-                .mvcMatchers("/*", "/user/**").permitAll()
+                .mvcMatchers("/*", "/user/**", "/post/*").permitAll()
                 .mvcMatchers(HttpMethod.GET, SECTION_URL+"*", FILE_URL+"*", DOWNLOAD_URL+"*",
-                                "/avatar/*").permitAll()
+                        COMMENT_IMAGE_URL+"*", "/avatar/*").permitAll()
                 .anyRequest().authenticated();
 
         http.formLogin()
                 .usernameParameter("username")
                 .passwordParameter("password")
+                .successHandler(new LoginSuccessHandler(context.getContextPath()))
                 .loginPage("/login")
                 .permitAll();
 
@@ -77,5 +80,27 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         jdbcTokenRepository.setDataSource(dataSource);
 
         return jdbcTokenRepository;
+    }
+
+    public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+        public LoginSuccessHandler(String defaultTargetUrl) {
+            setDefaultTargetUrl(defaultTargetUrl);
+        }
+
+        @Override
+        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
+            HttpSession session = request.getSession();
+            if (session != null) {
+                String redirectUrl = (String) session.getAttribute("prevPage");
+                if (redirectUrl != null) {
+                    session.removeAttribute("prevPage");
+                    getRedirectStrategy().sendRedirect(request, response, redirectUrl);
+                } else {
+                    super.onAuthenticationSuccess(request, response, authentication);
+                }
+            } else {
+                super.onAuthenticationSuccess(request, response, authentication);
+            }
+        }
     }
 }

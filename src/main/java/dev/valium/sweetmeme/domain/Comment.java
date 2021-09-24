@@ -1,5 +1,6 @@
 package dev.valium.sweetmeme.domain;
 
+import dev.valium.sweetmeme.controller.dto.CommentForm;
 import dev.valium.sweetmeme.domain.embeddable.Vote;
 import lombok.*;
 
@@ -18,8 +19,14 @@ public class Comment extends BaseEntityTime {
     @Column(name = "comment_id")
     private Long id;
 
-    private String commentedMember;
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "info_id")
+    private Info commenterInfo;
+
+//    @Column(nullable = false)
+//    private String commentedMember;
     private Vote vote;
+//    private String picImage;
     private String descriptionImg;
     @Column(nullable = false)
     private String content;
@@ -41,4 +48,13 @@ public class Comment extends BaseEntityTime {
 
     // 쿼리 최적화를 위해 코맨트 수를 병행관리
     private int replyCount;
+
+    public static Comment create(Info info) {
+        return Comment.builder()
+                .commenterInfo(info)
+                .vote(new Vote())
+                .children(new ArrayList<>())
+                .build();
+    }
+
 }
