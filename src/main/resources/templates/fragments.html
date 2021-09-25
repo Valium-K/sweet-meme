@@ -14,6 +14,13 @@
   <link rel="stylesheet" th:href="@{/node_modules/font-awesome/css/font-awesome.css}" />
 
   <style id="commonStyle">
+    .commentVoteBtn {
+      padding: 0px;
+      margin: 0px;
+      width: 40px;
+      height: 20px;
+    }
+
     body::-webkit-scrollbar-track
     {
       -webkit-box-shadow: inset 0 0 3px rgba(255, 255, 255, 0);
@@ -149,6 +156,14 @@
   }
   </style>
   <style id="bs5CustomStyle">
+
+    .btn-group-xs > .btn, .btn-xs {
+      padding: 1px 5px;
+      font-size: 12px;
+      line-height: 1.5;
+      border-radius: 3px;
+    }
+
     .btn:focus, .form-check-input:focus,  .navbar-toggler:focus {
       outline: none;
       box-shadow: none;
@@ -170,6 +185,8 @@
         window.addEventListener("touchmove", moveTouch,{ passive: false });
       }
       document.getElementById('gridContent').classList.remove('d-none');
+
+      resizer();
     }
   </script>
 
@@ -275,28 +292,6 @@
       }
     }
   </script>
-  <script id="navbarAutoHide" type="application/javascript">
-    var prevScrollpos = window.pageYOffset;
-
-    window.onscroll = function() {
-      var currentScrollPos = window.pageYOffset;
-      var navbar = document.getElementById("nav-bar");
-      var innerNavbar = document.getElementById("navbar");
-
-      if (window.innerWidth <= 572) {
-        if (prevScrollpos > currentScrollPos) {
-          navbar.style.top = "0px";
-        } else {
-          navbar.style.top = "-60px";
-          innerNavbar.classList.remove("show");
-        }
-        prevScrollpos = currentScrollPos;
-      }
-      else {
-        navbar.style.top = "0px";
-      }
-    }
-  </script>
 </nav>
 
 <div th:fragment="side-bar(currentMenu)" id="side-bar" class="nav d-flex sticky-top flex-column flex-shrink-0 p-3 bg-light">
@@ -387,6 +382,22 @@
         var diffX = initialX - currentX;
         var diffY = initialY - currentY;
 
+
+        if (Math.abs(diffX) < Math.abs(diffY)) {
+          if(window.innerWidth <= 572) {
+            var currentScrollPos = window.pageYOffset;
+            var navbar = document.getElementById("nav-bar");
+            var innerNavbar = document.getElementById("navbar");
+
+            if (diffY < -2) {
+              navbar.style.top = "0px";
+            }
+            else {
+              navbar.style.top = "-60px";
+              innerNavbar.classList.remove("show");
+            }
+          }
+        }
         if (Math.abs(diffX) > Math.abs(diffY)) {
           if (diffX < -15) {
             document.getElementById('offCanvasToggle').click();
@@ -572,7 +583,7 @@
       </div>
 
       <div class="row">
-        <a >
+        <a th:onclick="|window.open(@{/} + 'post/' + ${post.id}, '_blank').focus()|" style="cursor: pointer;">
           <span class="col fw-bold fs-3 m-1" style="word-wrap: break-word;" th:text="${post.title}"></span>
         </a>
         </div>

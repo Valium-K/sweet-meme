@@ -114,6 +114,11 @@ public class PostController extends BaseController {
     public String postComment(@PathVariable Long id, Model model, @CurrentMember Member member,
                               @Valid CommentForm form, BindingResult result) throws IOException {
 
+        if(form.getFile().isEmpty() && form.getContent().isEmpty()) {
+//            model.addAttribute(member);
+//            result.rejectValue("content", "comment.blankContentOrFile", new Object[]{},"코멘트나 파일을 작성");
+            return "redirect:/post/" + id;
+        }
         commentService.saveComment(id, form, member);
 
         return "redirect:/post/" + id;

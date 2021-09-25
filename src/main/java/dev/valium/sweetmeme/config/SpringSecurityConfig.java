@@ -1,8 +1,5 @@
 package dev.valium.sweetmeme.config;
 
-import dev.valium.sweetmeme.controller.dto.MemberUser;
-import dev.valium.sweetmeme.domain.Member;
-import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -14,13 +11,9 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import org.springframework.web.multipart.MultipartException;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.MultipartResolver;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -40,6 +33,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final MemberService memberService;
     private final DataSource dataSource;
     private final ServletContext context;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()

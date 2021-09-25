@@ -123,7 +123,7 @@ public class CommentService {
             foundMember.getCommentedPosts().add(post);
         }
 
-        if(form.getFile() != null) {
+        if(!form.getFile().isEmpty()) {
             String fileName = FileProcessor.transferFile(FileConfig.ABSOLUTE_COMMENT_IMAGE_PATH, form.getFile(), true);
             comment.setDescriptionImg(fileName);
         }
