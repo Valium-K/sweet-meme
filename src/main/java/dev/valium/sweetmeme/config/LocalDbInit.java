@@ -1,10 +1,12 @@
 package dev.valium.sweetmeme.config;
 
-import dev.valium.sweetmeme.domain.Info;
-import dev.valium.sweetmeme.domain.Member;
-import dev.valium.sweetmeme.domain.Section;
+import dev.valium.sweetmeme.controller.dto.CommentForm;
+import dev.valium.sweetmeme.domain.*;
 import dev.valium.sweetmeme.domain.enums.SectionType;
+import dev.valium.sweetmeme.repository.CommentRepository;
 import dev.valium.sweetmeme.repository.MemberRepository;
+import dev.valium.sweetmeme.repository.PostRepository;
+import dev.valium.sweetmeme.service.CommentService;
 import dev.valium.sweetmeme.service.MemberService;
 import dev.valium.sweetmeme.service.UploadService;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +61,9 @@ public class LocalDbInit {
         private final MessageSource messageSource;
         private final UploadService uploadService;
         private final MemberRepository memberRepository;
+        private final CommentService commentService;
+        private final PostRepository postRepository;
+        private final CommentRepository commentRepository;
 
         private final String NICKNAME = "testtest";
         private final String EMAIL = "test@test.test";
@@ -67,9 +72,41 @@ public class LocalDbInit {
         private final String DESCRIPTION = "testdescription";
 
         public void initDB() {
-            memberInit();
-            sectionInit();
-            uploadInit();
+            try {
+                memberInit();
+                sectionInit();
+                uploadInit();
+                commentInit();
+                replyInit(21);
+            }
+            catch (Exception e) {
+                e.getStackTrace();
+            }
+        }
+
+        private void replyInit(int numberOfReply) throws IOException {
+            Member member = memberRepository.findMemberAndInfoByNickname(NICKNAME).get();
+            CommentForm commentForm = new CommentForm();
+            Post post = postRepository.findAll().get(0);
+            commentForm.setFile(null);
+
+            Comment comment = commentRepository.findAll().get(0);
+            for(int i = 1; i <= numberOfReply; i++) {
+                commentForm.setContent(i + "번째 코맨트.");
+
+                commentService.saveReply(post.getId(), comment.getId(), commentForm, member);
+            }
+        }
+
+        private void commentInit() throws IOException {
+            Member member = memberRepository.findMemberAndInfoByNickname(NICKNAME).get();
+            CommentForm commentForm = new CommentForm();
+            Post post = postRepository.findAll().get(0);
+
+            commentForm.setContent("1번째 코맨트.");
+            commentForm.setFile(null);
+            commentService.saveComment(post.getId(), commentForm, member);
+
         }
 
         private void uploadInit() {

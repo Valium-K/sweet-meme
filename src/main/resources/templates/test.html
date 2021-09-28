@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments.html :: head"></head>
+<body>
+  <div th:onclick="viewReply([[${cId}]])">
+    asdffeeeeeee
+  </div>
+
+  <div th:id="test + ${cId}">
+
+  </div>
+  <script th:replace="fragments.html :: ajax-csrf-header"></script>
+</body>
+<script>
+  var viewReply = function (cId) {
+
+    var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+    console.log(contextPath + '/test/' + cId)
+    $.ajax({
+      contentType: "application/json; charset=utf-8",
+      method: "GET",
+      url: contextPath + '/test/' + cId,
+    }).done(function (reply) {
+      console.log(reply)
+      $('#test' + cId).append(reply)
+    });
+  }
+
+</script>
+
+</html>

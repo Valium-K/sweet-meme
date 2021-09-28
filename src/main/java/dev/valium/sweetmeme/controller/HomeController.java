@@ -1,17 +1,15 @@
 package dev.valium.sweetmeme.controller;
 
-import dev.valium.sweetmeme.domain.CurrentMember;
-import dev.valium.sweetmeme.domain.Info;
-import dev.valium.sweetmeme.domain.Member;
-import dev.valium.sweetmeme.domain.Post;
+import dev.valium.sweetmeme.domain.*;
 import dev.valium.sweetmeme.domain.enums.SectionType;
+import dev.valium.sweetmeme.repository.CommentRepository;
 import dev.valium.sweetmeme.repository.InfoRepository;
 import dev.valium.sweetmeme.repository.PostRepository;
 import dev.valium.sweetmeme.service.VoteService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -20,14 +18,31 @@ public class HomeController extends BaseController {
 
     private final PostRepository postRepository;
     private final InfoRepository infoRepository;
+    private final CommentRepository commentRepository;
 
-
-    public HomeController(VoteService voteService, PostRepository postRepository, InfoRepository infoRepository) {
+    public HomeController(VoteService voteService, PostRepository postRepository, InfoRepository infoRepository, CommentRepository commentRepository) {
         super(voteService);
         this.postRepository = postRepository;
         this.infoRepository = infoRepository;
+        this.commentRepository = commentRepository;
     }
 
+    @GetMapping("/test")
+    public String t(Model model) {
+        model.addAttribute("cId", "22");
+        return "test";
+    }
+
+    @GetMapping("/test/{id}")
+    public String t2(@PathVariable Long id, Model model) {
+        System.out.println("sdfsdf");
+        Comment parent = commentRepository.findCommentById(id);
+        List<Comment> replys = commentRepository.findByParent(parent);
+
+        model.addAttribute("replys", replys);
+
+        return "fragments :: test";
+    }
 
     @GetMapping
     public String home(@CurrentMember Member member, Model model) {

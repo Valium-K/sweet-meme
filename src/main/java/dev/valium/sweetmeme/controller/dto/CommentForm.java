@@ -17,4 +17,5 @@ public class CommentForm {
 
     @Length(max = 100)
     private String content;
+
 }

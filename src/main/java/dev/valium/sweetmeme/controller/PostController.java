@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.controller;
 
 import dev.valium.sweetmeme.controller.dto.CommentForm;
+import dev.valium.sweetmeme.controller.dto.ReplyDto;
 import dev.valium.sweetmeme.domain.*;
 import dev.valium.sweetmeme.repository.CommentRepository;
 import dev.valium.sweetmeme.service.CommentService;
@@ -88,7 +89,7 @@ public class PostController extends BaseController {
     @GetMapping("/post/{id}")
     public String currentPost(@PathVariable Long id, Model model, @CurrentMember Member member) {
         Post post = postService.findPostById(id);
-        List<Comment> comments = commentRepository.findByPost(post);
+        List<Comment> comments = commentRepository.findByPostAndParent(post, null);
         List<String> tags = tagService.findTags(post)
                             .stream()
                             .map(Tag::getTagName).collect(Collectors.toList());
@@ -106,6 +107,7 @@ public class PostController extends BaseController {
         model.addAttribute("upVoteCommentIds", upVoteCommentIds);
         List<Long> downVoteCommentIds = commentService.findDownVotedCommentsId(member);
         model.addAttribute("downVoteCommentIds", downVoteCommentIds);
+
 
         return "post/clickedPost";
     }
@@ -135,5 +137,15 @@ public class PostController extends BaseController {
             return ResponseEntity.ok().build();
         else
             return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/reply/slice/" + "{commentId}" + "/" + "{page}")
+    public String viewReply(Model model, @PathVariable Long commentId, @PathVariable int page) {
+        Comment parent = commentRepository.findCommentById(commentId);
+        List<Comment> replys = commentRepository.findByParent(parent);
+
+        model.addAttribute("replys", replys);
+
+        return "fragments :: test";
     }
 }

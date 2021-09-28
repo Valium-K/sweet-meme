@@ -11,6 +11,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findByPost(Post post);
 
+    List<Comment> findByPostAndParent(Post post, Comment parent);
+    List<Comment> findByParent(Comment parent);
+    Comment findCommentById(Long id);
 }

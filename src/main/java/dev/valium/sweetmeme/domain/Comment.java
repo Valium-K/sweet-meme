@@ -57,4 +57,11 @@ public class Comment extends BaseEntityTime {
                 .build();
     }
 
+    public void addReplyCount() {
+        this.replyCount++;
+    }
+    public void subReplyCount() {
+        this.replyCount--;
+    }
+
 }

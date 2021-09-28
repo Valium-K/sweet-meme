@@ -2,6 +2,7 @@ package dev.valium.sweetmeme.processor;
 
 import com.luciad.imageio.webp.WebPWriteParam;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.IIOImage;
@@ -19,12 +20,8 @@ public class FileProcessor {
         String newFileName = UUID.randomUUID().toString().replace("-", "");
         String fileType = FilenameUtils.getExtension(file.getOriginalFilename());
 
-        if(encode && !"mp4".equals(fileType)) {
-            image2webp(file,  path, newFileName);
 
-            return newFileName + ".webp";
-        }
-        else {
+        if ("mp4".equals(fileType) || "gif".equals(fileType)) {
             File newFile = new File(path, newFileName + "." + fileType);
 
             if(!newFile.exists()){
@@ -33,6 +30,11 @@ public class FileProcessor {
             file.transferTo(newFile);
 
             return newFile.getName();
+        }
+        else {
+            image2webp(file,  path, newFileName);
+
+            return newFileName + ".webp";
         }
     }
     public static void image2webp(MultipartFile file, String path, String fileName) throws IOException {

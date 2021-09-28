@@ -115,6 +115,24 @@ public class CommentService {
     }
 
     public void saveComment(Long postId, CommentForm form, Member member) throws IOException {
+        Comment comment = setComment(postId, form, member);
+
+        commentRepository.save(comment);
+    }
+
+
+    public void saveReply(Long postId, Long parentCommentId, CommentForm form, Member member) throws IOException {
+        Comment comment = setComment(postId, form, member);
+        Comment parentComment = commentRepository.findCommentById(parentCommentId);
+
+        comment.setParent(parentComment);
+        parentComment.getChildren().add(comment);
+        parentComment.addReplyCount();
+
+        commentRepository.save(comment);
+    }
+
+    private Comment setComment(Long postId, CommentForm form, Member member) throws IOException {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(postId + "id의 포스트가 없음"));
         Member foundMember = memberService.findMemberAndInfo(member.getNickname());
         Comment comment = Comment.create(foundMember.getMemberInfo());
@@ -123,7 +141,7 @@ public class CommentService {
             foundMember.getCommentedPosts().add(post);
         }
 
-        if(!form.getFile().isEmpty()) {
+        if(form.getFile() != null && !form.getFile().isEmpty()) {
             String fileName = FileProcessor.transferFile(FileConfig.ABSOLUTE_COMMENT_IMAGE_PATH, form.getFile(), true);
             comment.setDescriptionImg(fileName);
         }
@@ -133,6 +151,6 @@ public class CommentService {
         comment.setPost(post);
         post.getComments().add(comment);
 
-        commentRepository.save(comment);
+        return comment;
     }
 }

@@ -231,13 +231,13 @@
         <!-- 멤버 -->
         <li class="nav-item" sec:authorize="isAuthenticated()">
           <a class="nav-link" href="#" th:href="@{/notifications}">
-            noti
+            <i class="fa fa-bell-o" style="vertical-align: text-bottom;" aria-hidden="true"></i>
           </a>
         </li>
 
         <li class="nav-item" sec:authorize="isAuthenticated()">
           <a class="nav-link" href="#" th:href="@{/upload/post}">
-            + upload
+            <i class="fa fa-plus" style="vertical-align: text-bottom;" aria-hidden="true"></i> upload
           </a>
         </li>
 
@@ -593,7 +593,7 @@
         <div class="col-auto">
           <video preload="metadata" muted autoplay loop th:if="${post.getContentType()} == 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}"
                  style="min-width: 200px; width: 100%; max-width: 400px; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
-          <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="min-width: 200px; width: 100%; max-width: 400px; height: auto;">
+          <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="min-width: 350px; width: 100%; max-width: 400px;">
         </div>
       </div>
     </picture>
@@ -764,6 +764,44 @@
     };
   </script>
 
+<div th:fragment="commentForm">
+  <form class="needs-validation col-sm-6" action="#" th:object="${commentForm}" style="width: 100%"
+        th:action="@{'/post/' + ${post.id}}" method="post" enctype="multipart/form-data" novalidate>
+    <!-- 코멘트-->
+
+    <div class="input-group">
+      <span class="input-group-text">코멘트</span>
+      <textarea id="content" name="content" th:field="*{content}" style="height: 90px;" class="form-control" aria-label="With textarea" max="100"></textarea>
+      <small class="form-text text-danger" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
+        빈파일 | 정의되지 않은 확장자
+      </small>
+    </div>
+
+    <div class="row justify-content-between">
+      <div class="col-6">
+        <!-- TODO 파일 선택 후 hidden 후 프리뷰 띄우기 -->
+        <div class="form-group">
+          <label class="btn btn-default p-0 mt-2">
+            <i class="fa fa-camera fa-lg" aria-hidden="true"></i>
+            <input type="file" name="file" style="white-space: pre-line;" id="file" th:accept="*{ACCEPTABLE_COMMENT_TYPES}"
+                   aria-describedby="fileHelp" th:field="*{file}" oninput="fileValidation()" hidden />
+          </label>
+        </div>
+
+      </div>
+      <div class="col-3 mt-2 text-end">
+        <div class="form-group">
+          <button class="btn btn-primary btn-sm" type="submit" th:text="#{upload}">업로드</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div th:fragment="test" class="replyPageOffset">
+  <div  th:each="reply : ${replys}">
+    <div th:text="${reply.content}"></div>
+  </div>
+</div>
 <!----------------------------------------------------------------------------------------->
 
 </html>
