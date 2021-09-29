@@ -18,30 +18,11 @@ public class HomeController extends BaseController {
 
     private final PostRepository postRepository;
     private final InfoRepository infoRepository;
-    private final CommentRepository commentRepository;
 
-    public HomeController(VoteService voteService, PostRepository postRepository, InfoRepository infoRepository, CommentRepository commentRepository) {
+    public HomeController(VoteService voteService, PostRepository postRepository, InfoRepository infoRepository) {
         super(voteService);
         this.postRepository = postRepository;
         this.infoRepository = infoRepository;
-        this.commentRepository = commentRepository;
-    }
-
-    @GetMapping("/test")
-    public String t(Model model) {
-        model.addAttribute("cId", "22");
-        return "test";
-    }
-
-    @GetMapping("/test/{id}")
-    public String t2(@PathVariable Long id, Model model) {
-        System.out.println("sdfsdf");
-        Comment parent = commentRepository.findCommentById(id);
-        List<Comment> replys = commentRepository.findByParent(parent);
-
-        model.addAttribute("replys", replys);
-
-        return "fragments :: test";
     }
 
     @GetMapping

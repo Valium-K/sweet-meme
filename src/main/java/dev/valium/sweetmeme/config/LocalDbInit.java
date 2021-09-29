@@ -76,7 +76,7 @@ public class LocalDbInit {
                 memberInit();
                 sectionInit();
                 uploadInit();
-                commentInit();
+                commentInit(21);
                 replyInit(21);
             }
             catch (Exception e) {
@@ -92,20 +92,24 @@ public class LocalDbInit {
 
             Comment comment = commentRepository.findAll().get(0);
             for(int i = 1; i <= numberOfReply; i++) {
-                commentForm.setContent(i + "번째 코맨트.");
+                commentForm.setContent(i + "번째 리플.");
 
                 commentService.saveReply(post.getId(), comment.getId(), commentForm, member);
             }
         }
 
-        private void commentInit() throws IOException {
+        private void commentInit(int numberOfComment) throws IOException {
             Member member = memberRepository.findMemberAndInfoByNickname(NICKNAME).get();
             CommentForm commentForm = new CommentForm();
             Post post = postRepository.findAll().get(0);
-
-            commentForm.setContent("1번째 코맨트.");
             commentForm.setFile(null);
-            commentService.saveComment(post.getId(), commentForm, member);
+
+            for(int i = 1; i <= numberOfComment; i++) {
+                commentForm.setContent(i + "번째 코맨트.");
+
+                commentService.saveComment(post.getId(), commentForm, member);
+            }
+
 
         }
 

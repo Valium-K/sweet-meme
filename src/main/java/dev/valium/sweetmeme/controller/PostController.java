@@ -1,16 +1,20 @@
 package dev.valium.sweetmeme.controller;
 
 import dev.valium.sweetmeme.controller.dto.CommentForm;
-import dev.valium.sweetmeme.controller.dto.ReplyDto;
 import dev.valium.sweetmeme.domain.*;
 import dev.valium.sweetmeme.repository.CommentRepository;
+import dev.valium.sweetmeme.repository.CommentVoteRepository;
 import dev.valium.sweetmeme.service.CommentService;
 import dev.valium.sweetmeme.service.PostService;
 import dev.valium.sweetmeme.service.TagService;
 import dev.valium.sweetmeme.service.VoteService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,6 +35,7 @@ import java.util.stream.Collectors;
 
 import static dev.valium.sweetmeme.config.FileConfig.*;
 
+@Slf4j
 @Controller
 public class PostController extends BaseController {
 
@@ -38,13 +43,15 @@ public class PostController extends BaseController {
     private final TagService tagService;
     private final CommentRepository commentRepository;
     private final CommentService commentService;
+    private final CommentVoteRepository commentVoteRepository;
 
-    public PostController(VoteService voteService, PostService postService, TagService tagService, CommentRepository commentRepository, CommentService commentService) {
+    public PostController(VoteService voteService, PostService postService, TagService tagService, CommentRepository commentRepository, CommentService commentService, CommentVoteRepository commentVoteRepository) {
         super(voteService);
         this.postService = postService;
         this.tagService = tagService;
         this.commentRepository = commentRepository;
         this.commentService = commentService;
+        this.commentVoteRepository = commentVoteRepository;
     }
 
     @GetMapping(FILE_URL + "{file}")
@@ -88,8 +95,12 @@ public class PostController extends BaseController {
 
     @GetMapping("/post/{id}")
     public String currentPost(@PathVariable Long id, Model model, @CurrentMember Member member) {
+
         Post post = postService.findPostById(id);
-        List<Comment> comments = commentRepository.findByPostAndParent(post, null);
+
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "vote.upVote", "createdDate"));
+
+        Slice<Comment> comments = commentRepository.findByPostAndParent(post, null, pageRequest);
         List<String> tags = tagService.findTags(post)
                             .stream()
                             .map(Tag::getTagName).collect(Collectors.toList());
@@ -97,7 +108,7 @@ public class PostController extends BaseController {
 
         model.addAttribute(post);
         model.addAttribute("tags", tags);
-        model.addAttribute("comments", comments );
+        model.addAttribute("comments", comments);
 
         model.addAttribute(new CommentForm());
 
@@ -108,6 +119,9 @@ public class PostController extends BaseController {
         List<Long> downVoteCommentIds = commentService.findDownVotedCommentsId(member);
         model.addAttribute("downVoteCommentIds", downVoteCommentIds);
 
+        if(comments.isLast()) {
+            model.addAttribute("isLast", true);
+        }
 
         return "post/clickedPost";
     }
@@ -140,12 +154,54 @@ public class PostController extends BaseController {
     }
 
     @GetMapping("/reply/slice/" + "{commentId}" + "/" + "{page}")
-    public String viewReply(Model model, @PathVariable Long commentId, @PathVariable int page) {
+    public String viewReply(@CurrentMember Member member, Model model, @PathVariable Long commentId, @PathVariable int page) {
+
+        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "vote.upVote", "createdDate"));
+
         Comment parent = commentRepository.findCommentById(commentId);
-        List<Comment> replys = commentRepository.findByParent(parent);
+        Slice<Comment> replys = commentRepository.findByParent(parent, pageRequest);
 
-        model.addAttribute("replys", replys);
+        // TODO post, upVoteCommentIds, downVoteCommentIds 추가 쿼리
+        List<Long> upVoteCommentIds = commentService.findUpVotedCommentsId(member);
+        model.addAttribute("upVoteCommentIds", upVoteCommentIds);
+        List<Long> downVoteCommentIds = commentService.findDownVotedCommentsId(member);
+        model.addAttribute("downVoteCommentIds", downVoteCommentIds);
+        model.addAttribute("post", parent.getPost());
+        model.addAttribute("comments", replys);
+        model.addAttribute(new CommentForm());
 
-        return "fragments :: test";
+        model.addAttribute("rep", commentId);
+        model.addAttribute("isLast", true);
+        if(replys.isLast()) {
+            System.out.println("라스트" + commentId);
+            model.addAttribute("lastRep", false);
+        }
+        model.addAttribute("target", "reply");
+
+        return "fragments :: comments";
+    }
+
+    @GetMapping("/comment/slice/" + "{postId}" + "/" + "{page}")
+    public String viewComment(@CurrentMember Member member, Model model, @PathVariable Long postId, @PathVariable int page) {
+        Post post = postService.findPostById(postId);
+        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "vote.upVote", "createdDate"));
+        Slice<Comment> comments = commentRepository.findByPostAndParent(post, null, pageRequest);
+
+        // TODO post, upVoteCommentIds, downVoteCommentIds 추가 쿼리
+        List<Long> upVoteCommentIds = commentService.findUpVotedCommentsId(member);
+        model.addAttribute("upVoteCommentIds", upVoteCommentIds);
+        List<Long> downVoteCommentIds = commentService.findDownVotedCommentsId(member);
+        model.addAttribute("downVoteCommentIds", downVoteCommentIds);
+        model.addAttribute("post", post);
+        model.addAttribute("comments", comments);
+        model.addAttribute(new CommentForm());
+
+        model.addAttribute("target", "comment");
+        if(comments.isLast()) {
+            log.info("last");
+            model.addAttribute("isLast", true);
+        }
+
+        return "fragments :: comments";
     }
 }
