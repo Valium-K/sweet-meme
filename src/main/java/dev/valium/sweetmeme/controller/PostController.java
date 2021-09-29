@@ -120,7 +120,7 @@ public class PostController extends BaseController {
         model.addAttribute("downVoteCommentIds", downVoteCommentIds);
 
         if(comments.isLast()) {
-            model.addAttribute("isLast", true);
+            model.addAttribute("itIsLastCommentPage", true);
         }
 
         return "post/clickedPost";
@@ -170,13 +170,14 @@ public class PostController extends BaseController {
         model.addAttribute("comments", replys);
         model.addAttribute(new CommentForm());
 
-        model.addAttribute("rep", commentId);
-        model.addAttribute("isLast", true);
-        if(replys.isLast()) {
-            System.out.println("라스트" + commentId);
-            model.addAttribute("lastRep", false);
-        }
+        model.addAttribute("commentId", commentId);
+        model.addAttribute("itIsLastCommentPage", true);
         model.addAttribute("target", "reply");
+
+        if(replys.isLast()) {
+            model.addAttribute("itIsLastReplyPage", true);
+        }
+
 
         return "fragments :: comments";
     }
@@ -199,7 +200,7 @@ public class PostController extends BaseController {
         model.addAttribute("target", "comment");
         if(comments.isLast()) {
             log.info("last");
-            model.addAttribute("isLast", true);
+            model.addAttribute("itIsLastCommentPage", true);
         }
 
         return "fragments :: comments";

@@ -8,7 +8,7 @@
 <div th:replace="fragments.html :: nav-bar"></div>
 <div th:replace="fragments.html :: off-canvas('post')"></div>
 <div class="container">
-  <div id="gridContent" class="row justify-content-center row-col-md-auto d-none mt-4" >
+  <div id="gridContent" class="row justify-content-center row-col-md-auto mt-4" >
     <div class="col-3 d-none" id="side-bar-col" style="padding: 0px;" >
       <div th:replace="fragments.html :: side-bar('post')"></div>
     </div>
@@ -46,37 +46,7 @@
               </div>
             </div>
 
-            <div class="row justify-content-between">
-              <div class="col-8 mt-2">
-                <div sec:authorize="isAuthenticated()" th:id="'vote' + ${post.id}" style="display: inline">
-                  <div hidden>do not remove this div</div>
-                  <input type="button" id="upVoteBtn" class="btn btn-sm ms-1"  th:classappend="${upVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
-                         th:onclick="|vote('post', ${post.id}, true)|" th:value="'▲ ' + ${post.getVote().upVote}" />
-                  <input type="button" id="downVoteBtn" class="btn btn-sm ms-1" th:classappend="${downVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
-                         th:onclick="|vote('post', ${post.id}, false)|" th:value="'▼ ' + ${post.getVote().downVote}" />
-                </div>
-                <div sec:authorize="!isAuthenticated()" th:id="'vote' + ${post.id}" style="display: inline">
-                  <div hidden>do not remove this div</div>
-                  <input type="button" id="upVoteBtn" class="btn btn-outline-primary btn-sm ms-1"
-                         th:onclick="|window.location.href = @{/} + 'login'|" th:value="'▲ ' + ${post.getVote().upVote}" />
-                  <input type="button" id="downVoteBtn" class="btn btn-outline-primary btn-sm ms-1"
-                         th:onclick="|window.location.href = @{/} + 'login'|" th:value="'▼ ' + ${post.getVote().downVote}" />
-                </div>
-                <div style="display: inline">
-                  <button type="button" class="btn btn-outline-primary btn-sm ms-1" th:onclick="|window.open(@{/} + 'post/' + ${post.id}, '_blank').focus()|">
-                    <i class="fa fa-commenting" aria-hidden="true"></i>&nbsp;<span th:text="${post.commentCount}"></span>
-                  </button>
-                </div>
-              </div>
-
-
-              <div class="col-2 mt-2 me-1 text-end">
-                <!-- TODO 공유기능 추가 -->
-                <button type="button" class="btn btn-outline-primary btn-sm">
-                  <i class="fa fa-share-alt" aria-hidden="true"></i>
-                </button>
-              </div>
-            </div>
+            <div th:replace="fragments.html :: voteAndShareRow"></div>
           </header>
 
           <!-- 본문 사진영상 -->
@@ -84,8 +54,8 @@
             <div class="row justify-content-center rounded mt-2" style="background-color: #11111110; margin: 3px">
               <div class="col-auto">
                 <video preload="metadata" muted autoplay loop th:if="${post.getContentType()} == 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}"
-                       style="min-width: 200px; width: 100%; max-width: 400px; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
-                <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="min-width: 200px; width: 100%; max-width: 400px; height: auto;">
+                       style="min-width: 180px; width: 100%; max-width: 400px; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
+                <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="min-width: 180px; width: 100%; max-width: 400px; height: auto;">
               </div>
             </div>
           </picture>
@@ -131,37 +101,42 @@
         <div th:id="'post' + ${post.id}">
           <div class="replyPageOffset">
             <div class="mt-3" th:each="comment : ${comments}">
-              <div class="row">
+              <div class="row mt-3">
                 <!-- 아바타 -->
                 <div class="col-1">
                   <a class="round" th:href="@{'/user/'+${comment.commenterInfo.head}+'/home'}" href="#" role="button">
                     <svg th:if="${comment.commenterInfo.getPicImage()} == null" th:data-jdenticon-value="${comment.commenterInfo.head}"
                          width="30px" height="30px" class="rounded border bg-light"></svg>
                     <img th:href="@{'user/' + ${comment.commenterInfo.head} + '/home'}" th:if="${comment.commenterInfo.getPicImage()} != null" th:src="@{'/avatar/' + ${comment.commenterInfo.getPicImage()}}"
-                         width="100%" height="auto" class="rounded border"/>
+                         width="30px" height="30px" class="rounded border"/>
                   </a>
                 </div>
                 <!-- 코맨트 -->
                 <div class="col ms-1 mb-2">
                   <span class="fw-bold" th:text="${comment.commenterInfo.head}"></span>
                   <img th:if="${comment.commenterInfo.stateCode} != null" th:src="'https://lipis.github.io/flag-icon-css/flags/4x3/' + ${comment.commenterInfo.stateCode} + '.svg'"
-                       style="width: 25px; height: 17px; vertical-align: text-bottom" class="rounded border">
+                       style="width: 25px; height: 18px; vertical-align: text-bottom" class="rounded border">
                   <div style="white-space: pre-line;" class="mt-2" th:text="${comment.content}"></div>
                   <div th:if="${comment.descriptionImg} != null">
-                    <img th:src="@{'/comment/' + ${comment.descriptionImg}}" width="50%" class="rounded border"/>
+                    <img th:src="@{'/comment/' + ${comment.descriptionImg}}" width="70%" class="rounded border"/>
                   </div>
                 </div>
                 <!-- reply, upvote, downvote btn -->
                 <div>
-                  <div sec:authorize="isAuthenticated()" th:id="'vote' + ${comment.id}" style="display: inline">
-                    <a type="button" th:onclick="|reply(${comment.id})|">reply</a>
+                  <div sec:authorize="isAuthenticated()" th:id="${'vote'+comment.id}" style="display: inline">
+                    <a class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:onclick="|reply(${comment.id})|">
+                      reply
+                    </a>
                     <input type="button" class="btn btn-sm ms-1" th:classappend="${upVoteCommentIds.contains(comment.id)} ? 'btn-primary' : 'btn-outline-primary'"
                            th:onclick="|vote('comment', ${comment.id}, true)|" th:value="'▲ ' + ${comment.getVote().upVote}" style="padding: 0px; margin: 0px; width: 40px; height: 20px;"/>
                     <input type="button" class="btn btn-sm ms-1" th:classappend="${downVoteCommentIds.contains(comment.id)} ? 'btn-primary' : 'btn-outline-primary'"
                            th:onclick="|vote('comment', ${comment.id}, false)|" th:value="'▼ ' + ${comment.getVote().downVote}" style="padding: 0px; margin: 0px; width: 40px; height: 20px;"/>
                   </div>
-                  <div sec:authorize="!isAuthenticated()" th:id="'vote' + ${comment.id}" style="display: inline">
-                    <a type="button" th:onclick="|window.location.href = @{/} + 'login'|">reply</a>
+                  <div sec:authorize="!isAuthenticated()" th:id="${'vote'+comment.id}" style="display: inline">
+                    <a class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:onclick="|window.location.href = @{/} + 'login'|">
+                      reply
+                    </a>
+
                     <input type="button" class="btn btn-outline-primary btn-sm ms-1" style="padding: 0px; margin: 0px; width: 40px; height: 20px;"
                            th:onclick="|window.location.href = @{/} + 'login'|" th:value="'▲ ' + ${comment.getVote().upVote}" />
                     <input type="button" class="btn btn-outline-primary btn-sm ms-1" style="padding: 0px; margin: 0px; width: 40px; height: 20px;"
@@ -169,13 +144,12 @@
                   </div>
                 </div>
 
-                <!-- view # reply -->
-                <a class=" ms-2 mt-1" th:if="*{comment.replyCount > 0}" style="text-decoration: none; cursor: pointer"
-                   th:onclick="|viewReply(*{comment.id}, this)|" th:id="'replyArea' + *{comment.id}">
+                <!-- view # 2reply -->
+                <a class="ms-4 mt-3" th:if="*{comment.replyCount > 0}" style="text-decoration: none; cursor: pointer"
+                   th:onclick="|viewReply(*{comment.id}, this)|" id="replyArea">
                   <i style="vertical-align: text-bottom" class="fa fa-caret-down" aria-hidden="true"></i>&nbsp;
-                  <span>view </span>
                   <span th:text="*{comment.replyCount}"></span>
-                  <span> reply</span>
+                  <span th:text="#{reply}">리플</span>
                 </a>
 
                 <!-- reply 쓰기 및 다른사람 replys -->
@@ -215,30 +189,30 @@
                       </div>
                     </form>
                   </div>
-                  <!-- reply# 불러오기 -->
+
+                  <!-- reply append div -->
                   <div th:id="'reply' + *{comment.id}">
                     <div class="replyPageOffset"></div>
                   </div>
-                  <!-- reply 더보기 -->
-<!--                  <div id="viewMoreReplys" th:if="*{comment.replyCount > 0}">-->
-<!--                    <div th:if="${rep == null}" th:onclick="|viewReply(*{comment.id})|">-->
-<!--                      리플 더보기-->
-<!--                    </div>-->
-<!--                  </div>-->
+
                 </div>
               </div>
             </div>
-            <!-- 댓글 더보기 -->
-<!--            <div th:if="${!isLast}" th:onclick="|viewComment(${post.id}, this)|">댓글 더보기</div>-->
           </div>
 
         </div>
-        <!-- 댓글 불러오기 -->
+        <!-- 댓글 append div -->
         <div th:id="'comment' + ${post.id}"></div>
 
-        <!-- 댓글 더보기 -->
-        <div th:if="${'isLast' + post.id} != true" th:onclick="|viewComment(${post.id}, this)|">댓글 더보기</div>
 
+        <!-- 댓글 더보기 -->
+        <div class="mt-2">
+          <a th:if="${itIsLastCommentPage == null}" class="mt-2"
+             th:onclick="|viewComment(${post.id}, this)|" style="text-decoration: none; cursor: pointer">
+            <i style="vertical-align: text-bottom" class="fa fa-caret-down" aria-hidden="true"></i>&nbsp;
+            <span th:text="#{viewComment}">댓글 더보기</span>
+          </a>
+        </div>
       </section>
     </div>
   </div>
@@ -266,13 +240,6 @@
         $('#reply' + commentId).append(reply);
         });
     }
-    var reply = function (id) {
-      document.getElementById('replyForm' + id).removeAttribute('hidden');
-    }
-
-    var hideReplyForm = function (id){
-      document.getElementById('replyForm' + id).setAttribute('hidden', '');
-    }
 
     var viewComment = function (postId, div) {
       var page = $('#comment' + postId).children(".replyPageOffset").length + 1;
@@ -283,10 +250,17 @@
         url: contextPath + '/comment/slice/' + postId + '/' + page,
         processData: false,
       }).done(function (reply) {
-
         div.setAttribute('hidden', '');
         $('#comment' + postId).append(reply);
       });
+    }
+
+    var reply = function (id) {
+      document.getElementById('replyForm' + id).removeAttribute('hidden');
+    }
+
+    var hideReplyForm = function (id){
+      document.getElementById('replyForm' + id).setAttribute('hidden', '');
     }
   </script>
 
