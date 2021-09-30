@@ -3,12 +3,12 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments.html :: head"></head>
 
-<body onload="gridLazyView()" class="bg-light">
+<body class="bg-light">
 <div id="contentPadding" style="height: 70px"></div>
 <div th:replace="fragments.html :: nav-bar"></div>
 <div th:replace="fragments.html :: off-canvas('post')"></div>
 <div class="container">
-  <div id="gridContent" class="row justify-content-center row-col-md-auto mt-4" >
+  <div id="gridContent" class="row justify-content-center row-col-md-auto d-none mt-4" >
     <div class="col-3 d-none" id="side-bar-col" style="padding: 0px;" >
       <div th:replace="fragments.html :: side-bar('post')"></div>
     </div>

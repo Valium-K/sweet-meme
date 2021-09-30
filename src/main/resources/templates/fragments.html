@@ -172,6 +172,7 @@
 
   </style>
 
+
   <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
   <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.bundle.js}"></script>
   <script id="gridLazyView">
@@ -185,10 +186,15 @@
         window.addEventListener("touchstart", startTouch,{ passive: false });
         window.addEventListener("touchmove", moveTouch,{ passive: false });
       }
-      //document.getElementById('gridContent').classList.remove('d-none');
+      document.getElementById('gridContent').classList.remove('d-none');
 
       resizer();
     }
+  </script>
+  <script>
+    $(document).ready(function() {
+      gridLazyView();
+    });
   </script>
 
 </head>
