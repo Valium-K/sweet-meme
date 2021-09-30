@@ -32,7 +32,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MemberService memberService;
     private final DataSource dataSource;
-    private final ServletContext context;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -46,7 +45,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin()
                 .usernameParameter("username")
                 .passwordParameter("password")
-                .successHandler(new LoginSuccessHandler(context.getContextPath()))
+                .successHandler(new LoginSuccessHandler())
                 .loginPage("/login")
                 .permitAll();
 
@@ -74,27 +73,5 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         jdbcTokenRepository.setDataSource(dataSource);
 
         return jdbcTokenRepository;
-    }
-
-    public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
-        public LoginSuccessHandler(String defaultTargetUrl) {
-            setDefaultTargetUrl(defaultTargetUrl);
-        }
-
-        @Override
-        public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-            HttpSession session = request.getSession();
-            if (session != null) {
-                String redirectUrl = (String) session.getAttribute("prevPage");
-                if (redirectUrl != null) {
-                    session.removeAttribute("prevPage");
-                    getRedirectStrategy().sendRedirect(request, response, redirectUrl);
-                } else {
-                    super.onAuthenticationSuccess(request, response, authentication);
-                }
-            } else {
-                super.onAuthenticationSuccess(request, response, authentication);
-            }
-        }
     }
 }

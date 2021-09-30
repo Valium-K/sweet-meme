@@ -52,7 +52,7 @@
     }
     @media (max-width: 572px) {
       .container {
-        width: 95%;
+        width: 100%;
       }
     }
   </style>
@@ -593,8 +593,8 @@
       <div class="row justify-content-center rounded" style="background-color: #11111110; margin: 3px">
         <div class="col-auto">
           <video preload="metadata" muted autoplay loop th:if="${post.getContentType()} == 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}"
-                 style="min-width: 180px; width: 100%; max-width: 400px; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
-          <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="min-width: 180px; width: 100%; max-width: 400px;">
+                 style="width: 100%; max-width: 500px; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
+          <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="width: 100%; max-width: 500px; height: auto;">
         </div>
       </div>
     </picture>
@@ -821,7 +821,7 @@
       </div>
 
       <!-- view # reply -->
-      <a class="ms-4 mt-3" th:if="*{comment.replyCount > 0}" style="text-decoration: none; cursor: pointer"
+      <a class="ms-4 mt-2" th:if="*{comment.replyCount > 0}" style="text-decoration: none; cursor: pointer"
          th:onclick="|viewReply(*{comment.id}, this)|" id="replyArea">
         <i style="vertical-align: text-bottom" class="fa fa-caret-down" aria-hidden="true"></i>&nbsp;
         <span th:text="*{comment.replyCount}"></span>
@@ -887,7 +887,7 @@
       <span th:text="#{viewReply}">리플 더보기</span>
     </a>
   </div>
-  <script th:src="@{/node_modules/jdenticon/dist/jdenticon.min.js}"></script>
+  <script th:src="@{/node_modules/jdenticon/dist/jdenticon.js}"></script>
 </div>
 <div th:fragment="voteAndShareRow" class="row justify-content-between">
   <div class="col-8 mt-2">

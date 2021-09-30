@@ -48,7 +48,8 @@ class LoginControllerTest {
 
     @AfterEach
     void afterEach() {
-        memberRepository.deleteAll();
+        Member memberByNickname = memberRepository.findMemberByNickname(nickname);
+        memberRepository.delete(memberByNickname);
     }
 
 

@@ -1,8 +1,11 @@
 package dev.valium.sweetmeme.processor;
 
 import com.luciad.imageio.webp.WebPWriteParam;
+import dev.valium.sweetmeme.config.FileConfig;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.tomcat.jni.Time;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.IIOImage;
@@ -12,6 +15,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -21,15 +25,33 @@ public class FileProcessor {
         String fileType = FilenameUtils.getExtension(file.getOriginalFilename());
 
 
-        if ("mp4".equals(fileType) || "gif".equals(fileType)) {
+        if ("mp4".equals(fileType)) {
             File newFile = new File(path, newFileName + "." + fileType);
 
             if(!newFile.exists()){
                 newFile.mkdir();
             }
+
             file.transferTo(newFile);
 
             return newFile.getName();
+        }
+        else if("gif".equals(fileType)) {
+            File newFile = new File(path, newFileName + "." + fileType);
+
+            if(!newFile.exists()){
+                newFile.mkdir();
+            }
+
+            file.transferTo(newFile);
+
+            try {
+                gif2webp(newFile);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return newFileName + ".webp";
         }
         else {
             image2webp(file,  path, newFileName);
@@ -37,7 +59,23 @@ public class FileProcessor {
             return newFileName + ".webp";
         }
     }
-    public static void image2webp(MultipartFile file, String path, String fileName) throws IOException {
+
+    private static void gif2webp(File file) throws IOException, InterruptedException {
+
+        File gif2webp = ResourceUtils.getFile("classpath:static/webp/gif2webp.exe");
+        String gif2webpAbsPath = gif2webp.getAbsolutePath();
+
+        String gifAbsPath = file.getAbsolutePath();
+        String webpAbsPath = gifAbsPath.substring(0, gifAbsPath.length() - 3) + "webp";
+
+        Process process = new ProcessBuilder(gif2webpAbsPath, "-lossy", gifAbsPath, "-o", webpAbsPath).start();
+
+        process.waitFor();
+        process.destroy();
+        file.delete();
+    }
+
+    private static void image2webp(MultipartFile file, String path, String fileName) throws IOException {
 
         // BufferedImage read = ImageIO.read(file.getInputStream());
         File newFile = new File(path, fileName + ".webp");

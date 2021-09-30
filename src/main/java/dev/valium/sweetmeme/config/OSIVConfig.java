@@ -3,16 +3,8 @@ package dev.valium.sweetmeme.config;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
-import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
-import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
-import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 
 @Configuration
 public class OSIVConfig {

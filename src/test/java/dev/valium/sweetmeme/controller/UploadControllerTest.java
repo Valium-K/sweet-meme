@@ -3,6 +3,8 @@ package dev.valium.sweetmeme.controller;
 import dev.valium.sweetmeme.controller.dto.SignUpForm;
 import dev.valium.sweetmeme.domain.Info;
 import dev.valium.sweetmeme.domain.Member;
+import dev.valium.sweetmeme.domain.Section;
+import dev.valium.sweetmeme.domain.enums.SectionType;
 import dev.valium.sweetmeme.repository.MemberRepository;
 import dev.valium.sweetmeme.service.MemberService;
 import dev.valium.sweetmeme.service.SignUpService;
@@ -14,16 +16,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.swing.text.html.parser.Entity;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -35,34 +43,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class UploadControllerTest {
 
     @Autowired private MockMvc mockMvc;
     @Autowired private MemberRepository memberRepository;
     @Autowired private MemberService memberService;
-    @Autowired private SignUpService signUpService;
+    @Autowired private EntityManager entityManager;
+    @Autowired private MessageSource messageSource;
 
     private String nickname = "membersdf1";
     private String email = "email2@email2.com";
     private String password = "membermember";
 
     @BeforeEach void beforeEach() {
-
-        SignUpForm signUpForm = new SignUpForm();
-        signUpForm.setNickname(nickname);
-        signUpForm.setEmail(email);
-        signUpForm.setPassword(password);
-
-        Member member = signUpService.form2Member(signUpForm);
-        Info info = Info.createInfo(null, member.getNickname(), member.getNickname() + " description");
+        Member member = Member.createMember(nickname, email, password);
+        Info info = Info.createInfo(null, "head", "description");
 
         member.setMemberInfo(info);
-        info.setHead(member.getNickname());
 
-        Member savedMember = memberService.saveMember(member);
+        memberService.saveMember(member);
 
-        memberService.login(savedMember);
-
+        memberService.login(member);
     }
     @AfterEach void afterEach() {
         memberRepository.deleteAll();
@@ -71,13 +73,15 @@ class UploadControllerTest {
     @Test
     @DisplayName("업로드_화면이_잘_보이는지")
     public void 업로드_화면이_잘_보이는지() throws Exception {
-        mockMvc.perform(get("/upload"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("upload"));
+        mockMvc.perform(get("/upload/post"))
+                .andExpect(status().isOk());
+
     }
 
     @Test @DisplayName("업로드처리_입력값_정상")
     public void 업로드처리_입력값_정상() throws Exception {
+        // sectionInit();
+
         String title = "this is test title";
         String sectionType = "[{\"value\":\"FUNNY\"}]";
 
@@ -87,7 +91,7 @@ class UploadControllerTest {
 
         MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "image/jpg", bytes);
 
-        mockMvc.perform(multipart("/upload")
+        mockMvc.perform(multipart("/upload/post")
                 .file(file)
                 .param("title", title)
                 .param("sections",sectionType)
@@ -106,7 +110,7 @@ class UploadControllerTest {
         MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "image/jpg", "test file".getBytes());
         String wrongTitle_Short = "a";
 
-        mockMvc.perform(multipart("/upload")
+        mockMvc.perform(multipart("/upload/post")
                 .file(file)
                 .param("title", wrongTitle_Short)
                 .param("sections",sectionType)
@@ -125,7 +129,7 @@ class UploadControllerTest {
         MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "image/jpg", "test file".getBytes());
         String wrongSectionType = "[{\"value\":\"NOT_FUNNY\"}]";
 
-        mockMvc.perform(multipart("/upload")
+        mockMvc.perform(multipart("/upload/post")
                 .file(file)
                 .param("title", title)
                 .param("sections",wrongSectionType)
@@ -145,7 +149,7 @@ class UploadControllerTest {
         String sectionType = "[{\"value\":\"FUNNY\"}]";
         MockMultipartFile wrongFile = new MockMultipartFile("file", "file.jpg", "image/icon", "test test".getBytes());
 
-        mockMvc.perform(multipart("/upload")
+        mockMvc.perform(multipart("/upload/post")
                 .file(wrongFile)
                 .param("title", title)
                 .param("sections",sectionType)
@@ -156,5 +160,20 @@ class UploadControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("upload"))
                 .andExpect(authenticated());
+    }
+
+    private void sectionInit() {
+        Arrays.asList(SectionType.values()).forEach(sectionType -> {
+            Section section = Section.createSection(
+                    sectionType
+                    , Info.createInfo(
+                            sectionType.name().toLowerCase(),
+                            sectionType.name().toUpperCase(),
+                            messageSource.getMessage("section." + sectionType.name().toLowerCase(Locale.US) + ".description"
+                                    , new Object[0]
+                                    , Locale.US)
+                    ));
+            entityManager.persist(section);
+        });
     }
 }

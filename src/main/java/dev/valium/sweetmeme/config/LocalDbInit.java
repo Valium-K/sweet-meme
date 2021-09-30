@@ -144,8 +144,6 @@ public class LocalDbInit {
             entityManager.persist(member);
         }
         private void sectionInit() {
-            List<SectionType> sectionTypes = Arrays.asList(SectionType.values());
-
             Arrays.asList(SectionType.values()).forEach(sectionType -> {
                 Section section = Section.createSection(
                         sectionType
