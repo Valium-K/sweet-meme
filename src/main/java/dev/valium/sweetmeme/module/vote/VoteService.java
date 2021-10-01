@@ -1,0 +1,112 @@
+package dev.valium.sweetmeme.module.vote;
+
+import dev.valium.sweetmeme.module.member.Member;
+import dev.valium.sweetmeme.module.post.Post;
+import dev.valium.sweetmeme.module.post.PostRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class VoteService {
+
+    private final PostRepository postRepository;
+    private final VoteRepository voteRepository;
+
+    public boolean votePost(Member member, Long id, boolean vote) throws Exception {
+        Post post = postRepository.findById(id).orElseThrow(() -> new Exception("post 없음"));
+
+        Vote upVote = voteRepository.findUpVoteByUpVotedMemberAndUpVotedPost(member, post);
+        Vote downVote = voteRepository.findDownVoteByDownVotedMemberAndDownVotedPost(member, post);
+
+        // 첫 보트
+        if(downVote == null && upVote == null) {
+            Vote newVote = new Vote();
+            if(vote) {
+                newVote.setUpVotedPost(post);
+                //post.getUpVotedMember().add(newVote);
+                newVote.setUpVotedMember(member);
+                //member.getUpVotedPosts().add(newVote);
+
+                post.getVote().addUpVote();
+            }
+            else {
+                newVote.setDownVotedPost(post);
+                newVote.setDownVotedMember(member);
+                //member.getDownVotedPosts().add(newVote);
+                post.getVote().addDownVote();
+            }
+            voteRepository.save(newVote);
+        }
+        // upvote한 포스트
+        else if(upVote != null && downVote == null) {
+            if(vote) {
+                voteRepository.delete(upVote);
+                post.getVote().subUpvote();
+            }
+            else {
+                voteRepository.delete(upVote);
+                post.getVote().subUpvote();
+                post.getVote().addDownVote();
+
+                Vote newVote = new Vote();
+                newVote.setDownVotedPost(post);
+                newVote.setDownVotedMember(member);
+                //member.getDownVotedPosts().add(newVote);
+
+                voteRepository.save(newVote);
+            }
+
+        }
+        // downvote한 포스트
+        else {
+            if(vote) {
+                voteRepository.delete(downVote);
+                post.getVote().subDownVote();
+                post.getVote().addUpVote();
+
+
+                Vote newVote = new Vote();
+                newVote.setUpVotedPost(post);
+                newVote.setUpVotedMember(member);
+                //post.getUpVotedMember().add(newVote);
+                //member.getUpVotedPosts().add(newVote);
+
+                voteRepository.save(newVote);
+            }
+            else {
+                post.getVote().subDownVote();
+                voteRepository.delete(downVote);
+            }
+        }
+
+        return true;
+    }
+
+    public List<Long> findUpVotedPostsId(Member member) {
+        List<Vote> upVotes = voteRepository.findByUpVotedMember(member);
+
+        return upVotes.stream().map(Vote::getUpVotedPost).map(Post::getId).collect(Collectors.toList());
+    }
+
+    public List<Long> findDownVotedPostsId(Member member) {
+        List<Vote> upVotes = voteRepository.findByDownVotedMember(member);
+
+        return upVotes.stream().map(Vote::getDownVotedPost).map(Post::getId).collect(Collectors.toList());
+    }
+
+    public List<Post> findUpVotedPosts(Member member) {
+        List<Vote> memberUpVotes = voteRepository.findAllByUpVotedMember(member);
+        List<Post> upVotedPosts = memberUpVotes.stream()
+                                            .map(Vote::getUpVotedPost)
+                                            .collect(Collectors.toList());
+
+        return upVotedPosts;
+
+    }
+}

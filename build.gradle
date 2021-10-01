@@ -36,6 +36,7 @@ dependencies {
     implementation 'commons-io:commons-io:2.4'
     implementation 'org.json:json:20200518'
 //    implementation 'com.github.zakgof:webp4j:0.0.2'
+    testImplementation 'com.tngtech.archunit:archunit-junit5:0.21.0'
     implementation 'org.sejda.imageio:webp-imageio:0.1.6'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

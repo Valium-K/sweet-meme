@@ -1,0 +1,100 @@
+package dev.valium.sweetmeme.module.member;
+
+import dev.valium.sweetmeme.module.bases.BaseEntityTime;
+import dev.valium.sweetmeme.module.comment_vote.CommentVote;
+import dev.valium.sweetmeme.module.info.Info;
+import dev.valium.sweetmeme.module.vote.Vote;
+import dev.valium.sweetmeme.module.bases.enums.Membership;
+import dev.valium.sweetmeme.module.post.Post;
+import lombok.*;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Entity
+@Getter @Setter
+@EqualsAndHashCode(of = {"id"})
+@Builder @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Member extends BaseEntityTime {
+
+    @Id @GeneratedValue
+    @Column(name = "member_id")
+    private Long id;
+
+    @Column(unique = true)
+    private String nickname;
+
+    @Column(unique = true)
+    private String email;
+    private String password;
+
+    private boolean emailVerified;
+    private String emailCheckToken;
+
+    private boolean upvoteAlert;
+    private boolean replyAlert;
+
+    @Enumerated(EnumType.STRING)
+    private Membership membership;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "info_id")
+    private Info memberInfo;
+    // member -> post
+    @OneToMany(mappedBy = "originalPoster", cascade = CascadeType.ALL)
+    private List<Post> myPosts = new ArrayList<>();
+    // member ->Post
+    @OneToMany(mappedBy = "postedMember", cascade = CascadeType.ALL)
+    private List<Post> commentedPosts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "upVotedMember", cascade = CascadeType.ALL)
+    private List<Vote> upVotedPosts = new ArrayList<>();
+    @OneToMany(mappedBy = "downVotedMember", cascade = CascadeType.ALL)
+    private List<Vote> downVotedPosts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "upVotedMember", cascade = CascadeType.ALL)
+    private List<CommentVote> upVotedComments = new ArrayList<>();
+    @OneToMany(mappedBy = "downVotedMember", cascade = CascadeType.ALL)
+    private List<CommentVote> downVotedComments = new ArrayList<>();
+
+    public static String createEmailCheckToken() {
+        return UUID.randomUUID().toString();
+    }
+
+    public static Member createMember(String nickname, String email, String password) {
+        return Member.builder()
+                    .nickname(nickname)
+                    .email(email)
+                    .password(password)
+                    .emailVerified(false)
+                    .membership(Membership.NEW)
+                    .upvoteAlert(true)
+                    .replyAlert(true)
+                    .emailCheckToken(createEmailCheckToken())
+                    .myPosts(new ArrayList<>())
+                    .commentedPosts(new ArrayList<>())
+                    .upVotedPosts(new ArrayList<>())
+                    .downVotedPosts(new ArrayList<>())
+                    .build();
+    }
+
+    public int getSpendDate() {
+        return Period.between(
+                this.getCreatedDate().toLocalDate(),
+                LocalDateTime.now().toLocalDate()
+        ).getDays();
+    }
+
+    public boolean isContainsPost(Post post) {
+        return this.myPosts.contains(post);
+    }
+
+    public void addCommentedPost(Post post) {
+        this.commentedPosts.add(post);
+    }
+}
