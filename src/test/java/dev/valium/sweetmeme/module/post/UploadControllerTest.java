@@ -1,11 +1,14 @@
 package dev.valium.sweetmeme.module.post;
 
 import dev.valium.sweetmeme.module.info.Info;
+import dev.valium.sweetmeme.module.info.InfoFactory;
 import dev.valium.sweetmeme.module.member.Member;
+import dev.valium.sweetmeme.module.member.MemberFactory;
 import dev.valium.sweetmeme.module.section.Section;
 import dev.valium.sweetmeme.module.bases.enums.SectionType;
 import dev.valium.sweetmeme.module.member.MemberRepository;
 import dev.valium.sweetmeme.module.member.MemberService;
+import dev.valium.sweetmeme.module.section.SectionFactory;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,25 +41,22 @@ class UploadControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private MemberRepository memberRepository;
     @Autowired private MemberService memberService;
-    @Autowired private EntityManager entityManager;
-    @Autowired private MessageSource messageSource;
+    // @Autowired private SectionFactory sectionFactory;
 
     private String nickname = "membersdf1";
     private String email = "email2@email2.com";
     private String password = "membermember";
 
     @BeforeEach void beforeEach() {
-        Member member = Member.createMember(nickname, email, password);
-        Info info = Info.createInfo(null, "head", "description");
-
-        member.setMemberInfo(info);
+        Member member = MemberFactory.create(nickname, email, password, "description");
 
         memberService.saveMember(member);
 
         memberService.login(member);
     }
     @AfterEach void afterEach() {
-        memberRepository.deleteAll();
+        Member memberByNickname = memberRepository.findMemberByNickname(nickname);
+        memberRepository.delete(memberByNickname);
     }
 
     @Test
@@ -69,7 +69,7 @@ class UploadControllerTest {
 
     @Test @DisplayName("업로드처리_입력값_정상")
     public void 업로드처리_입력값_정상() throws Exception {
-        sectionInit();
+        // sectionFactory.init(); //
 
         String title = "this is test title";
         String sectionType = "[{\"value\":\"FUNNY\"}]";
@@ -151,18 +151,4 @@ class UploadControllerTest {
                 .andExpect(authenticated());
     }
 
-    private void sectionInit() {
-        Arrays.asList(SectionType.values()).forEach(sectionType -> {
-            Section section = Section.createSection(
-                    sectionType
-                    , Info.createInfo(
-                            sectionType.name().toLowerCase(),
-                            sectionType.name().toUpperCase(),
-                            messageSource.getMessage("section." + sectionType.name().toLowerCase(Locale.US) + ".description"
-                                    , new Object[0]
-                                    , Locale.US)
-                    ));
-            entityManager.persist(section);
-        });
-    }
 }

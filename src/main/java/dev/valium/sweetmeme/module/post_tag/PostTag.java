@@ -5,6 +5,9 @@ import lombok.*;
 
 import javax.persistence.*;
 
+/**
+ * [1:N:?] Post <-*> PostTag : [tagId 주석참조]
+ */
 @Entity(name = "post_tag")
 @Setter @Getter
 @Builder @AllArgsConstructor
@@ -19,10 +22,8 @@ public class PostTag {
     private Post post;
 
     /**
-     * 1:N:1
-     * Post - PostTag -> Tag
-     *
      * Unique한 tagName을 tagId가 multiple 하게 참조함.
+     * 그래서 Tag객체가 아닌 tagId를 직접 알고 있음
      */
     private Long tagId;
 

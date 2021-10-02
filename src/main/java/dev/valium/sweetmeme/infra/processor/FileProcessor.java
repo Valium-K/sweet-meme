@@ -20,8 +20,7 @@ public class FileProcessor {
         String newFileName = UUID.randomUUID().toString().replace("-", "");
         String fileType = FilenameUtils.getExtension(file.getOriginalFilename());
 
-
-        if ("mp4".equals(fileType)) {
+        if ("mp4".equals(fileType) || "webp".equals(fileType)) {
             File newFile = new File(path, newFileName + "." + fileType);
 
             if(!newFile.exists()){
@@ -41,6 +40,7 @@ public class FileProcessor {
 
             file.transferTo(newFile);
 
+            // TODO Exception 구현
             try {
                 gif2webp(newFile);
             } catch (InterruptedException e) {
@@ -57,7 +57,7 @@ public class FileProcessor {
     }
 
     private static void gif2webp(File file) throws IOException, InterruptedException {
-
+        // TODO Linux용 코드 추가 요망
         File gif2webp = ResourceUtils.getFile("classpath:static/webp/gif2webp.exe");
         String gif2webpAbsPath = gif2webp.getAbsolutePath();
 

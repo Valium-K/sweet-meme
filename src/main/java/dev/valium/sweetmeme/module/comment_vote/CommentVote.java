@@ -6,12 +6,13 @@ import lombok.*;
 
 import javax.persistence.*;
 
+/**
+ * [1:N:1] Member <-* CommentVote *-> Comment
+ */
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 @EqualsAndHashCode(of = {"id"})
-@Builder
-@AllArgsConstructor
+@Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class CommentVote {
 

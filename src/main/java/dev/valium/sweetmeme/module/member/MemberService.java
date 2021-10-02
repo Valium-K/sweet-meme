@@ -1,13 +1,10 @@
 package dev.valium.sweetmeme.module.member;
 
 import dev.valium.sweetmeme.infra.config.FileConfig;
-import dev.valium.sweetmeme.module.comment.Comment;
-import dev.valium.sweetmeme.module.info.Info;
+import dev.valium.sweetmeme.infra.processor.Code2State;
+import dev.valium.sweetmeme.infra.processor.FileProcessor;
 import dev.valium.sweetmeme.module.member.form.SettingsAccountForm;
 import dev.valium.sweetmeme.module.member.form.SettingsProfileForm;
-import dev.valium.sweetmeme.infra.processor.Code2State;
-import dev.valium.sweetmeme.module.post.Post;
-import dev.valium.sweetmeme.infra.processor.FileProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -31,22 +28,24 @@ import java.util.*;
 public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
-
     private final PasswordEncoder passwordEncoder;
 
     public Member findMember(String nickname) {
+        // TODO Exception 구현
         return memberRepository.findByNickname(nickname).orElseThrow(
                 () -> new IllegalArgumentException(nickname + "에 해당하는 멤버를 찾을 수 없습니다.")
         );
     }
 
     @Transactional(readOnly = true)
+    // TODO Exception 구현
     public Member findMemberAndInfo(String nickname) {
         return memberRepository.findMemberAndInfoByNickname(nickname).orElseThrow(
             () -> new IllegalArgumentException(nickname + "에 해당하는 멤버를 찾을 수 없습니다.")
         );
     }
 
+    // TODO upvotedList, downVotedList 함께 가져오기
     public void login(Member member) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 new MemberUser(memberRepository.findFetchInfoById(member.getId()).orElse(member)),
@@ -58,6 +57,7 @@ public class MemberService implements UserDetailsService {
         context.setAuthentication(token);
     }
 
+    // TODO 프로필 수정 시, 코멘트시, up*down vote시 업뎃 후 세션에 보관하게 바꾸기
     public void updatePrincipal(Member member) {
         SecurityContext context = SecurityContextHolder.getContext();
 
@@ -77,12 +77,6 @@ public class MemberService implements UserDetailsService {
     }
 
 
-    @Transactional(readOnly = true)
-    public List<Post> findPostsByNickname(String nickname) {
-        Member foundMember = findMember(nickname);
-
-        return new ArrayList<>(foundMember.getMyPosts());
-    }
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -94,6 +88,7 @@ public class MemberService implements UserDetailsService {
         return new MemberUser(member);
     }
 
+    // TODO Exception 구현
     public Member updatePassword(Member member, String pw) {
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
                 () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
@@ -104,6 +99,7 @@ public class MemberService implements UserDetailsService {
         return foundMember;
     }
 
+    // TODO Exception 구현
     public Member updateMemberAccount(Member member, SettingsAccountForm form) {
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
                 () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
@@ -117,6 +113,7 @@ public class MemberService implements UserDetailsService {
         return foundMember;
     }
 
+    // TODO Exception 구현
     public Member updateProfile(Member member, SettingsProfileForm form) throws IOException {
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
                 () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
@@ -125,7 +122,6 @@ public class MemberService implements UserDetailsService {
         if(!form.getFile().isEmpty()) {
             String newFile = FileProcessor.transferFile(FileConfig.ABSOLUTE_AVATAR_PATH, form.getFile(), true);
             foundMember.getMemberInfo().setPicImage(newFile);
-//             form.getFile().transferTo(newFile);
         }
 
         if("".equals(form.getDescription())) foundMember.getMemberInfo().setDescription(member.getNickname() + "'s description.");
@@ -136,6 +132,7 @@ public class MemberService implements UserDetailsService {
         return foundMember;
     }
 
+    // TODO Exception 구현
     public Member resetProfileAvatar(Member member) {
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
                 () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
@@ -144,14 +141,6 @@ public class MemberService implements UserDetailsService {
         foundMember.getMemberInfo().setPicImage(null);
 
         return foundMember;
-    }
-
-    public Comment getComment(Member member) {
-        return null;
-    }
-
-    public Info getInfo(Member member) {
-        return member.getMemberInfo();
     }
 }
 

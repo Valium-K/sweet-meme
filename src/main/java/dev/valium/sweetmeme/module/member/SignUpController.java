@@ -1,9 +1,9 @@
 package dev.valium.sweetmeme.module.member;
 
+import dev.valium.sweetmeme.module.bases.enums.SectionType;
+import dev.valium.sweetmeme.module.info.Info;
 import dev.valium.sweetmeme.module.member.form.SignUpForm;
 import dev.valium.sweetmeme.module.member.validator.SignUpFormValidator;
-import dev.valium.sweetmeme.module.info.Info;
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

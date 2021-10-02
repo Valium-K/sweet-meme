@@ -4,10 +4,12 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 
+@Transactional(readOnly = true)
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Member findMemberById(Long id);
@@ -25,6 +27,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findMemberAndInfoByNickname(@Param("nickname") String nickname);
     @Query("select m from Member m join fetch m.memberInfo i where m.email = :email")
     Optional<Member> findMemberAndInfoByEmail(@Param("email") String email);
-    @Query("select m from Member m join fetch m.commentedPosts where m.id = :id")
-    Member findMemberAndCommentedPostsById(@Param("id") Long id);
 }

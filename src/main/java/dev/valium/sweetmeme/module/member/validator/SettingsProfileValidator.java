@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.module.member.validator;
 
 import dev.valium.sweetmeme.infra.config.FileConfig;
+import dev.valium.sweetmeme.infra.processor.Code2State;
 import dev.valium.sweetmeme.module.member.form.SettingsProfileForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,9 @@ import org.springframework.validation.Validator;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
+
+import static dev.valium.sweetmeme.infra.processor.Code2State.json2Code;
+import static dev.valium.sweetmeme.infra.processor.Code2State.json2State;
 
 @Slf4j
 @Component
@@ -28,6 +32,19 @@ public class SettingsProfileValidator implements Validator {
             log.error(form.getFile().getContentType() + "은 정의된 확장자가 아닙니다.");
             errors.rejectValue("file", "upload.file.error.type",
                     new Object[]{form.getFile().getContentType()}, form.getFile().getContentType() + "은 정의된 확장자가 아닙니다.");
+        }
+
+        if(!form.getFile().isEmpty() && form.getFile().getSize() >= 10485760) {
+            log.error("파일 크기가 10mb가 넘습니다.");
+            errors.rejectValue("file", "upload.file.info",
+                    new Object[]{form.getFile().getContentType()}, "파일크기가 10mb가 넘습니다.");
+        }
+
+        Code2State code2State = new Code2State();
+        if(!code2State.isThereSuchCodeLike(json2Code(form.getState()))) {
+            log.error(form.getState() + "는 등록된 국가가 아닙니다.");
+            errors.rejectValue("state", "settings.info.stateCode.error",
+                    new Object[]{form.getFile().getContentType()}, form.getState() + "는 등록된 국가가 아닙니다.");
         }
     }
 

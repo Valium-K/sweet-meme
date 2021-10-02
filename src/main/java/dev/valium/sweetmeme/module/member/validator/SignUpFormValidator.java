@@ -1,7 +1,7 @@
 package dev.valium.sweetmeme.module.member.validator;
 
-import dev.valium.sweetmeme.module.member.form.SignUpForm;
 import dev.valium.sweetmeme.module.member.MemberRepository;
+import dev.valium.sweetmeme.module.member.form.SignUpForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

@@ -4,6 +4,7 @@ import com.tngtech.archunit.*;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import dev.valium.sweetmeme.module.post_tag.PostTag;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
@@ -18,11 +19,11 @@ public class PackageDependencyTests {
     private static final String TAG = "..module.tag..";
     private static final String COMMENT = "..module.comment..";
     private static final String COMMENT_VOTE = "..module.comment_vote..";
-    private static final String VOTE = "..module.vote..";
+    private static final String POST_VOTE = "..module.post_vote..";
     private static final String POST_TAG = "..module.post_tag..";
-    private static final String UPLOAD = "..module.upload..";
     private static final String BASES = "..module.bases..";
     private static final String HOME = "..module.home..";
+    private static final String MEMBER_POST = "..module.member_post..";
 
     @ArchTest
     ArchRule modulesPackageRule = classes().that().resideInAPackage("dev.valium.sweetmeme.module..")
@@ -32,7 +33,7 @@ public class PackageDependencyTests {
     @ArchTest
     ArchRule sectionPackageRule = classes().that().resideInAPackage(SECTION)
             .should().onlyBeAccessed().byClassesThat()
-            .resideInAnyPackage(SECTION, POST, UPLOAD);
+            .resideInAnyPackage(SECTION, POST);
 
     @ArchTest
     ArchRule infoPackageRule = classes().that().resideInAPackage(INFO)
@@ -47,12 +48,12 @@ public class PackageDependencyTests {
     @ArchTest
     ArchRule memberPackageRule = classes().that().resideInAPackage(MEMBER)
             .should().onlyBeAccessed().byClassesThat()
-            .resideInAnyPackage(MEMBER, COMMENT_VOTE, VOTE, POST);
+            .resideInAnyPackage(MEMBER, MEMBER_POST, POST_VOTE, COMMENT_VOTE, POST, HOME);
 
     @ArchTest
     ArchRule postPackageRule = classes().that().resideInAPackage(POST)
             .should().onlyBeAccessed().byClassesThat()
-            .resideInAnyPackage(POST,COMMENT, VOTE, POST_TAG, SECTION);
+            .resideInAnyPackage(POST, MEMBER_POST, COMMENT_VOTE, POST_VOTE, SECTION);
 
     @ArchTest
     ArchRule comment_votePackageRule = classes().that().resideInAPackage(COMMENT_VOTE)
@@ -60,19 +61,19 @@ public class PackageDependencyTests {
             .resideInAnyPackage(COMMENT_VOTE, POST);
 
     @ArchTest
-    ArchRule votePackageRule = classes().that().resideInAPackage(VOTE)
+    ArchRule post_votePackageRule = classes().that().resideInAPackage(POST_VOTE)
             .should().onlyBeAccessed().byClassesThat()
-            .resideInAnyPackage(VOTE, POST, BASES);
+            .resideInAnyPackage(POST_VOTE, POST, BASES, MEMBER);
 
     @ArchTest
     ArchRule tagPackageRule = classes().that().resideInAPackage(TAG)
             .should().onlyBeAccessed().byClassesThat()
-            .resideInAnyPackage(TAG, POST);
+            .resideInAnyPackage(TAG, POST_TAG, POST);
 
     @ArchTest
     ArchRule homePackageRule = classes().that().resideInAPackage(HOME)
             .should().onlyBeAccessed().byClassesThat()
-            .resideInAnyPackage(INFO, POST);
+            .resideInAnyPackage(HOME, POST);
 
     @ArchTest
     ArchRule cycleCheck = slices().matching("dev.valium.sweetmeme.(*)..")

@@ -9,8 +9,7 @@ import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.post.Post;
 import dev.valium.sweetmeme.module.post.PostRepository;
 import dev.valium.sweetmeme.module.section.form.SectionTagForm;
-import dev.valium.sweetmeme.module.vote.VoteService;
-import lombok.RequiredArgsConstructor;
+import dev.valium.sweetmeme.module.post_vote.PostVoteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,8 +27,8 @@ public class SectionController  extends BaseController {
     private final PostRepository postRepository;
     private final InfoRepository infoRepository;
 
-    public SectionController(VoteService voteService, PostRepository postRepository, InfoRepository infoRepository) {
-        super(voteService);
+    public SectionController(PostVoteService postVoteService, PostRepository postRepository, InfoRepository infoRepository) {
+        super(postVoteService);
         this.postRepository = postRepository;
         this.infoRepository = infoRepository;
     }

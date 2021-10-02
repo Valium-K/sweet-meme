@@ -34,17 +34,15 @@ class ProfileControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        Member member = Member.createMember(nickname, email, password);
-        Info info = Info.createInfo(null, "head", "description");
-
-        member.setMemberInfo(info);
+        Member member = MemberFactory.create(nickname, email, password, "description");
 
         memberService.saveMember(member);
     }
 
     @AfterEach
     void afterEach() {
-        memberRepository.deleteAll();
+        Member memberByNickname = memberRepository.findMemberByNickname(nickname);
+        memberRepository.delete(memberByNickname);
     }
 
     @Test

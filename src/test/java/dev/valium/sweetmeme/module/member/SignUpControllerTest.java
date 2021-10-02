@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -111,7 +113,10 @@ class SignUpControllerTest {
                 .andExpect(view().name("redirect:/"))
                 .andExpect(authenticated().withUsername(nickname));
 
-        assertNotNull(memberRepository.findByEmail(email));
+        Member byEmail = memberRepository.findByEmail(email).get();
+        assertNotNull(byEmail);
+
+        memberRepository.delete(byEmail);
     }
 
 }

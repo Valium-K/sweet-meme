@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 @Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Section extends BaseEntityTime {
@@ -28,7 +28,6 @@ public class Section extends BaseEntityTime {
     @JoinColumn(name = "section_info_id")
     private Info sectionInfo;
 
-    // section -> post
     @OneToMany(mappedBy = "section")
     private List<Post> posts = new ArrayList<>();
 

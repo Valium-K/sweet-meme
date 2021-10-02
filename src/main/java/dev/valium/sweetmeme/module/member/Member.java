@@ -1,10 +1,10 @@
 package dev.valium.sweetmeme.module.member;
 
 import dev.valium.sweetmeme.module.bases.BaseEntityTime;
+import dev.valium.sweetmeme.module.bases.enums.Membership;
 import dev.valium.sweetmeme.module.comment_vote.CommentVote;
 import dev.valium.sweetmeme.module.info.Info;
-import dev.valium.sweetmeme.module.vote.Vote;
-import dev.valium.sweetmeme.module.bases.enums.Membership;
+import dev.valium.sweetmeme.module.member_post.MemberPost;
 import dev.valium.sweetmeme.module.post.Post;
 import lombok.*;
 
@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @Entity
 @Getter @Setter
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 @Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntityTime {
@@ -45,17 +45,12 @@ public class Member extends BaseEntityTime {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "info_id")
     private Info memberInfo;
-    // member -> post
+
     @OneToMany(mappedBy = "originalPoster", cascade = CascadeType.ALL)
     private List<Post> myPosts = new ArrayList<>();
-    // member ->Post
-    @OneToMany(mappedBy = "postedMember", cascade = CascadeType.ALL)
-    private List<Post> commentedPosts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "upVotedMember", cascade = CascadeType.ALL)
-    private List<Vote> upVotedPosts = new ArrayList<>();
-    @OneToMany(mappedBy = "downVotedMember", cascade = CascadeType.ALL)
-    private List<Vote> downVotedPosts = new ArrayList<>();
+    @OneToMany(mappedBy = "commentedMember", cascade = CascadeType.ALL)
+    private List<MemberPost> commentedMember = new ArrayList<>();
 
     @OneToMany(mappedBy = "upVotedMember", cascade = CascadeType.ALL)
     private List<CommentVote> upVotedComments = new ArrayList<>();
@@ -77,9 +72,9 @@ public class Member extends BaseEntityTime {
                     .replyAlert(true)
                     .emailCheckToken(createEmailCheckToken())
                     .myPosts(new ArrayList<>())
-                    .commentedPosts(new ArrayList<>())
-                    .upVotedPosts(new ArrayList<>())
-                    .downVotedPosts(new ArrayList<>())
+                    .commentedMember(new ArrayList<>())
+//                    .upVotedPosts(new ArrayList<>())
+//                    .downVotedPosts(new ArrayList<>())
                     .build();
     }
 
@@ -88,13 +83,5 @@ public class Member extends BaseEntityTime {
                 this.getCreatedDate().toLocalDate(),
                 LocalDateTime.now().toLocalDate()
         ).getDays();
-    }
-
-    public boolean isContainsPost(Post post) {
-        return this.myPosts.contains(post);
-    }
-
-    public void addCommentedPost(Post post) {
-        this.commentedPosts.add(post);
     }
 }

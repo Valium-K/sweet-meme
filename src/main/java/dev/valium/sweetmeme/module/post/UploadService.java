@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class UploadService {
 
-    // TODO 윈도우에서 봐도 \가 아는 /로 보인다. DB상에서만 그런걸수도 있으니 나중에 확인할 것.
+    // TODO 윈도우에서 봐도 \가 아닌 /로 보인다. DB상에서만 그런걸수도 있으니 나중에 확인할 것.
     private final String ABSOLUTE_UPLOAD_PATH = FileConfig.ABSOLUTE_UPLOAD_PATH;
 
     private final MemberRepository memberRepository;
@@ -88,7 +88,7 @@ public class UploadService {
 
     }
     public Set<Tag> json2TagSet(String json) {
-        System.out.println("===========" + json);
+
         JSONArray jsonArray = new JSONArray(json);
         Set<Tag> outputs = new HashSet<>();
 
@@ -104,15 +104,12 @@ public class UploadService {
         JSONArray jsonArray = new JSONArray(json);
         List<SectionType> outputs = new ArrayList<>();
 
-        List<String> sectionNames = Arrays.stream(SectionType.values())
-                                        .map(Enum::name)
-                                        .collect(Collectors.toList());
-
         for(int i = 0; i < jsonArray.length(); i++) {
             String value = (String) jsonArray.getJSONObject(i).get("value");
             outputs.add(SectionType.valueOf(value));
         }
 
+        // 앞 validation에서 검증 완료
         return outputs;
     }
 

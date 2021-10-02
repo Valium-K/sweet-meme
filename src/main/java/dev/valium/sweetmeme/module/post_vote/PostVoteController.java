@@ -1,4 +1,4 @@
-package dev.valium.sweetmeme.module.vote;
+package dev.valium.sweetmeme.module.post_vote;
 
 import dev.valium.sweetmeme.module.member.CurrentMember;
 import dev.valium.sweetmeme.module.member.Member;
@@ -13,9 +13,9 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
-public class VoteController {
+public class PostVoteController {
 
-    private final VoteService voteService;
+    private final PostVoteService postVoteService;
 
     @PostMapping("/post/{id}/vote")
     @ResponseBody
@@ -23,7 +23,7 @@ public class VoteController {
         Long id = Long.valueOf(params.get("id"));
         boolean vote = Boolean.parseBoolean(params.get("vote"));
 
-        boolean success = voteService.votePost(member, id, vote);
+        boolean success = postVoteService.votePost(member, id, vote);
         if(success)
             return ResponseEntity.ok().build();
         else

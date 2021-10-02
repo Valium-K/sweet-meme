@@ -1,11 +1,12 @@
 package dev.valium.sweetmeme.module.post;
 
-import dev.valium.sweetmeme.module.comment.Comment;
 import dev.valium.sweetmeme.module.bases.enums.SectionType;
+import dev.valium.sweetmeme.module.comment.Comment;
 import dev.valium.sweetmeme.module.member.Member;
+import dev.valium.sweetmeme.module.member_post.MemberPost;
 import dev.valium.sweetmeme.module.post_tag.PostTag;
+import dev.valium.sweetmeme.module.post_vote.PostVote;
 import dev.valium.sweetmeme.module.section.Section;
-import dev.valium.sweetmeme.module.vote.Vote;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -69,19 +70,15 @@ public class Post {
     ////////////////////////////////////////////////////
     // member -> post
     @OneToMany(mappedBy = "upVotedPost")
-    private List<Vote> upVotedMembers;
+    private List<PostVote> upVotedMembers;
 
 //    // member -> post
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "down_voted_member_id")
 //    private Member downVotedMember;
 
-
-    // member -> post
-    // 멤버A 입장에서 봤을 때 이 포스트를 업로드한 사람
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "posted_member_id")
-    private Member postedMember;
+    @OneToMany(mappedBy = "commentedPost", cascade = CascadeType.ALL)
+    private List<MemberPost> commentedPost;
     ////////////////////////////////////////////////////
 
     /**

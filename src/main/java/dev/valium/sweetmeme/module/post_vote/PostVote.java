@@ -1,4 +1,4 @@
-package dev.valium.sweetmeme.module.vote;
+package dev.valium.sweetmeme.module.post_vote;
 
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.post.Post;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class Vote {
+public class PostVote {
 
     @Id
     @GeneratedValue

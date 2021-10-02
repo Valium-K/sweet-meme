@@ -259,32 +259,39 @@ public class Code2State {
         }
         this.isInited = true;
     }
+
     public Map<String, String> getCodeMap() {
         if(!isInited) initCodeMap();
         return codeMap;
     }
+
     public String findStateByCode(String code) throws Exception {
         if(code == null) return null;
         if(!isInited) initCodeMap();
 
         String state = codeMap.get(code.toUpperCase());
 
+        // TODO Exception 구현
         if(state == null)
             throw new Exception(code + "는 등록된 국가가 아닙니다.");
 
         return state;
     }
-    public boolean isThereSuchStateLike(String code) {
+    public boolean isThereSuchCodeLike(String code) {
+        // TODO Exception 구현
         try {
-            findStateByCode(code);
-
-            return true;
+            if(findStateByCode(code) == null)
+                return false;
+            else
+                return true;
         }
         catch (Exception e) {
             return false;
         }
     }
+
     public static String json2Code(String json) {
+        // TODO Exception 구현
         try {
             return json.split("\"")[7].toLowerCase();
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -292,6 +299,7 @@ public class Code2State {
         }
     }
     public static String json2State(String json) {
+        // TODO Exception 구현
         try {
             return json.split("\"")[3].toLowerCase();
         } catch (ArrayIndexOutOfBoundsException e) {

@@ -1,12 +1,12 @@
 package dev.valium.sweetmeme.module.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.valium.sweetmeme.module.post.form.UploadForm;
-import dev.valium.sweetmeme.module.post.validator.UploadFormValidator;
+import dev.valium.sweetmeme.module.bases.enums.SectionType;
 import dev.valium.sweetmeme.module.member.CurrentMember;
 import dev.valium.sweetmeme.module.member.Member;
+import dev.valium.sweetmeme.module.post.form.UploadForm;
+import dev.valium.sweetmeme.module.post.validator.UploadFormValidator;
 import dev.valium.sweetmeme.module.tag.Tag;
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
 import dev.valium.sweetmeme.module.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
 import java.util.Arrays;
@@ -57,7 +59,6 @@ public class UploadController {
 
     @PostMapping("/upload/post")
     public String upload(Model model, @CurrentMember Member member, @Valid UploadForm form, BindingResult result) throws Exception {
-
 
         if (result.hasErrors()) {
             log.error("error");

@@ -11,6 +11,8 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import java.util.Locale;
+
 @Configuration
 @EnableJpaAuditing
 public class SpringConfig {
@@ -40,12 +42,12 @@ public class SpringConfig {
         return messageSource;
     }
 
-    @Bean
-    public LocaleResolver localeResolver() {
-        SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
-        // sessionLocaleResolver.setDefaultLocale(Locale.US);
-        return sessionLocaleResolver;
-    }
+//    @Bean
+//    public LocaleResolver localeResolver() {
+//        SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
+//        sessionLocaleResolver.setDefaultLocale(Locale.KOREA);
+//        return sessionLocaleResolver;
+//    }
 
     @Bean
     public LocalValidatorFactoryBean localValidatorFactoryBean() {

@@ -6,10 +6,7 @@ import dev.valium.sweetmeme.module.comment.Comment;
 import dev.valium.sweetmeme.module.comment.CommentRepository;
 import dev.valium.sweetmeme.module.comment.form.CommentForm;
 import dev.valium.sweetmeme.module.member.Member;
-import dev.valium.sweetmeme.module.member.MemberRepository;
-import dev.valium.sweetmeme.module.member.MemberService;
-import dev.valium.sweetmeme.module.post.Post;
-import dev.valium.sweetmeme.module.post.PostRepository;
+import dev.valium.sweetmeme.module.member_post.MemberPostService;
 import dev.valium.sweetmeme.module.post_tag.PostTag;
 import dev.valium.sweetmeme.module.post_tag.PostTagRepository;
 import dev.valium.sweetmeme.module.tag.Tag;
@@ -32,13 +29,13 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final PostTagRepository postTagRepository;
     private final TagRepository tagRepository;
-    private final MemberService memberService;
-    private final MemberRepository memberRepository;
+    private final MemberPostService memberPostService;
 
+    // TODO Excpetion 구현
     public Post findPostById(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new IllegalArgumentException(id + "에 해당하는 post를 찾을 수 없습니다."));
-
-        return post;
+        return postRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException(id + "에 해당하는 post를 찾을 수 없습니다.")
+        );
     }
 
     public void saveComment(Long postId, CommentForm form, Member member) throws IOException {
@@ -61,13 +58,11 @@ public class PostService {
     private Comment setComment(Long postId, CommentForm form, Member member) throws IOException {
         Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(postId + "id의 포스트가 없음"));
 
-
-        System.out.println(member.getId());
-        Member foundMember = memberRepository.findMemberAndCommentedPostsById(member.getId());
         Comment comment = Comment.create(member.getMemberInfo());
 
-        if(!foundMember.getCommentedPosts().contains(post)) {
-            foundMember.getCommentedPosts().add(post);
+        List<Post> commentedPosts = memberPostService.findPostsByMember(member);
+        if(!commentedPosts.contains(post)) {
+            memberPostService.addCommentedPost(member, post);
         }
 
         if(form.getFile() != null && !form.getFile().isEmpty()) {
@@ -92,5 +87,9 @@ public class PostService {
         List<Tag> tags = tagRepository.findByTagIds(tagIds);
 
         return tags;
+    }
+
+    public List<Post> findFetchPostsByCommentedMember(Member member) {
+        return memberPostService.findFetchPostsByCommentedMember(member);
     }
 }

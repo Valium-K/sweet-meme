@@ -29,9 +29,9 @@ class LoginControllerTest {
     @Autowired private MemberRepository memberRepository;
     @Autowired private MemberService memberService;
 
-    private final String nickname = "membersdf1";
-    private final String email = "email2@email2.com";
-    private final String password = "membermember";
+    private static final String nickname = "membersdf1";
+    private static final String email = "email2@email2.com";
+    private static final String password = "membermember";
 
     @BeforeEach
     void beforeEach() {

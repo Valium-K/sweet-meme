@@ -20,13 +20,11 @@ public class CommentVoteService {
     private final CommentRepository commentRepository;
 
     public boolean voteComment(Member member, Long id, boolean vote) throws Exception {
+        // TODO Exception 구현
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new Exception("comment 없음"));
 
         CommentVote upVotedComment = commentVoteRepository.findUpVoteByUpVotedMemberAndUpVotedComment(member, comment);
-        //Comment upVotedComment = upvote.getUpVotedComment();
-
         CommentVote downVotedComment = commentVoteRepository.findDownVoteByDownVotedMemberAndDownVotedComment(member, comment);
-        //Comment downVotedComment = downvote.getDownVotedComment();
 
         // 첫 보트
         if(downVotedComment == null && upVotedComment == null) {
@@ -63,7 +61,6 @@ public class CommentVoteService {
 
                 commentVoteRepository.save(commentVote);
             }
-
         }
         // downvote한 comment
         else {

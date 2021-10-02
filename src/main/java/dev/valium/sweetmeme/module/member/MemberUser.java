@@ -1,6 +1,5 @@
 package dev.valium.sweetmeme.module.member;
 
-import dev.valium.sweetmeme.module.member.Member;
 import lombok.Getter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

@@ -24,7 +24,4 @@ public class UploadForm {
 
     @NotBlank
     private String sections;
-
-
-
 }

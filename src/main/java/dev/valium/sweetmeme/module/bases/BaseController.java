@@ -2,7 +2,7 @@ package dev.valium.sweetmeme.module.bases;
 
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.bases.enums.SectionType;
-import dev.valium.sweetmeme.module.vote.VoteService;
+import dev.valium.sweetmeme.module.post_vote.PostVoteService;
 import org.springframework.ui.Model;
 
 import java.util.Arrays;
@@ -15,10 +15,10 @@ import static dev.valium.sweetmeme.infra.config.FileConfig.FILE_URL;
 
 public class BaseController {
 
-    private final VoteService voteService;
+    private final PostVoteService postVoteService;
 
-    public BaseController(VoteService voteService) {
-        this.voteService = voteService;
+    public BaseController(PostVoteService postVoteService) {
+        this.postVoteService = postVoteService;
     }
 
     protected void setBaseAttributes(Member member, Model model, String currentMenu) {
@@ -27,9 +27,9 @@ public class BaseController {
         } else {
             model.addAttribute("member", member);
 
-            List<Long> upVoteIds = voteService.findUpVotedPostsId(member);
+            List<Long> upVoteIds = postVoteService.findUpVotedPostsId(member);
             model.addAttribute("upVotedIds", upVoteIds);
-            List<Long> downVoteIds = voteService.findDownVotedPostsId(member);
+            List<Long> downVoteIds = postVoteService.findDownVotedPostsId(member);
             model.addAttribute("downVotedIds", downVoteIds);
         }
 

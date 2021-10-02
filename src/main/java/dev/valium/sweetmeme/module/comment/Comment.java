@@ -1,8 +1,8 @@
 package dev.valium.sweetmeme.module.comment;
 
 import dev.valium.sweetmeme.module.bases.BaseEntityTime;
-import dev.valium.sweetmeme.module.info.Info;
 import dev.valium.sweetmeme.module.bases.embeddable.Vote;
+import dev.valium.sweetmeme.module.info.Info;
 import dev.valium.sweetmeme.module.post.Post;
 import lombok.*;
 
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
-@EqualsAndHashCode(of = {"id"})
+@EqualsAndHashCode(of = {"id"}, callSuper = false)
 @Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends BaseEntityTime {
@@ -21,20 +21,16 @@ public class Comment extends BaseEntityTime {
     @Column(name = "comment_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "info_id")
     private Info commenterInfo;
 
-//    @Column(nullable = false)
-//    private String commentedMember;
     private Vote vote;
-//    private String picImage;
+
     private String descriptionImg;
     @Column(nullable = false)
     private String content;
 
-
-    // Post -> Comment
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;

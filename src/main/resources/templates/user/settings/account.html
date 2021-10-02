@@ -27,7 +27,7 @@
 
             <div class="form-group mb-3">
               <label for="nickname" th:text="#{nickname}">닉네임</label>
-              <input id="nickname" type="text" th:field="*{nickname}" class="form-control"
+              <input id="nickname" name="nickname" type="text" th:field="*{nickname}" class="form-control"
                      th:placeholder="#{signup.nickname.placeholder}" aria-describedby="nicknameHelp" required min="3" max="20" />
               <small id="nicknameHelp" class="form-text text-muted" th:text="#{signup.nickname.help}" style="display: block">
                 3자 이상 20자 이내의 영문자, 한글, 숫자, 특수기호('-' '_')만 사용가능합니다.

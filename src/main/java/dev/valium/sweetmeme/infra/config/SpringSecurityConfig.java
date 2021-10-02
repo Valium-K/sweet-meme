@@ -29,7 +29,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 // TODO 임시 permitAll() 나중에 경로 설정하기
-                .mvcMatchers("/*", "/user/**", "/post/*", "test/*", "/comment/slice/**","/reply/slice/**").permitAll()
+                .mvcMatchers("/*", "/user/**", "/post/*", "test/*",
+                        "/comment/slice/**", "/reply/slice/**", "/notifications/*").permitAll()
                 .mvcMatchers(HttpMethod.GET, SECTION_URL+"*", FILE_URL+"*", DOWNLOAD_URL+"*",
                         COMMENT_IMAGE_URL+"*", "/avatar/*").permitAll()
                 .anyRequest().authenticated();
@@ -51,7 +52,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring()
                 .mvcMatchers("/node_modules/**") // 추가필터
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
@@ -59,7 +60,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PersistentTokenRepository tokenRepository() {
-        // TODO JdbcTokenRepositoryImpl.CREATE_TABLE_SQL의 SQL문에 맞는 Entity 생성
 
         JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
         jdbcTokenRepository.setDataSource(dataSource);

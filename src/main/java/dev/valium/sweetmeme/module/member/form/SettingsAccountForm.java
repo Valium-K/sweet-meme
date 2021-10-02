@@ -1,13 +1,16 @@
 package dev.valium.sweetmeme.module.member.form;
 
 import dev.valium.sweetmeme.module.member.Member;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Data
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class SettingsAccountForm {
 
     @NotBlank
@@ -18,7 +21,6 @@ public class SettingsAccountForm {
     private boolean upvoteAlert;
     private boolean replyAlert;
 
-    public SettingsAccountForm() {}
     public SettingsAccountForm(Member member) {
         this.nickname = member.getNickname();
         this.upvoteAlert = member.isUpvoteAlert();

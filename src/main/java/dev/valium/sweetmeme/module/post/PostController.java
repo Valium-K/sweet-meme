@@ -1,16 +1,15 @@
 package dev.valium.sweetmeme.module.post;
 
-import dev.valium.sweetmeme.module.comment.Comment;
 import dev.valium.sweetmeme.module.bases.BaseController;
+import dev.valium.sweetmeme.module.comment.Comment;
+import dev.valium.sweetmeme.module.comment.CommentRepository;
 import dev.valium.sweetmeme.module.comment.form.CommentForm;
 import dev.valium.sweetmeme.module.comment_vote.CommentVoteService;
 import dev.valium.sweetmeme.module.member.CurrentMember;
 import dev.valium.sweetmeme.module.member.Member;
-import dev.valium.sweetmeme.module.comment.CommentRepository;
-import dev.valium.sweetmeme.module.member.MemberService;
+import dev.valium.sweetmeme.module.post.form.UploadForm;
 import dev.valium.sweetmeme.module.tag.Tag;
-import dev.valium.sweetmeme.module.tag.TagService;
-import dev.valium.sweetmeme.module.vote.VoteService;
+import dev.valium.sweetmeme.module.post_vote.PostVoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.InputStreamResource;
@@ -39,20 +38,14 @@ import static dev.valium.sweetmeme.infra.config.FileConfig.*;
 @Controller
 public class PostController extends BaseController {
 
-    private final PostRepository postRepository;
     private final PostService postService;
     private final CommentRepository commentRepository;
-    private final MemberService memberService;
-    private final VoteService voteService;
     private final CommentVoteService commentVoteService;
 
-    public PostController(VoteService voteService, PostService postService, CommentRepository commentRepository, PostRepository postRepository, MemberService memberService, VoteService voteService1, CommentVoteService commentVoteService) {
-        super(voteService);
+    public PostController(PostVoteService postVoteService, PostService postService, CommentRepository commentRepository, CommentVoteService commentVoteService) {
+        super(postVoteService);
         this.postService = postService;
         this.commentRepository = commentRepository;
-        this.postRepository = postRepository;
-        this.memberService = memberService;
-        this.voteService = voteService1;
         this.commentVoteService = commentVoteService;
     }
 
@@ -96,7 +89,7 @@ public class PostController extends BaseController {
     }
 
     @GetMapping("/post/{id}")
-    public String currentPost(@PathVariable Long id, Model model, @CurrentMember Member member) {
+    public String viewClickedPost(@PathVariable Long id, Model model, @CurrentMember Member member) {
 
         Post post = postService.findPostById(id);
 
@@ -140,42 +133,6 @@ public class PostController extends BaseController {
         postService.saveComment(id, form, member);
 
         return "redirect:/post/" + id;
-    }
-
-    @GetMapping("/user/{path}/upvotes")
-    public String upvotes(@CurrentMember Member mem, @PathVariable String path, Model model) {
-        Member member = setBaseProfile(path, model, mem, "upvotes");
-
-        List<Post> posts = voteService.findUpVotedPosts(member);
-
-        model.addAttribute("posts", posts);
-
-        return "user/profile";
-    }
-
-    @GetMapping(value = "/user/{path}/posts", produces = MediaType.ALL_VALUE)
-    public String posts(@CurrentMember Member mem, @PathVariable String path, Model model)  {
-        Member member = setBaseProfile(path, model, mem, "posts");
-
-        List<Post> posts = postRepository.findAllByOriginalPosterOrderByCreatedDateDesc(member);
-
-        model.addAttribute("posts", posts);
-
-        return "user/profile";
-    }
-
-    private Member setBaseProfile(String path, Model model, Member member, String profileMenu) {
-        Member foundMember = memberService.findMemberAndInfo(path);
-
-        model.addAttribute("spendDate", foundMember.getSpendDate());
-        model.addAttribute("info", foundMember.getMemberInfo());
-        model.addAttribute("member", foundMember);
-
-        setBaseAttributes(member, model, null);
-
-        model.addAttribute("profileMenu", profileMenu);
-
-        return foundMember;
     }
 
     @PostMapping("/reply/{postId}/{parentCommentId}")

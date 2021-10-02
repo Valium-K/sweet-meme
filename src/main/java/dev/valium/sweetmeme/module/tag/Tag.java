@@ -6,7 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Getter @Setter @EqualsAndHashCode(of = {"tagName"})
+@Getter @Setter @EqualsAndHashCode(of = {"tagName"}, callSuper = false)
 @Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag extends BaseEntityTime {
@@ -17,10 +17,6 @@ public class Tag extends BaseEntityTime {
 
     @Column(unique = true, nullable = false)
     private String tagName;
-
-    // post <- post_tag -> tag
-//    @OneToMany(mappedBy = "tag")
-//    private Set<PostTag> postTags = new HashSet<>();
 
     public Tag(String tagName) {
         this.tagName = tagName;
