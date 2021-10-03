@@ -13,11 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class HomeController extends BaseController {
 
-    public HomeController(PostVoteService postVoteService) {
-        super(postVoteService);
-    }
-
-
     @GetMapping
     public String home(@CurrentMember Member member, Model model) {
         setBaseAttributes(member, model, "hot");

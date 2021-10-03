@@ -1,6 +1,6 @@
 package dev.valium.sweetmeme.module.comment_vote;
 
-import dev.valium.sweetmeme.module.comment.Comment;
+import dev.valium.sweetmeme.module.post.Comment;
 import dev.valium.sweetmeme.module.member.Member;
 import lombok.*;
 

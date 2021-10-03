@@ -67,7 +67,6 @@ public class SettingsController {
         }
 
         Member changedMember = memberService.updateMemberAccount(member, form);
-        memberService.updatePrincipal(changedMember);
 
         attributes.addFlashAttribute("accountChanged", "변경사항을 적용하였습니다.");
 
@@ -98,7 +97,6 @@ public class SettingsController {
         }
 
         Member updatedMember = memberService.updateProfile(member, form);
-        memberService.updatePrincipal(updatedMember);
 
         attributes.addFlashAttribute("profileChanged", "프로필을 변경하였습니다.");
 
@@ -109,7 +107,6 @@ public class SettingsController {
     @ResponseBody
     public ResponseEntity resetAvatar(@CurrentMember Member member) {
         Member updatedMember = memberService.resetProfileAvatar(member);
-        memberService.updatePrincipal(updatedMember);
 
         return ResponseEntity.ok().build();
     }
@@ -140,7 +137,6 @@ public class SettingsController {
         }
 
         Member updatedMember = memberService.updatePassword(member, form.getPassword());
-        memberService.updatePrincipal(updatedMember);
 
         attributes.addFlashAttribute("passwordChanged", "비밀번호를 변경하였습니다.");
 

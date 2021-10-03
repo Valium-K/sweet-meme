@@ -10,28 +10,32 @@ import dev.valium.sweetmeme.module.post.Post;
 import dev.valium.sweetmeme.module.post.PostRepository;
 import dev.valium.sweetmeme.module.section.form.SectionTagForm;
 import dev.valium.sweetmeme.module.post_vote.PostVoteService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+
+import static dev.valium.sweetmeme.infra.config.FileConfig.ABSOLUTE_SECTION_PATH;
+import static dev.valium.sweetmeme.infra.config.FileConfig.SECTION_URL;
 
 @Controller
+@Slf4j
+@RequiredArgsConstructor
 public class SectionController  extends BaseController {
 
     private final PostRepository postRepository;
     private final InfoRepository infoRepository;
-
-    public SectionController(PostVoteService postVoteService, PostRepository postRepository, InfoRepository infoRepository) {
-        super(postVoteService);
-        this.postRepository = postRepository;
-        this.infoRepository = infoRepository;
-    }
 
     @GetMapping("/fresh")
     public String fresh(@CurrentMember Member member, Model model) {
@@ -50,26 +54,18 @@ public class SectionController  extends BaseController {
         return "home/home";
     }
 
-    @GetMapping("/funny")
-    public String funny(@CurrentMember Member member, Model model) {
-        setBaseAttributes(member, model, "funny");
+    @GetMapping("/{section}")
+    public String sectionPosts(@CurrentMember Member member, Model model, @PathVariable String section) {
 
-        SectionType sectionType = SectionType.FUNNY;
+        setBaseAttributes(member, model, section);
+        SectionType sectionType;
 
-        Info infoByHead = infoRepository.findInfoByHead(sectionType.name());
-        model.addAttribute("sectionInfo", infoByHead);
-
-        List<Post> posts = postRepository.findAllByBelongedSectionTypeOrderByCreatedDateDesc(sectionType);
-        model.addAttribute("posts", posts);
-
-        return "home/home";
-    }
-
-    @GetMapping("/animals")
-    public String animals(@CurrentMember Member member, Model model) {
-        setBaseAttributes(member, model, "animals");
-
-        SectionType sectionType = SectionType.ANIMALS;
+        try {
+            sectionType = Enum.valueOf(SectionType.class, section.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            log.error("SectionController: " + e.getMessage());
+            return "home/home";
+        }
 
         Info infoByHead = infoRepository.findInfoByHead(sectionType.name());
         model.addAttribute("sectionInfo", infoByHead);
@@ -80,64 +76,14 @@ public class SectionController  extends BaseController {
         return "home/home";
     }
 
-    @GetMapping("/gif")
-    public String gif(@CurrentMember Member member, Model model) {
-        setBaseAttributes(member, model, "gif");
+    @GetMapping(SECTION_URL + "{sectionName}")
+    public ResponseEntity<byte[]> getSectionPic(@PathVariable String sectionName) throws IOException {
 
-        SectionType sectionType = SectionType.GIF;
+        InputStream imageStream = new FileInputStream(ABSOLUTE_SECTION_PATH + sectionName.toLowerCase() + ".jpg");
+        byte[] imageByteArray = IOUtils.toByteArray(imageStream);
+        imageStream.close();
 
-        Info infoByHead = infoRepository.findInfoByHead(sectionType.name());
-        model.addAttribute("sectionInfo", infoByHead);
-
-        List<Post> posts = postRepository.findAllByBelongedSectionTypeOrderByCreatedDateDesc(sectionType);
-        model.addAttribute("posts", posts);
-
-        return "home/home";
-    }
-
-    @GetMapping("/meme")
-    public String meme(@CurrentMember Member member, Model model) {
-        setBaseAttributes(member, model, "meme");
-
-        SectionType sectionType = SectionType.MEME;
-
-        Info infoByHead = infoRepository.findInfoByHead(sectionType.name());
-        model.addAttribute("sectionInfo", infoByHead);
-
-        List<Post> posts = postRepository.findAllByBelongedSectionTypeOrderByCreatedDateDesc(sectionType);
-        model.addAttribute("posts", posts);
-
-        return "home/home";
-    }
-
-    @GetMapping("/wholesome")
-    public String wholesome(@CurrentMember Member member, Model model) {
-        setBaseAttributes(member, model, "wholesome");
-
-        SectionType sectionType = SectionType.WHOLESOME;
-
-        Info infoByHead = infoRepository.findInfoByHead(sectionType.name());
-        model.addAttribute("sectionInfo", infoByHead);
-
-        List<Post> posts = postRepository.findAllByBelongedSectionTypeOrderByCreatedDateDesc(sectionType);
-        model.addAttribute("posts", posts);
-
-        return "home/home";
-    }
-
-    @GetMapping("/wallpaper")
-    public String wallpaper(@CurrentMember Member member, Model model) {
-        setBaseAttributes(member, model, "wallpaper");
-
-        SectionType sectionType = SectionType.WALLPAPER;
-
-        Info infoByHead = infoRepository.findInfoByHead(sectionType.name());
-        model.addAttribute("sectionInfo", infoByHead);
-
-        List<Post> posts = postRepository.findAllByBelongedSectionTypeOrderByCreatedDateDesc(sectionType);
-        model.addAttribute("posts", posts);
-
-        return "home/home";
+        return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
     }
 
     @PostMapping("/upload/section-tag/verify")

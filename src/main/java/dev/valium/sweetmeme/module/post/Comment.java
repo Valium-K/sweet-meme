@@ -1,9 +1,8 @@
-package dev.valium.sweetmeme.module.comment;
+package dev.valium.sweetmeme.module.post;
 
 import dev.valium.sweetmeme.module.bases.BaseEntityTime;
 import dev.valium.sweetmeme.module.bases.embeddable.Vote;
 import dev.valium.sweetmeme.module.info.Info;
-import dev.valium.sweetmeme.module.post.Post;
 import lombok.*;
 
 import javax.persistence.*;
@@ -61,5 +60,4 @@ public class Comment extends BaseEntityTime {
     public void subReplyCount() {
         this.replyCount--;
     }
-
 }

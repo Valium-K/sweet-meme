@@ -12,8 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 
-import static dev.valium.sweetmeme.infra.processor.Code2State.json2Code;
-import static dev.valium.sweetmeme.infra.processor.Code2State.json2State;
 
 @Slf4j
 @Component
@@ -41,8 +39,11 @@ public class SettingsProfileValidator implements Validator {
         }
 
         Code2State code2State = new Code2State();
-        if(!code2State.isThereSuchCodeLike(json2Code(form.getState()))) {
-            log.error(form.getState() + "는 등록된 국가가 아닙니다.");
+        String code = code2State.json2Code(form.getState());
+
+        // 빈폼과 에러를 같이 처리하면 에러처리를 서비스단까지 가져가야하기에
+        // 에러의 경우 null 처리로, 빈 폼의경우 code = ""로 처리함.
+        if(code == null) {
             errors.rejectValue("state", "settings.info.stateCode.error",
                     new Object[]{form.getFile().getContentType()}, form.getState() + "는 등록된 국가가 아닙니다.");
         }

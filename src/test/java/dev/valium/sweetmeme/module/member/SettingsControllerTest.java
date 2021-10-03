@@ -1,10 +1,7 @@
 package dev.valium.sweetmeme.module.member;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,10 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -142,6 +137,11 @@ class SettingsControllerTest {
                 .andExpect(redirectedUrl("/settings/profile"))
                 .andExpect(flash().attributeExists("profileChanged"))
                 .andExpect(authenticated());
+
+        Member memberAndInfo = memberService.findMemberAndInfo(nickname);
+        String stateCode = memberAndInfo.getMemberInfo().getStateCode();
+
+        Assertions.assertNotNull(stateCode);
     }
 
     @Test @DisplayName("아바타_변경_실패")
@@ -155,6 +155,7 @@ class SettingsControllerTest {
 
         MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "image/icon", bytes);
 
+        // 지원하지 않는 확장자
         mockMvc.perform(multipart("/settings/profile")
                 .file(file)
                 .param("description", "description")
@@ -172,6 +173,7 @@ class SettingsControllerTest {
 
         MockMultipartFile file2 = new MockMultipartFile("file", "10mb.jpg", "image/jpg", bytes2);
 
+        // 10mb 이상의 파일
         mockMvc.perform(multipart("/settings/profile")
                 .file(file2)
                 .param("description", "description")
@@ -184,33 +186,99 @@ class SettingsControllerTest {
                 .andExpect(authenticated());
     }
 
-    @Test @DisplayName("description_변경_성공")
-    public void description_변경_성공() throws Exception {
-
-    }
-
     @Test @DisplayName("description_변경_실패")
     public void description_변경_실패() throws Exception {
 
-    }
+        MockMultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpg", new byte[1]);
 
-    @Test @DisplayName("국기_변경_성공")
-    public void 국기_변경_성공() throws Exception {
+        String flagJson = "[{\"value\":\"\"}]";
 
+        mockMvc.perform(multipart("/settings/profile")
+                .file(file)
+                .param("description", "soooooooooooooo looooooooooooooooooooooong descriptionnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
+                .param("state", flagJson)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .with(csrf()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(authenticated());
     }
 
     @Test @DisplayName("국기_변경_실패")
     public void 국기_변경_실패() throws Exception {
+        String flagJson = "[{\"value\":\"Faroe Islands\",\"code\":\"RANDOM_CODE\"}]";
+        MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "image/jpg", new byte[1]);
 
+        // 등록되지 않은 국가
+        mockMvc.perform(multipart("/settings/profile")
+                .file(file)
+                .param("description", "description")
+                .param("state",flagJson)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .with(csrf()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(authenticated());
+
+        Member memberAndInfo = memberService.findMemberAndInfo(nickname);
+        String stateCode = memberAndInfo.getMemberInfo().getStateCode();
+
+        Assertions.assertNull(stateCode);
+    }
+
+    @Test @DisplayName("국기_변경_빈_폼_성공")
+    public void 국기_변경_빈_폼_성공() throws Exception {
+        String flagJson = "[{\"value\":\"Faroe Islands\",\"code\":\"\"}]";
+        MockMultipartFile file = new MockMultipartFile("file", "file.jpg", "image/jpg", new byte[1]);
+
+        // 등록되지 않은 국가
+        mockMvc.perform(multipart("/settings/profile")
+                .file(file)
+                .param("description", "description")
+                .param("state",flagJson)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .with(csrf()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(authenticated());
+
+        Member memberAndInfo = memberService.findMemberAndInfo(nickname);
+        String stateCode = memberAndInfo.getMemberInfo().getStateCode();
+
+        Assertions.assertNull(stateCode);
     }
 
     @Test @DisplayName("패스워드_변경_성공")
     public void 패스워드_변경_성공() throws Exception {
-
+        mockMvc.perform(post("/settings/password")
+                .param("password", "newPassword1234")
+                .param("passwordConfirm", "newPassword1234")
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/settings/password"))
+                .andExpect(flash().attributeExists("passwordChanged"))
+                .andExpect(authenticated());
     }
     @Test @DisplayName("패스워드_변경_실패")
     public void 패스워드_변경_실패() throws Exception {
+        // password != passwordConfirm
+        mockMvc.perform(post("/settings/password")
+                .param("password", "newPassword1234")
+                .param("passwordConfirm", "newPassword1111")
+                .with(csrf()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(authenticated());
 
+        // 짧은 패스워드
+        mockMvc.perform(post("/settings/password")
+                .param("password", "new")
+                .param("passwordConfirm", "new")
+                .with(csrf()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(authenticated());
     }
 
 

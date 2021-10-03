@@ -5,6 +5,7 @@ import dev.valium.sweetmeme.module.member.CurrentMember;
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.member.MemberService;
 import dev.valium.sweetmeme.module.post_vote.PostVoteService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,20 +19,13 @@ import java.util.Set;
 
 @Controller
 @RequestMapping("/user/{path}")
+@RequiredArgsConstructor
 public class ProfileController extends BaseController {
 
     private final MemberService memberService;
     private final PostRepository postRepository;
     private final PostService postService;
     private final PostVoteService postVoteService;
-
-    public ProfileController(MemberService memberService, PostRepository postRepository, PostService postService, PostVoteService postVoteService) {
-        super(postVoteService);
-        this.postService = postService;
-        this.postVoteService = postVoteService;
-        this.memberService = memberService;
-        this.postRepository = postRepository;
-    }
 
     @GetMapping("/upvotes")
     public String profileUpVotes(@CurrentMember Member mem, @PathVariable String path, Model model) {

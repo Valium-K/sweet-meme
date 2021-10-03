@@ -1,9 +1,11 @@
 package dev.valium.sweetmeme.infra.processor;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 public class Code2State {
     private final String stateString =
             "Afghanistan/AF/" +
@@ -260,49 +262,36 @@ public class Code2State {
         this.isInited = true;
     }
 
-    public Map<String, String> getCodeMap() {
+    public String findStateByCode(String code) {
         if(!isInited) initCodeMap();
-        return codeMap;
-    }
-
-    public String findStateByCode(String code) throws Exception {
         if(code == null) return null;
-        if(!isInited) initCodeMap();
 
-        String state = codeMap.get(code.toUpperCase());
-
-        // TODO Exception 구현
-        if(state == null)
-            throw new Exception(code + "는 등록된 국가가 아닙니다.");
-
-        return state;
-    }
-    public boolean isThereSuchCodeLike(String code) {
-        // TODO Exception 구현
-        try {
-            if(findStateByCode(code) == null)
-                return false;
-            else
-                return true;
-        }
-        catch (Exception e) {
-            return false;
-        }
+        return codeMap.get(code.toUpperCase());
     }
 
-    public static String json2Code(String json) {
-        // TODO Exception 구현
+    /**
+     * return: 에러일 경우 null, 빈 form일 경우 ""
+     * @param json
+     * @return
+     */
+    public String json2Code(String json) {
         try {
-            return json.split("\"")[7].toLowerCase();
+            if("".equals(json)) {
+                log.info("profile - 국가: empty form.");
+                return json;
+            }
+
+            String code = json.split("\"")[7].toLowerCase();
+
+            if(findStateByCode(code) == null) {
+                log.error("profile - 국가: 등록된 국가가 아닙니다.");
+                return null;
+            }
+
+            return code;
+
         } catch (ArrayIndexOutOfBoundsException e) {
-            return null;
-        }
-    }
-    public static String json2State(String json) {
-        // TODO Exception 구현
-        try {
-            return json.split("\"")[3].toLowerCase();
-        } catch (ArrayIndexOutOfBoundsException e) {
+            log.error("profile - 국가: 올바른 json 형식이 아닙니다.");
             return null;
         }
     }

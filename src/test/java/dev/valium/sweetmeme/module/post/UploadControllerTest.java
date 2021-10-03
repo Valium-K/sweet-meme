@@ -41,7 +41,7 @@ class UploadControllerTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private MemberRepository memberRepository;
     @Autowired private MemberService memberService;
-    // @Autowired private SectionFactory sectionFactory;
+    @Autowired private SectionFactory sectionFactory;
 
     private String nickname = "membersdf1";
     private String email = "email2@email2.com";
@@ -69,7 +69,7 @@ class UploadControllerTest {
 
     @Test @DisplayName("업로드처리_입력값_정상")
     public void 업로드처리_입력값_정상() throws Exception {
-        // sectionFactory.init(); //
+        sectionFactory.init(); //
 
         String title = "this is test title";
         String sectionType = "[{\"value\":\"FUNNY\"}]";

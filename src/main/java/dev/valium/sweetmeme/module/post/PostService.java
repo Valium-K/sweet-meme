@@ -2,9 +2,7 @@ package dev.valium.sweetmeme.module.post;
 
 import dev.valium.sweetmeme.infra.config.FileConfig;
 import dev.valium.sweetmeme.infra.processor.FileProcessor;
-import dev.valium.sweetmeme.module.comment.Comment;
-import dev.valium.sweetmeme.module.comment.CommentRepository;
-import dev.valium.sweetmeme.module.comment.form.CommentForm;
+import dev.valium.sweetmeme.module.post.form.CommentForm;
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.member_post.MemberPostService;
 import dev.valium.sweetmeme.module.post_tag.PostTag;

@@ -5,6 +5,7 @@ import dev.valium.sweetmeme.infra.processor.Code2State;
 import dev.valium.sweetmeme.infra.processor.FileProcessor;
 import dev.valium.sweetmeme.module.member.form.SettingsAccountForm;
 import dev.valium.sweetmeme.module.member.form.SettingsProfileForm;
+import dev.valium.sweetmeme.module.post_vote.PostVoteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +30,7 @@ public class MemberService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PostVoteService postVoteService;
 
     public Member findMember(String nickname) {
         // TODO Exception 구현
@@ -47,8 +49,9 @@ public class MemberService implements UserDetailsService {
 
     // TODO upvotedList, downVotedList 함께 가져오기
     public void login(Member member) {
+
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                new MemberUser(memberRepository.findFetchInfoById(member.getId()).orElse(member)),
+                new MemberUser(member),
                 member.getPassword(),
                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
@@ -59,10 +62,11 @@ public class MemberService implements UserDetailsService {
 
     // TODO 프로필 수정 시, 코멘트시, up*down vote시 업뎃 후 세션에 보관하게 바꾸기
     public void updatePrincipal(Member member) {
+
         SecurityContext context = SecurityContextHolder.getContext();
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                new MemberUser(memberRepository.findFetchInfoById(member.getId()).orElse(member)),
+                new MemberUser(member),
                 member.getPassword(),
                 context.getAuthentication().getAuthorities()
         );
@@ -85,6 +89,11 @@ public class MemberService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(email)
         );
 
+        List<Long> upVoteIds = postVoteService.findUpVotedPostsId(member);
+        member.setUpVotedIds(upVoteIds);
+        List<Long> downVoteIds = postVoteService.findDownVotedPostsId(member);
+        member.setDownVotedIds(downVoteIds);
+
         return new MemberUser(member);
     }
 
@@ -95,6 +104,7 @@ public class MemberService implements UserDetailsService {
         );
 
         foundMember.setPassword(passwordEncoder.encode(pw));
+        updatePrincipal(foundMember);
 
         return foundMember;
     }
@@ -109,6 +119,8 @@ public class MemberService implements UserDetailsService {
         foundMember.setReplyAlert(form.isReplyAlert());
         foundMember.setUpvoteAlert(form.isUpvoteAlert());
         foundMember.getMemberInfo().setHead(form.getNickname());
+
+        updatePrincipal(foundMember);
 
         return foundMember;
     }
@@ -127,7 +139,12 @@ public class MemberService implements UserDetailsService {
         if("".equals(form.getDescription())) foundMember.getMemberInfo().setDescription(member.getNickname() + "'s description.");
         else foundMember.getMemberInfo().setDescription(form.getDescription());
 
-        foundMember.getMemberInfo().setStateCode(Code2State.json2Code(form.getState()));
+        Code2State code2State = new Code2State();
+        String code = code2State.json2Code(form.getState());
+        if("".equals(code)) code = null;
+
+        foundMember.getMemberInfo().setStateCode(code);
+        updatePrincipal(foundMember);
 
         return foundMember;
     }
@@ -139,6 +156,7 @@ public class MemberService implements UserDetailsService {
         );
 
         foundMember.getMemberInfo().setPicImage(null);
+        updatePrincipal(foundMember);
 
         return foundMember;
     }

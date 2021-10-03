@@ -15,23 +15,8 @@ import static dev.valium.sweetmeme.infra.config.FileConfig.FILE_URL;
 
 public class BaseController {
 
-    private final PostVoteService postVoteService;
-
-    public BaseController(PostVoteService postVoteService) {
-        this.postVoteService = postVoteService;
-    }
-
     protected void setBaseAttributes(Member member, Model model, String currentMenu) {
-        if(member == null) {
-            model.addAttribute("member", null);
-        } else {
-            model.addAttribute("member", member);
-
-            List<Long> upVoteIds = postVoteService.findUpVotedPostsId(member);
-            model.addAttribute("upVotedIds", upVoteIds);
-            List<Long> downVoteIds = postVoteService.findDownVotedPostsId(member);
-            model.addAttribute("downVotedIds", downVoteIds);
-        }
+        model.addAttribute("member", member);
 
         List<String> sectionTypes = Arrays.stream(SectionType.values()).map(s->s.name().toLowerCase()).collect(Collectors.toList());
         model.addAttribute("sidebarSectionTypes", sectionTypes);

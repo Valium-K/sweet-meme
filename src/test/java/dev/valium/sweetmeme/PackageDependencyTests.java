@@ -33,7 +33,7 @@ public class PackageDependencyTests {
     @ArchTest
     ArchRule sectionPackageRule = classes().that().resideInAPackage(SECTION)
             .should().onlyBeAccessed().byClassesThat()
-            .resideInAnyPackage(SECTION, POST);
+            .resideInAnyPackage(SECTION, POST, POST_VOTE); // POST, POST_VOTE는 sectioninit떄문에 어쩔수 없이 넣음. 나중에 수정할 것
 
     @ArchTest
     ArchRule infoPackageRule = classes().that().resideInAPackage(INFO)

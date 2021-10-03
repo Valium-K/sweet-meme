@@ -1,4 +1,4 @@
-package dev.valium.sweetmeme.module.comment.form;
+package dev.valium.sweetmeme.module.post.form;
 
 import dev.valium.sweetmeme.infra.config.FileConfig;
 import lombok.Data;

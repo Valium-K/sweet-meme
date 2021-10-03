@@ -1,7 +1,7 @@
 package dev.valium.sweetmeme.module.comment_vote;
 
-import dev.valium.sweetmeme.module.comment.Comment;
-import dev.valium.sweetmeme.module.comment.CommentRepository;
+import dev.valium.sweetmeme.module.post.Comment;
+import dev.valium.sweetmeme.module.post.CommentRepository;
 import dev.valium.sweetmeme.module.member.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ public class CommentVoteService {
     private final CommentVoteRepository commentVoteRepository;
     private final CommentRepository commentRepository;
 
-    public boolean voteComment(Member member, Long id, boolean vote) throws Exception {
+    public Member voteComment(Member member, Long id, boolean vote) throws Exception {
         // TODO Exception 구현
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new Exception("comment 없음"));
 
@@ -35,17 +35,24 @@ public class CommentVoteService {
                 commentVote.setUpVotedMember(member);
 
                 comment.getVote().addUpVote();
+
+                member.getUpVotedIds().add(id);
             }
             else {
                 commentVote.setDownVotedComment(comment);
                 commentVote.setDownVotedMember(member);
 
                 comment.getVote().addDownVote();
+
+                member.getDownVotedIds().add(id);
             }
             commentVoteRepository.save(commentVote);
         }
         // upvote한 comment
         else if(upVotedComment != null && downVotedComment == null) {
+
+            member.getUpVotedIds().remove(id);
+
             if(vote) {
                 commentVoteRepository.delete(upVotedComment);
                 comment.getVote().subUpvote();
@@ -59,11 +66,15 @@ public class CommentVoteService {
                 commentVote.setDownVotedComment(comment);
                 commentVote.setDownVotedMember(member);
 
+                member.getDownVotedIds().add(id);
+
                 commentVoteRepository.save(commentVote);
             }
         }
         // downvote한 comment
         else {
+            member.getDownVotedIds().remove(id);
+
             if(vote) {
                 commentVoteRepository.delete(downVotedComment);
                 comment.getVote().subDownVote();
@@ -77,11 +88,13 @@ public class CommentVoteService {
             }
             else {
                 comment.getVote().subDownVote();
+
+                member.getUpVotedIds().add(id);
                 commentVoteRepository.delete(downVotedComment);
             }
         }
 
-        return true;
+        return member;
     }
 
     public List<Long> findUpVotedCommentsId(Member member) {

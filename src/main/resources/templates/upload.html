@@ -93,7 +93,7 @@
 
   var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
 
-  // getting whitelist
+  // getting Tag whitelist
   var tagInput = document.querySelector('input[name="tags"]');
   var tagifyForTag = new Tagify(tagInput, {
     pattern: /^.{0,20}$/,
@@ -109,6 +109,7 @@
     }
   });
 
+  // getting Section whitelist
   var sectionInput = document.querySelector('input[name="sections"]');
   var tagifyForSection = new Tagify(sectionInput, {
     pattern: /^.{0,20}$/,
@@ -123,7 +124,7 @@
     }
   });
 
-  // async validation
+  // async section validation
   function sectionRequest(url, sectionName) {
     $.ajax({
       dataType: "json",

@@ -57,6 +57,11 @@ public class Member extends BaseEntityTime {
     @OneToMany(mappedBy = "downVotedMember", cascade = CascadeType.ALL)
     private List<CommentVote> downVotedComments = new ArrayList<>();
 
+    @Transient private List<Long> upVotedIds = new ArrayList<>();
+    @Transient private List<Long> downVotedIds = new ArrayList<>();
+    @Transient private List<Long> upVoteCommentIds = new ArrayList<>();
+    @Transient private List<Long> downVoteCommentIds = new ArrayList<>();
+
     public static String createEmailCheckToken() {
         return UUID.randomUUID().toString();
     }
@@ -73,8 +78,10 @@ public class Member extends BaseEntityTime {
                     .emailCheckToken(createEmailCheckToken())
                     .myPosts(new ArrayList<>())
                     .commentedMember(new ArrayList<>())
-//                    .upVotedPosts(new ArrayList<>())
-//                    .downVotedPosts(new ArrayList<>())
+                    .upVotedIds(new ArrayList<>())
+                    .downVotedIds(new ArrayList<>())
+                    .upVoteCommentIds(new ArrayList<>())
+                    .downVoteCommentIds(new ArrayList<>())
                     .build();
     }
 

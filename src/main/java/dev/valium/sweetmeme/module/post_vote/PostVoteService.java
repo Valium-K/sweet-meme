@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.module.post_vote;
 
 import dev.valium.sweetmeme.module.member.Member;
+import dev.valium.sweetmeme.module.member.MemberService;
 import dev.valium.sweetmeme.module.post.Post;
 import dev.valium.sweetmeme.module.post.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class PostVoteService {
     private final PostRepository postRepository;
     private final PostVoteRepository postVoteRepository;
 
-    public boolean votePost(Member member, Long id, boolean vote) throws Exception {
+    public Member votePost(Member member, Long id, boolean vote) throws Exception {
         Post post = postRepository.findById(id).orElseThrow(() -> new Exception("post 없음"));
 
         PostVote upPostVote = postVoteRepository.findUpVoteByUpVotedMemberAndUpVotedPost(member, post);
@@ -29,17 +30,19 @@ public class PostVoteService {
             PostVote newPostVote = new PostVote();
             if(vote) {
                 newPostVote.setUpVotedPost(post);
-                //post.getUpVotedMember().add(newPostVote);
                 newPostVote.setUpVotedMember(member);
-                //member.getUpVotedPosts().add(newPostVote);
 
                 post.getVote().addUpVote();
+
+                member.getUpVotedIds().add(id);
             }
             else {
                 newPostVote.setDownVotedPost(post);
                 newPostVote.setDownVotedMember(member);
-                //member.getDownVotedPosts().add(newPostVote);
+
                 post.getVote().addDownVote();
+
+                member.getDownVotedIds().add(id);
             }
             postVoteRepository.save(newPostVote);
         }
@@ -48,6 +51,8 @@ public class PostVoteService {
             if(vote) {
                 postVoteRepository.delete(upPostVote);
                 post.getVote().subUpvote();
+
+                member.getUpVotedIds().remove(id);
             }
             else {
                 postVoteRepository.delete(upPostVote);
@@ -57,7 +62,9 @@ public class PostVoteService {
                 PostVote newPostVote = new PostVote();
                 newPostVote.setDownVotedPost(post);
                 newPostVote.setDownVotedMember(member);
-                //member.getDownVotedPosts().add(newPostVote);
+
+                member.getUpVotedIds().remove(id);
+                member.getDownVotedIds().add(id);
 
                 postVoteRepository.save(newPostVote);
             }
@@ -70,22 +77,25 @@ public class PostVoteService {
                 post.getVote().subDownVote();
                 post.getVote().addUpVote();
 
-
                 PostVote newPostVote = new PostVote();
                 newPostVote.setUpVotedPost(post);
                 newPostVote.setUpVotedMember(member);
-                //post.getUpVotedMember().add(newPostVote);
-                //member.getUpVotedPosts().add(newPostVote);
+
+                member.getDownVotedIds().remove(id);
+                member.getUpVotedIds().add(id);
 
                 postVoteRepository.save(newPostVote);
             }
             else {
                 post.getVote().subDownVote();
+
+                member.getDownVotedIds().remove(id);
+
                 postVoteRepository.delete(downPostVote);
             }
         }
 
-        return true;
+        return member;
     }
 
     public List<Long> findUpVotedPostsId(Member member) {
