@@ -1,5 +1,6 @@
 package dev.valium.sweetmeme.module.member;
 
+import dev.valium.sweetmeme.module.bases.BaseController;
 import dev.valium.sweetmeme.module.bases.enums.SectionType;
 import dev.valium.sweetmeme.module.info.Info;
 import dev.valium.sweetmeme.module.member.form.SignUpForm;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
-public class SignUpController {
+public class SignUpController extends BaseController {
 
     private final MemberService memberService;
     private final SignUpService signUpService;
@@ -33,7 +34,8 @@ public class SignUpController {
 
 
     @GetMapping("/sign-up")
-    public String signUpForm(Model model) {
+    public String signUpForm(@CurrentMember Member member, Model model) {
+        setBaseAttributes(member, model, "sign-up");
         model.addAttribute(new SignUpForm());
 
         List<String> sectionTypes = Arrays.stream(SectionType.values()).map(s->s.name().toLowerCase()).collect(Collectors.toList());

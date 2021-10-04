@@ -1,14 +1,9 @@
 //package dev.valium.sweetmeme.infra.config;
 //
 //import dev.valium.sweetmeme.module.bases.enums.SectionType;
-//import dev.valium.sweetmeme.module.post.Comment;
-//import dev.valium.sweetmeme.module.post.CommentRepository;
-//import dev.valium.sweetmeme.module.comment.CommentService;
-//import dev.valium.sweetmeme.module.post.form.UploadForm.CommentForm;
 //import dev.valium.sweetmeme.module.info.Info;
-//import dev.valium.sweetmeme.module.member.Member;
 //import dev.valium.sweetmeme.module.member.MemberRepository;
-//import dev.valium.sweetmeme.module.post.Post;
+//import dev.valium.sweetmeme.module.post.CommentRepository;
 //import dev.valium.sweetmeme.module.post.PostRepository;
 //import dev.valium.sweetmeme.module.post.UploadService;
 //import dev.valium.sweetmeme.module.section.Section;
@@ -21,11 +16,10 @@
 //
 //import javax.annotation.PostConstruct;
 //import javax.persistence.EntityManager;
-//import java.io.IOException;
 //import java.util.Arrays;
 //import java.util.Locale;
 //
-//@Profile("local")
+//@Profile("dev")
 //@Component
 //@RequiredArgsConstructor
 //public class LocalDbInit {
@@ -52,7 +46,6 @@
 //        private final MessageSource messageSource;
 //        private final UploadService uploadService;
 //        private final MemberRepository memberRepository;
-//        private final CommentService commentService;
 //        private final PostRepository postRepository;
 //        private final CommentRepository commentRepository;
 //

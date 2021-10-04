@@ -21,7 +21,8 @@ public class HomeController extends BaseController {
     }
 
     @GetMapping("/login")
-    public String loginForm(@CurrentMember Member member, HttpServletRequest request) {
+    public String loginForm(@CurrentMember Member member, Model model, HttpServletRequest request) {
+        setBaseAttributes(member, model, "login");
         String referrer = request.getHeader("Referer");
         request.getSession().setAttribute("prevPage", referrer);
 

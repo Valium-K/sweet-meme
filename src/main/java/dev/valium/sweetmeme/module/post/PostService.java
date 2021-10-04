@@ -2,15 +2,18 @@ package dev.valium.sweetmeme.module.post;
 
 import dev.valium.sweetmeme.infra.config.FileConfig;
 import dev.valium.sweetmeme.infra.processor.FileProcessor;
+import dev.valium.sweetmeme.module.notifications.NotificationType;
 import dev.valium.sweetmeme.module.post.form.CommentForm;
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.member_post.MemberPostService;
 import dev.valium.sweetmeme.module.post_tag.PostTag;
 import dev.valium.sweetmeme.module.post_tag.PostTagRepository;
+import dev.valium.sweetmeme.module.notifications.event.NotificationEvent;
 import dev.valium.sweetmeme.module.tag.Tag;
 import dev.valium.sweetmeme.module.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +31,7 @@ public class PostService {
     private final PostTagRepository postTagRepository;
     private final TagRepository tagRepository;
     private final MemberPostService memberPostService;
+    private final ApplicationEventPublisher eventPublisher;
 
     // TODO Excpetion 구현
     public Post findPostById(Long id) {
@@ -38,6 +42,9 @@ public class PostService {
 
     public void saveComment(Long postId, CommentForm form, Member member) throws IOException {
         Comment comment = setComment(postId, form, member);
+
+
+
 
         commentRepository.save(comment);
     }
@@ -54,7 +61,7 @@ public class PostService {
     }
 
     private Comment setComment(Long postId, CommentForm form, Member member) throws IOException {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException(postId + "id의 포스트가 없음"));
+        Post post = postRepository.findFetchOPById(postId).orElseThrow(() -> new IllegalArgumentException(postId + "id의 포스트가 없음"));
 
         Comment comment = Comment.create(member.getMemberInfo());
 
@@ -62,6 +69,9 @@ public class PostService {
         if(!commentedPosts.contains(post)) {
             memberPostService.addCommentedPost(member, post);
         }
+
+        if(!member.getNickname().equals(post.getOriginalPoster().getNickname()))
+            eventPublisher.publishEvent(new NotificationEvent(post, member, NotificationType.COMMENT));
 
         if(form.getFile() != null && !form.getFile().isEmpty()) {
             String fileName = FileProcessor.transferFile(FileConfig.ABSOLUTE_COMMENT_IMAGE_PATH, form.getFile(), true);

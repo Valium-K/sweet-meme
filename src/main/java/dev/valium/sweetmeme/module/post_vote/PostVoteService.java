@@ -1,10 +1,12 @@
 package dev.valium.sweetmeme.module.post_vote;
 
 import dev.valium.sweetmeme.module.member.Member;
-import dev.valium.sweetmeme.module.member.MemberService;
+import dev.valium.sweetmeme.module.notifications.NotificationType;
 import dev.valium.sweetmeme.module.post.Post;
 import dev.valium.sweetmeme.module.post.PostRepository;
+import dev.valium.sweetmeme.module.notifications.event.NotificationEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +20,10 @@ public class PostVoteService {
 
     private final PostRepository postRepository;
     private final PostVoteRepository postVoteRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Member votePost(Member member, Long id, boolean vote) throws Exception {
-        Post post = postRepository.findById(id).orElseThrow(() -> new Exception("post 없음"));
+        Post post = postRepository.findFetchOPById(id).orElseThrow(() -> new Exception("post 없음"));
 
         PostVote upPostVote = postVoteRepository.findUpVoteByUpVotedMemberAndUpVotedPost(member, post);
         PostVote downPostVote = postVoteRepository.findDownVoteByDownVotedMemberAndDownVotedPost(member, post);
@@ -35,6 +38,8 @@ public class PostVoteService {
                 post.getVote().addUpVote();
 
                 member.getUpVotedIds().add(id);
+                if(!member.getNickname().equals(post.getOriginalPoster().getNickname()))
+                    eventPublisher.publishEvent(new NotificationEvent(post, member, NotificationType.UPVOTE_POST));
             }
             else {
                 newPostVote.setDownVotedPost(post);
@@ -84,6 +89,9 @@ public class PostVoteService {
                 member.getDownVotedIds().remove(id);
                 member.getUpVotedIds().add(id);
 
+                if(!member.getNickname().equals(post.getOriginalPoster().getNickname()))
+                    eventPublisher.publishEvent(new NotificationEvent(post, member, NotificationType.UPVOTE_POST));
+
                 postVoteRepository.save(newPostVote);
             }
             else {
@@ -112,11 +120,9 @@ public class PostVoteService {
 
     public List<Post> findUpVotedPosts(Member member) {
         List<PostVote> memberUpPostVotes = postVoteRepository.findAllByUpVotedMember(member);
-        List<Post> upVotedPosts = memberUpPostVotes.stream()
-                                            .map(PostVote::getUpVotedPost)
-                                            .collect(Collectors.toList());
 
-        return upVotedPosts;
-
+        return memberUpPostVotes.stream()
+                    .map(PostVote::getUpVotedPost)
+                    .collect(Collectors.toList());
     }
 }

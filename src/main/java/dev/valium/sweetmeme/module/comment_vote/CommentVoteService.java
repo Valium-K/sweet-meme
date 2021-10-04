@@ -1,10 +1,13 @@
 package dev.valium.sweetmeme.module.comment_vote;
 
+import dev.valium.sweetmeme.module.notifications.NotificationType;
 import dev.valium.sweetmeme.module.post.Comment;
 import dev.valium.sweetmeme.module.post.CommentRepository;
 import dev.valium.sweetmeme.module.member.Member;
+import dev.valium.sweetmeme.module.notifications.event.NotificationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +21,11 @@ import java.util.stream.Collectors;
 public class CommentVoteService {
     private final CommentVoteRepository commentVoteRepository;
     private final CommentRepository commentRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Member voteComment(Member member, Long id, boolean vote) throws Exception {
         // TODO Exception 구현
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new Exception("comment 없음"));
+        Comment comment = commentRepository.findFetchPostAndInfoById(id).orElseThrow(() -> new Exception("comment 없음"));
 
         CommentVote upVotedComment = commentVoteRepository.findUpVoteByUpVotedMemberAndUpVotedComment(member, comment);
         CommentVote downVotedComment = commentVoteRepository.findDownVoteByDownVotedMemberAndDownVotedComment(member, comment);
@@ -37,6 +41,9 @@ public class CommentVoteService {
                 comment.getVote().addUpVote();
 
                 member.getUpVotedIds().add(id);
+
+                if(!member.getNickname().equals(comment.getCommenterInfo().getHead()))
+                    eventPublisher.publishEvent(new NotificationEvent(comment.getPost(), member, NotificationType.UPVOTE_COMMENT));
             }
             else {
                 commentVote.setDownVotedComment(comment);
@@ -83,6 +90,9 @@ public class CommentVoteService {
                 CommentVote commentVote = new CommentVote();
                 commentVote.setUpVotedComment(comment);
                 commentVote.setUpVotedMember(member);
+
+                if(!member.getNickname().equals(comment.getCommenterInfo().getHead()))
+                    eventPublisher.publishEvent(new NotificationEvent(comment.getPost(), member, NotificationType.UPVOTE_COMMENT));
 
                 commentVoteRepository.save(commentVote);
             }

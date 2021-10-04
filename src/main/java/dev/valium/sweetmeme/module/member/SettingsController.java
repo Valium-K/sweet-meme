@@ -96,7 +96,7 @@ public class SettingsController {
             return "user/settings/profile";
         }
 
-        Member updatedMember = memberService.updateProfile(member, form);
+        memberService.updateProfile(member, form);
 
         attributes.addFlashAttribute("profileChanged", "프로필을 변경하였습니다.");
 
@@ -106,7 +106,7 @@ public class SettingsController {
     @PostMapping("/settings/profile/reset/avatar")
     @ResponseBody
     public ResponseEntity resetAvatar(@CurrentMember Member member) {
-        Member updatedMember = memberService.resetProfileAvatar(member);
+        memberService.resetProfileAvatar(member);
 
         return ResponseEntity.ok().build();
     }
@@ -136,7 +136,7 @@ public class SettingsController {
             return "user/settings/password";
         }
 
-        Member updatedMember = memberService.updatePassword(member, form.getPassword());
+        memberService.updatePassword(member, form.getPassword());
 
         attributes.addFlashAttribute("passwordChanged", "비밀번호를 변경하였습니다.");
 
