@@ -28,10 +28,10 @@ public class NotificationEventListener {
         Post post = notificationEvent.getPost();
         NotificationType type = notificationEvent.getType();
 
-        if(type.equals(NotificationType.COMMENT) && member.isReplyAlert()) {
+        if(type.equals(NotificationType.COMMENT) && post.getOriginalPoster().isReplyAlert()) {
             publishNotification(member, post, type);
         }
-        else if(!type.equals(NotificationType.COMMENT) && member.isUpvoteAlert()) {
+        else if(!type.equals(NotificationType.COMMENT) && post.getOriginalPoster().isUpvoteAlert()) {
             publishNotification(member, post, type);
         }
     }

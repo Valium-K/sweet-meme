@@ -13,6 +13,9 @@ import dev.valium.sweetmeme.module.post_vote.PostVoteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -41,7 +44,9 @@ public class SectionController  extends BaseController {
     public String fresh(@CurrentMember Member member, Model model) {
         setBaseAttributes(member, model, "fresh");
 
+        //PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
         List<Post> posts = postRepository.findAll();
+
         model.addAttribute("posts", posts);
 
         return "home/home";

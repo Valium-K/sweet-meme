@@ -177,6 +177,9 @@
   <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.bundle.js}"></script>
   <script id="gridLazyView">
     var gridLazyView = function () {
+
+      if(document.getElementById("side-bar-col") == null) return;
+
       if(window.innerWidth > 572) {
         window.removeEventListener("touchstart", startTouch,{ passive: false });
         window.removeEventListener("touchmove", moveTouch,{ passive: false });
@@ -246,53 +249,8 @@
             <i class="fa fa-bell-o" aria-hidden="true"></i> notification&nbsp;
           </a>
 
-          <ul class="dropdown-menu dropdown-menu-light text-small shadow dropdown-menu-lg-start" aria-labelledby="NotiDropdown">
-              <div id="notificationPeek">
-                <li th:if="${hasNotification <= 0}">
-                  <span class="dropdown-item my-3" th:text="#{notification.none}">새 알림이 없습니다.</span>
-                </li>
-                <li th:each="notification : ${notifications}">
-                  <a class="dropdown-item" th:href="@{'/notification/post/' + ${notification.notificationType} + '/' + ${notification.originalPostId}}" th:target="_blank">
-                    <span th:text="${notification.lastVoteOrCommenter.head}" class="fw-bold">USER NAME</span>
-                    <span th:if="${notification.notificationType.name()} == 'UPVOTE_POST'">
-                      <span th:if="${notification.voteOrCommentCounter} > 1">
-                        <span th:text="#{notification.common.many1}">님 외</span>
-                        <span th:text="${notification.voteOrCommentCounter}">#</span>
-                        <span th:text="#{notification.upvote.post.many2}">명이 포스트를 업보트했습니다.</span>
-                      </span>
-                      <span th:if="${notification.voteOrCommentCounter} <= 1" th:text="#{notification.upvote.post.one}">
-                        님이 포스트를 업보트했습니다.
-                      </span>
-                    </span>
-                    <span th:if="${notification.notificationType.name()} == 'UPVOTE_COMMENT'">
-                      <span th:if="${notification.voteOrCommentCounter} > 1">
-                        <span th:text="#{notification.common.many1}">님 외</span>
-                        <span th:text="${notification.voteOrCommentCounter}">#</span>
-                        <span th:text="#{notification.upvote.comment.many2}">명이 코멘트를 업보트했습니다.</span>
-                      </span>
-                      <span th:if="${notification.voteOrCommentCounter} <= 1" th:text="#{notification.upvote.comment.one}">
-                        님이 코멘트를 업보트했습니다.
-                      </span>
-                    </span>
-                    <span th:if="${notification.notificationType.name()} == 'COMMENT'">
-                      <span th:if="${notification.voteOrCommentCounter} > 1">
-                        <span th:text="#{notification.common.many1}">님 외</span>
-                        <span th:text="${notification.voteOrCommentCounter}">#</span>
-                        <span th:text="#{notification.comment.many2}">명이 코멘트 했습니다.</span>
-                      </span>
-                      <span th:if="${notification.voteOrCommentCounter} <= 1" th:text="#{notification.comment.one}">
-                        님이 코멘트했습니다.
-                      </span>
-                    </span>
-                  </a>
-                </li>
-              </div>
-            <li>
-              <a class="dropdown-item my-1" style="text-align: center" th:href="@{'/notifications/all'}">
-                [모든 알림 보기]
-              </a>
-            </li>
-          </ul>
+
+          <ul th:replace="fragments.html :: notifications"></ul>
         </li>
 
         <script class="notificationPeekScript">
@@ -371,7 +329,56 @@
     }
   </script>
 </nav>
-
+<ul th:fragment="notifications" class="dropdown-menu dropdown-menu-light text-small shadow dropdown-menu-lg-start" aria-labelledby="NotiDropdown">
+  <div id="notificationPeek">
+<!--    <li th:if="${hasNotification <= 0}">-->
+<!--      <span class="dropdown-item my-3" th:text="#{notification.none}">새 알림이 없습니다.</span>-->
+<!--    </li>-->
+    <div th:replace="fragments.html :: date-time"></div>
+    <li th:each="notification : ${notifications}">
+      <a class="dropdown-item" th:style="${!notification.hasRead} ? 'background-color: #11111110;'"
+         th:href="@{'/notification/post/' + ${notification.notificationType} + '/' + ${notification.originalPostId}}" th:target="_blank">
+        <span th:text="${notification.lastVoteOrCommenter.head}" class="fw-bold">USER NAME</span>
+        <span th:if="${notification.notificationType.name()} == 'UPVOTE_POST'">
+          <span th:if="${notification.voteOrCommentCounter} > 1">
+            <span th:text="#{notification.common.many1}">님 외</span>
+            <span th:text="${notification.voteOrCommentCounter}">#</span>
+            <span th:text="#{notification.upvote.post.many2}">명이 포스트를 업보트했습니다.</span>
+          </span>
+          <span th:if="${notification.voteOrCommentCounter} <= 1" th:text="#{notification.upvote.post.one}">
+            님이 포스트를 업보트했습니다.
+          </span>
+        </span>
+        <span th:if="${notification.notificationType.name()} == 'UPVOTE_COMMENT'">
+          <span th:if="${notification.voteOrCommentCounter} > 1">
+            <span th:text="#{notification.common.many1}">님 외</span>
+            <span th:text="${notification.voteOrCommentCounter}">#</span>
+            <span th:text="#{notification.upvote.comment.many2}">명이 코멘트를 업보트했습니다.</span>
+          </span>
+          <span th:if="${notification.voteOrCommentCounter} <= 1" th:text="#{notification.upvote.comment.one}">
+            님이 코멘트를 업보트했습니다.
+          </span>
+        </span>
+        <span th:if="${notification.notificationType.name()} == 'COMMENT'">
+          <span th:if="${notification.voteOrCommentCounter} > 1">
+            <span th:text="#{notification.common.many1}">님 외</span>
+            <span th:text="${notification.voteOrCommentCounter}">#</span>
+            <span th:text="#{notification.comment.many2}">명이 코멘트 했습니다.</span>
+          </span>
+          <span th:if="${notification.voteOrCommentCounter} <= 1" th:text="#{notification.comment.one}">
+            님이 코멘트했습니다.
+          </span>
+        </span>
+          &nbsp; - <span class="fromNow" th:text="${notification.lastModifiedDate}"></span>
+      </a>
+    </li>
+  </div>
+  <li>
+    <a class="dropdown-item" style="text-align: center" th:href="@{'/notifications/all'}">
+      모든 알림 보기
+    </a>
+  </li>
+</ul>
 <div th:fragment="side-bar(currentMenu)" id="side-bar" class="nav d-flex sticky-top flex-column flex-shrink-0 p-3 bg-light">
   <div class="navbar-expand-lg navbar-light">
     <ul th:replace="fragments.html :: content(${currentMenu})"></ul>
@@ -643,6 +650,7 @@
           <img th:src="@{'/sections/' + ${post.belongedSectionType}}" class="rounded" width="20px" height="20px" />
           <small th:text="${post.belongedSectionType}"></small><small> · </small>
           <small th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></small>
+<!--            <small class="fromNow" th:text="${post.createdDate}"></small>-->
         </div>
         <div class="col-2 text-end">
 
@@ -996,6 +1004,37 @@
     </button>
   </div>
 </div>
+<div th:fragment="date-time">
+  <script th:src="@{/node_modules/moment/min/moment-with-locales.min.js}"></script>
+  <script type="application/javascript">
+    $(function () {
+      moment.locale(navigator.language);
+      $(".date-time").text(function(index, dateTime) {
+        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
+      });
+      $(".date").text(function(index, dateTime) {
+        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LL');
+      });
+      $(".weekday").text(function(index, dateTime) {
+        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('dddd');
+      });
+      $(".time").text(function(index, dateTime) {
+        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LT');
+      });
+      $(".calendar").text(function(index, dateTime) {
+        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").calendar();
+      });
+      $(".fromNow").text(function(index, dateTime) {
+        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").fromNow();
+      });
+      $(".date-weekday-time").text(function(index, dateTime) {
+        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLLL');
+      });
+    })
+  </script>
+</div>
+
+
 
 <!----------------------------------------------------------------------------------------->
 

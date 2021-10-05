@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+
+<body class="bg-light">
+<div id="contentPadding" style="height: 70px"></div>
+<div th:replace="fragments.html :: nav-bar"></div>
+<div th:replace="fragments.html :: off-canvas('notifications')"></div>
+<div class="container">
+    <div class="mb-5 text-center">
+        <p class="lead mb-5"></p>
+        <h2>Notification</h2>
+        <div th:if="${#lists.isEmpty(notifications) && hasNotification <= 0}">
+            <small th:text="#{notification.empty}">메시지가 없습니다.</small>
+        </div>
+        <div th:if="${!#lists.isEmpty(notifications) && hasNotification <= 0}">
+            <small th:text="#{notification.all-has-read}"> 새 알림을 모두 읽었습니다. </small>
+        </div>
+        <div th:if="${!#lists.isEmpty(notifications) && hasNotification > 0}">
+            <small th:text="#{notification.not-has-read1}">읽지 않은 알림</small>
+            <small th:text="${hasNotification}"></small>
+            <small th:text="#{notification.not-has-read2}">개가 있습니다.</small>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-sm-8" style="min-width: 450px">
+            <div class="row justify-content-between">
+                <div class="col mb-2 me-1 text-end">
+                    <button type="button" class="btn btn-light btn-sm" id="notificationDropdownMenuBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-light text-small" aria-labelledby="notificationDropdownMenuBtn">
+                        <li class="dropdown-item"><a type="button" th:onclick="|setAllHasRead()|">모두 읽음으로 표시</a></li>
+                        <li class="dropdown-item"><a type="button" th:onclick="|deleteAllHasRead()|">읽은 알림 모두 삭제</a></li>
+                    </ul>
+                </div>
+            </div>
+            <script>
+                var setAllHasRead = function () {
+                    var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+
+                    $.ajax({
+                        dataType: "json",
+                        autocomplete: {
+                            enabled: true,
+                            rightKey: true,
+                        },
+                        contentType: "application/json; charset=utf-8",
+                        method: "POST",
+                        url: contextPath + "/notifications/set/all-has-read",
+                    }).always(function () {
+                        location.reload();
+                    })
+                }
+                    var deleteAllHasRead = function () {
+                        var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+
+                        $.ajax({
+                            dataType: "json",
+                            autocomplete: {
+                                enabled: true,
+                                rightKey: true,
+                            },
+                            contentType: "application/json; charset=utf-8",
+                            method: "POST",
+                            url: contextPath + "/notifications/remove/all-has-read",
+                        }).always(function () {
+                            location.reload();
+                        })
+                }
+            </script>
+            <div th:replace="fragments.html :: date-time"></div>
+            <div class="rounded" style="min-height: 500px; background-color: #11111110;">
+                <div class="list-group">
+                    <a th:each="notification : ${notifications}" class="list-group-item" th:classappend="${!notification.hasRead} ? 'list-group-item-info':''"
+                       th:href="@{'/notification/post/' + ${notification.notificationType} + '/' + ${notification.originalPostId}}" th:target="_blank">
+                        <div class="row justify-content-between">
+                            <div class="col">
+                                <span th:text="${notification.lastVoteOrCommenter.head}" class="fw-bold">USER NAME</span>
+                                <span th:if="${notification.notificationType.name()} == 'UPVOTE_POST'">
+                            <span th:if="${notification.voteOrCommentCounter} > 1">
+                                <span th:text="#{notification.common.many1}">님 외</span>
+                                <span th:text="${notification.voteOrCommentCounter}">#</span>
+                                <span th:text="#{notification.upvote.post.many2}">명이 포스트를 업보트했습니다.</span>
+                            </span>
+                            <span th:if="${notification.voteOrCommentCounter} <= 1" th:text="#{notification.upvote.post.one}">
+                                님이 포스트를 업보트했습니다.
+                            </span>
+                    </span>
+                                <span th:if="${notification.notificationType.name()} == 'UPVOTE_COMMENT'">
+                            <span th:if="${notification.voteOrCommentCounter} > 1">
+                                <span th:text="#{notification.common.many1}">님 외</span>
+                                <span th:text="${notification.voteOrCommentCounter}">#</span>
+                                <span th:text="#{notification.upvote.comment.many2}">명이 코멘트를 업보트했습니다.</span>
+                            </span>
+                            <span th:if="${notification.voteOrCommentCounter} <= 1" th:text="#{notification.upvote.comment.one}">
+                                님이 코멘트를 업보트했습니다.
+                            </span>
+                    </span>
+                                <span th:if="${notification.notificationType.name()} == 'COMMENT'">
+                            <span th:if="${notification.voteOrCommentCounter} > 1">
+                                <span th:text="#{notification.common.many1}">님 외</span>
+                                <span th:text="${notification.voteOrCommentCounter}">#</span>
+                                <span th:text="#{notification.comment.many2}">명이 코멘트 했습니다.</span>
+                            </span>
+                            <span th:if="${notification.voteOrCommentCounter} <= 1" th:text="#{notification.comment.one}">
+                                님이 코멘트했습니다.
+                            </span>
+                    </span>
+                            </div>
+                            <div class="col-sm-3 text-end">
+                                <small class="fromNow" th:text="${notification.lastModifiedDate}"></small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script th:replace="fragments.html :: ajax-csrf-header"></script>
+</body>
+</html>
