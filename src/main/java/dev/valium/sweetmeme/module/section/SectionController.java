@@ -25,12 +25,14 @@ import org.springframework.web.bind.annotation.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
-import static dev.valium.sweetmeme.infra.config.FileConfig.ABSOLUTE_SECTION_PATH;
-import static dev.valium.sweetmeme.infra.config.FileConfig.SECTION_URL;
+import static dev.valium.sweetmeme.infra.config.FileConfig.*;
 
 @Controller
 @Slf4j
@@ -40,23 +42,73 @@ public class SectionController  extends BaseController {
     private final PostRepository postRepository;
     private final InfoRepository infoRepository;
 
-    @GetMapping("/fresh")
+    @GetMapping("/")
     public String fresh(@CurrentMember Member member, Model model) {
         setBaseAttributes(member, model, "fresh");
 
-        //PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
-        List<Post> posts = postRepository.findAll();
+        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Slice<Post> posts = postRepository.findAll(pageRequest);
 
         model.addAttribute("posts", posts);
 
         return "home/home";
+    }
+    @GetMapping("/post/slice/fresh/{page}")
+    public String freshSlice(Model model, @PathVariable int page) {
+
+        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Slice<Post> posts = postRepository.findAll(pageRequest);
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("FILE_URL", FILE_URL);
+
+        return "fragments :: postSection";
+    }
+
+    @GetMapping("/hot")
+    public String home(@CurrentMember Member member, Model model) {
+        setBaseAttributes(member, model, "hot");
+
+        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
+        Slice<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusHours(6), LocalDateTime.now(), pageRequest);
+
+        model.addAttribute("posts", posts);
+
+        return "home/home";
+    }
+    @GetMapping("/post/slice/hot/{page}")
+    public String homeSlice(Model model, @PathVariable int page) {
+
+        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
+        Slice<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusHours(6), LocalDateTime.now(), pageRequest);
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("FILE_URL", FILE_URL);
+
+        return "fragments :: postSection";
     }
 
     @GetMapping("/top")
     public String top(@CurrentMember Member member, Model model) {
         setBaseAttributes(member, model, "top");
 
+        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
+        Slice<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusDays(3), LocalDateTime.now(), pageRequest);
+
+        model.addAttribute("posts", posts);
+
         return "home/home";
+    }
+    @GetMapping("/post/slice/top/{page}")
+    public String topSlice(Model model, @PathVariable int page) {
+
+        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
+        Slice<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusDays(3), LocalDateTime.now(), pageRequest);
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("FILE_URL", FILE_URL);
+
+        return "fragments :: postSection";
     }
 
     @GetMapping("/{section}")
@@ -75,10 +127,22 @@ public class SectionController  extends BaseController {
         Info infoByHead = infoRepository.findInfoByHead(sectionType.name());
         model.addAttribute("sectionInfo", infoByHead);
 
-        List<Post> posts = postRepository.findAllByBelongedSectionTypeOrderByCreatedDateDesc(sectionType);
+        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
+        Slice<Post> posts = postRepository.findAllByBelongedSectionType(sectionType, pageRequest);
         model.addAttribute("posts", posts);
 
         return "home/home";
+    }
+    @GetMapping("/post/slice/{section}/{page}")
+    public String sectionSlice(Model model, @PathVariable String section, @PathVariable int page) {
+
+        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
+        Slice<Post> posts = postRepository.findAllByBelongedSectionType(SectionType.valueOf(section.toUpperCase()), pageRequest);
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("FILE_URL", FILE_URL);
+
+        return "fragments :: postSection";
     }
 
     @GetMapping(SECTION_URL + "{sectionName}")
@@ -100,7 +164,6 @@ public class SectionController  extends BaseController {
         else
             return ResponseEntity.ok().build();
     }
-
     private boolean isSectionOnType(String sectionName) {
         return Arrays.stream(SectionType.values())
                 .map(SectionType::name)

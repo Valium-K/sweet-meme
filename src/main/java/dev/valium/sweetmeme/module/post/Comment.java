@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.module.post;
 
 import dev.valium.sweetmeme.module.bases.BaseEntityTime;
+import dev.valium.sweetmeme.module.bases.BaseEntityZonedTime;
 import dev.valium.sweetmeme.module.bases.embeddable.Vote;
 import dev.valium.sweetmeme.module.info.Info;
 import lombok.*;
@@ -14,7 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment extends BaseEntityTime {
+public class Comment extends BaseEntityZonedTime {
 
     @Id @GeneratedValue
     @Column(name = "comment_id")

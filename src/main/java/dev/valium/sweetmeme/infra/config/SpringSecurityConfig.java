@@ -29,10 +29,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 // TODO 임시 permitAll() 나중에 경로 설정하기
-                .mvcMatchers("/*", "/user/**", "/post/*", "test/*",
-                        "/comment/slice/**", "/reply/slice/**").permitAll()
+                .mvcMatchers("/*", "/user/**", "/post/*").permitAll()
                 .mvcMatchers(HttpMethod.GET, SECTION_URL+"*", FILE_URL+"*", DOWNLOAD_URL+"*",
-                        COMMENT_IMAGE_URL+"*", "/avatar/*").permitAll()
+                        COMMENT_IMAGE_URL+"*", "/avatar/*", "/comment/slice/**",
+                        "/reply/slice/**", "/post/slice/**").permitAll()
                 .anyRequest().authenticated();
 
         http.formLogin()

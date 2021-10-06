@@ -19,7 +19,7 @@
 //import java.util.Arrays;
 //import java.util.Locale;
 //
-//@Profile("dev")
+//
 //@Component
 //@RequiredArgsConstructor
 //public class LocalDbInit {

@@ -41,9 +41,7 @@
             </div>
 
             <div class="row">
-              <div th:onclick="|vote('post', ${post.id}, true)|">
-                <span class="col fw-bold fs-3 m-1" style="word-wrap: break-word;" th:text="${post.title}"></span>
-              </div>
+              <span class="col fw-bold fs-3 ms-1 my-1" th:text="${post.title}"></span>
             </div>
 
             <div th:replace="fragments.html :: voteAndShareRow"></div>
@@ -61,17 +59,20 @@
           </picture>
           <!-- 태그 -->
           <span th:each="tag : ${tags}">
-              <button type="button" class="btn btn-secondary btn-sm m-1" th:text="${tag}"></button>
-            </span>
+            <i class="fa fa-tag fa-lg ms-1 mt-3" aria-hidden="true"></i>
+            <button type="button" class="btn btn-secondary btn-sm m-1" th:text="${tag}"></button>
+          </span>
           <div class="ms-1 mt-4">
-            <span th:text="${post.commentCount}" class="h5"></span>&nbsp;<span th:text="Comments" class="h5"></span>
+            <span th:text="${post.commentCount}" class="h5"></span>
+            &nbsp;
+            <span th:text="Comments" class="h5"></span>
           </div>
           <hr/>
         </article>
       </section>
 
       <section class="p-1">
-        <!-- 코맨트 남기기 -->
+        <!-- 코멘트 남기기 -->
         <div sec:authorize="isAuthenticated()">
           <div class="row mb-3">
             <div class="col-1">
@@ -82,7 +83,7 @@
             </div>
             <div class="col">
               <div th:if="${blankCommentForm}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                <span th:text="#{comment.blankCommentForm}">코맨트를 입력하세요.</span>
+                <span th:text="#{comment.blankCommentForm}">코멘트를 입력하세요.</span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
               <div th:if="${wrongFileType}" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -98,7 +99,7 @@
           </div>
         </div>
 
-        <!-- 로그인하여 코맨트 남기기 -->
+        <!-- 로그인하여 코멘트 남기기 -->
         <div sec:authorize="!isAuthenticated()">
           <div class="row justify-content-between">
             <div class="col mt-1" th:text="#{comment.anonymous}">로그인으로 댓글남기기</div>
@@ -125,7 +126,7 @@
                          width="30px" height="30px" class="rounded border"/>
                   </a>
                 </div>
-                <!-- 코맨트 -->
+                <!-- 코멘트 -->
                 <div class="col ms-1 mb-2">
                   <span class="fw-bold" th:text="${comment.commenterInfo.head}"></span>
                   <img th:if="${comment.commenterInfo.stateCode} != null" th:src="'https://lipis.github.io/flag-icon-css/flags/4x3/' + ${comment.commenterInfo.stateCode} + '.svg'"

@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.module.tag;
 
 import dev.valium.sweetmeme.module.bases.BaseEntityTime;
+import dev.valium.sweetmeme.module.bases.BaseEntityZonedTime;
 import lombok.*;
 
 import javax.persistence.*;
@@ -9,7 +10,7 @@ import javax.persistence.*;
 @Getter @Setter @EqualsAndHashCode(of = {"tagName"}, callSuper = false)
 @Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Tag extends BaseEntityTime {
+public class Tag extends BaseEntityZonedTime {
 
     @Id @GeneratedValue
     @Column(name = "tag_id")

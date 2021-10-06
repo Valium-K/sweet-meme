@@ -83,7 +83,9 @@
                 <button class="btn btn-primary" type="submit"
                         aria-describedby="submitHelp" th:text="#{signup}">회원가입</button>
                 <small id="submitHelp" class="form-text text-muted">
-                    <a href="#">약관</a>에 동의하시면 가입하기 버튼을 클릭하세요.
+                    <span th:text="#{signup.terms1}">한/영 padding</span>
+                    <div th:replace="fragments.html :: terms"></div>
+                    <span th:text="#{signup.terms3}">에 동의하시면 가입하기 버튼을 클릭하세요.</span>
                 </small>
             </div>
 

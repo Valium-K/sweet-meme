@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.module.member;
 
 import dev.valium.sweetmeme.module.bases.BaseEntityTime;
+import dev.valium.sweetmeme.module.bases.BaseEntityZonedTime;
 import dev.valium.sweetmeme.module.bases.enums.Membership;
 import dev.valium.sweetmeme.module.comment_vote.CommentVote;
 import dev.valium.sweetmeme.module.info.Info;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseEntityTime {
+public class Member extends BaseEntityZonedTime {
 
     @Id @GeneratedValue
     @Column(name = "member_id")

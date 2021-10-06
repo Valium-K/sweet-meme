@@ -13,6 +13,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+
 @Slf4j
 @Async
 @Component
@@ -60,6 +63,7 @@ public class NotificationEventListener {
     private void setNotificationReadyToGo(Member member, Post post, Notification foundNotification, NotificationType type) {
         foundNotification.setHasRead(false);
         foundNotification.setLastVoteOrCommenter(member.getMemberInfo());
+        foundNotification.setLastVoteOrCommentDate(ZonedDateTime.now());
         if(type.name().equals(NotificationType.COMMENT)) {
             foundNotification.setVoteOrCommentCounter(post.getCommentCount());
         }

@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.module.section;
 
 import dev.valium.sweetmeme.module.bases.BaseEntityTime;
+import dev.valium.sweetmeme.module.bases.BaseEntityZonedTime;
 import dev.valium.sweetmeme.module.bases.enums.SectionType;
 import dev.valium.sweetmeme.module.info.Info;
 import dev.valium.sweetmeme.module.post.Post;
@@ -15,7 +16,7 @@ import java.util.List;
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @Builder @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Section extends BaseEntityTime {
+public class Section extends BaseEntityZonedTime {
 
     @Id @GeneratedValue
     @Column(name = "section_id")

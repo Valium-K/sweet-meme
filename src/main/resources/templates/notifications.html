@@ -6,6 +6,7 @@
 <div id="contentPadding" style="height: 70px"></div>
 <div th:replace="fragments.html :: nav-bar"></div>
 <div th:replace="fragments.html :: off-canvas('notifications')"></div>
+<div th:replace="fragments.html :: date-time"></div>
 <div class="container">
     <div class="mb-5 text-center">
         <p class="lead mb-5"></p>
@@ -31,8 +32,8 @@
                         <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-light text-small" aria-labelledby="notificationDropdownMenuBtn">
-                        <li class="dropdown-item"><a type="button" th:onclick="|setAllHasRead()|">모두 읽음으로 표시</a></li>
-                        <li class="dropdown-item"><a type="button" th:onclick="|deleteAllHasRead()|">읽은 알림 모두 삭제</a></li>
+                        <li class="dropdown-item"><a type="button" th:onclick="|setAllHasRead()|" th:text="#{notification.set.all-read}">모두 읽음으로 표시</a></li>
+                        <li class="dropdown-item"><a type="button" th:onclick="|deleteAllHasRead()|" th:text="#{notification.remove.all-read}">읽은 알림 모두 삭제</a></li>
                     </ul>
                 </div>
             </div>
@@ -70,7 +71,6 @@
                         })
                 }
             </script>
-            <div th:replace="fragments.html :: date-time"></div>
             <div class="rounded" style="min-height: 500px; background-color: #11111110;">
                 <div class="list-group">
                     <a th:each="notification : ${notifications}" class="list-group-item" th:classappend="${!notification.hasRead} ? 'list-group-item-info':''"
@@ -110,13 +110,12 @@
                     </span>
                             </div>
                             <div class="col-sm-3 text-end">
-                                <small class="fromNow" th:text="${notification.lastModifiedDate}"></small>
+                                <small class="fromNow" th:text="${#temporals.format(notification.lastVoteOrCommentDate, 'YYYY/MM/dd HH:mm')}"></small>
                             </div>
                         </div>
                     </a>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

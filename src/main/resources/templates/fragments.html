@@ -8,13 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9, minimum-scale=0.9, shrink-to-fit=no, user-scalable=no">
   <title>Sweet Meme</title>
 
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR:300,400,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/node_modules/bootstrap/dist/css/bootstrap.css}" />
   <link rel="stylesheet" th:href="@{/node_modules/@yaireo/tagify/dist/tagify.css}" />
   <link id="contextPathHolder" th:data-contextPath="${#httpServletRequest.getContextPath()}"/>
   <link rel="stylesheet" th:href="@{/node_modules/font-awesome/css/font-awesome.css}" />
 
   <style id="commonStyle">
-
     .commentVoteBtn {
       padding: 0px;
       margin: 0px;
@@ -38,6 +38,16 @@
     {
       border-radius: 3px;
       background-color: rgb(248, 249, 250);
+    }
+    body,
+    input,
+    button,
+    select,
+    optgroup,
+    textarea,
+    .tooltip,
+    .popover {
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     }
   </style>
   <style id="forMobilePage">
@@ -194,12 +204,11 @@
       resizer();
     }
   </script>
-  <script>
+  <script title="grid lazy load">
     $(document).ready(function() {
       gridLazyView();
     });
   </script>
-
 </head>
 <nav th:fragment="nav-bar" id="nav-bar" class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
   <div class="container">
@@ -263,28 +272,26 @@
               url: contextPath + "/notifications/peek",
               processData: false,
             }).done(function(div) {
-              console.log(div)
-
               $('#notificationPeek').replaceWith(div);
             })
           }
         </script>
 
-        <li class="nav-item" sec:authorize="isAuthenticated()">
+        <li class="nav-item mt-1" sec:authorize="isAuthenticated()">
           <a class="nav-link" href="#" th:href="@{/upload/post}">
-            <i class="fa fa-plus" style="vertical-align: text-bottom;" aria-hidden="true"></i> upload
+            <i class="fa fa-plus fa-lg" style="vertical-align: text-bottom;" aria-hidden="true"></i> upload &nbsp;
           </a>
         </li>
 
         <!-- 유저 드롭다운 메뉴 -->
         <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
 
-          <a class="nav-link dropdown-toggle" href="#" id="dropdown07" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 0px; margin: 0px">
+          <a class="nav-link dropdown-toggle" href="#" id="dropdown07" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 0px; margin-top: 0px">
             <svg th:if="${member.memberInfo.picImage} == null" th:data-jdenticon-value="${#authentication.name}"
-                 width="30px" height="30px" style="padding: 0px; margin: 5px" class="rounded border bg-light"></svg>
+                 width="30px" height="30px" style="padding: 1px; margin-top: 6px;" class="rounded border bg-light"></svg>
             <img th:if="${member.memberInfo.picImage} != null" th:src="@{'/avatar/' + ${member.memberInfo.picImage}}"
                            width="30px" height="30px" style="padding: 0px; margin: 5px" class="rounded border"/>
-            <span th:text="${member.nickname}"></span>
+<!--            <span th:text="${member.nickname}" style="margin-top: 10px"></span>-->
           </a>
 
           <ul class="dropdown-menu dropdown-menu-light text-small shadow mt-2" aria-labelledby="dropdown07">
@@ -331,10 +338,7 @@
 </nav>
 <ul th:fragment="notifications" class="dropdown-menu dropdown-menu-light text-small shadow dropdown-menu-lg-start" aria-labelledby="NotiDropdown">
   <div id="notificationPeek">
-<!--    <li th:if="${hasNotification <= 0}">-->
-<!--      <span class="dropdown-item my-3" th:text="#{notification.none}">새 알림이 없습니다.</span>-->
-<!--    </li>-->
-    <div th:replace="fragments.html :: date-time"></div>
+<!--    <div th:replace="fragments.html :: date-time"></div>-->
     <li th:each="notification : ${notifications}">
       <a class="dropdown-item" th:style="${!notification.hasRead} ? 'background-color: #11111110;'"
          th:href="@{'/notification/post/' + ${notification.notificationType} + '/' + ${notification.originalPostId}}" th:target="_blank">
@@ -369,12 +373,12 @@
             님이 코멘트했습니다.
           </span>
         </span>
-          &nbsp; - <span class="fromNow" th:text="${notification.lastModifiedDate}"></span>
+           - <span class="date" th:text="${#temporals.format(notification.lastVoteOrCommentDate, 'MM/dd HH:mm')}"></span>
       </a>
     </li>
   </div>
   <li>
-    <a class="dropdown-item" style="text-align: center" th:href="@{'/notifications/all'}">
+    <a class="dropdown-item" th:text="#{notification.view-all}" style="text-align: center" th:href="@{'/notifications/all'}">
       모든 알림 보기
     </a>
   </li>
@@ -507,20 +511,23 @@
   <hr style="color: black"/>
 
   <li class="nav-item">
-    <a class="nav-link" th:style="${currentMenu == 'hot'}? 'background-color: #11111110;'" th:href="@{/}">
-      H Hot
+    <a class="nav-link" th:style="${currentMenu == 'fresh'}? 'background-color: #11111110;'" th:href="@{/}">
+      <i class="fa fa-clock-o" aria-hidden="true"></i>
+      &nbsp; Fresh
     </a>
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" th:style="${currentMenu == 'fresh'}? 'background-color: #11111110;'" th:href="@{/fresh}">
-      F Fresh
+    <a class="nav-link" th:style="${currentMenu == 'hot'}? 'background-color: #11111110;'" th:href="@{/hot}">
+      <i class="fa fa-line-chart" aria-hidden="true"></i>
+      &nbsp;Hot
     </a>
   </li>
 
   <li class="nav-item">
     <a class="nav-link" th:style="${currentMenu == 'top'}? 'background-color: #11111110;'" th:href="@{/top}">
-      T Top
+      <i class="fa fa-align-left" aria-hidden="true"></i>
+      &nbsp;Top
     </a>
   </li>
 
@@ -606,10 +613,6 @@
   </ul>
 </div>
 
-<div th:fragment="memberShip(membership)">
-  <span th:if="membership == "></span>
-</div>
-
 <script th:fragment="form-validation" type="application/javascript">
   (function () {
     'use strict';
@@ -642,7 +645,7 @@
   });
 </script>
 
-<section th:fragment="postSection">
+<section th:class="postSection" th:fragment="postSection">
   <article th:each="post : ${posts}" class="mx-1">
     <header>
       <div class="row">
@@ -660,8 +663,8 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="postDropdownMenuBtn">
               <li><a class="dropdown-item" th:href="@{${DOWNLOAD_URL} + ${post.postImageUrl}}">download</a></li>
-              <li th:if="${profileMenu != null}"><a class="dropdown-item">delete</a></li>
-              <li th:if="${currentMenu != null}"><a href="#" class="dropdown-item">report</a></li>
+              <li sec:authorize="isAuthenticated()" th:if="${profileMenu != null}"><a class="dropdown-item">delete</a></li>
+              <li sec:authorize="isAuthenticated()" th:if="${currentMenu != null}"><a href="#" class="dropdown-item">report</a></li>
             </ul>
           </div>
         </div>
@@ -685,6 +688,32 @@
     <div th:replace="fragments.html :: voteAndShareRow"></div>
     <hr/>
   </article>
+  <script th:inline="javascript" title="ajax more posts">
+    var win = $(window);
+    var doc = $(document);
+
+    win.scroll(function () {
+      if(win.scrollTop() == doc.height() - win.height()) {
+
+        var page = $('#postSectionPlacer').children(".postSection").length;
+
+        /*<![CDATA[*/
+        var currentMenu = /*[[${currentMenu}]]*/ 'default';
+        /*]]>*/
+        if(currentMenu == null) return;
+
+        var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+
+        $.ajax({
+          method: "GET",
+          url: contextPath + "/post/slice/" + currentMenu + "/" + page,
+          processData: false
+        }).done(function (div) {
+          $('#postSectionPlacer').append(div);
+        })
+      }
+    });
+  </script>
 </section>
   <script th:fragment="videoAutoPlay">
     var videos = document.getElementsByTagName("video");
@@ -832,7 +861,7 @@
 
     <!-- 코멘트-->
     <div class="input-group">
-      <span class="input-group-text">코멘트</span>
+      <span class="input-group-text" th:text="#{comment}">코멘트</span>
       <textarea id="content" name="content" th:field="*{content}" style="height: 90px;" class="form-control" aria-label="With textarea" max="100"></textarea>
       <small class="form-text text-danger" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
         콘텐트 에러
@@ -871,7 +900,7 @@
                width="30px" height="30px" class="rounded border"/>
         </a>
       </div>
-      <!-- 코맨트 -->
+      <!-- 코멘트 -->
       <div class="col ms-1 mb-2">
         <span class="fw-bold" th:text="${comment.commenterInfo.head}"></span>
         <img th:if="${comment.commenterInfo.stateCode} != null" th:src="'https://lipis.github.io/flag-icon-css/flags/4x3/' + ${comment.commenterInfo.stateCode} + '.svg'"
@@ -1005,37 +1034,184 @@
   </div>
 </div>
 <div th:fragment="date-time">
-  <script th:src="@{/node_modules/moment/min/moment-with-locales.min.js}"></script>
+  <script th:src="@{/node_modules/moment/min/moment-with-locales.js}"></script>
   <script type="application/javascript">
     $(function () {
+
       moment.locale(navigator.language);
-      $(".date-time").text(function(index, dateTime) {
-        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
-      });
-      $(".date").text(function(index, dateTime) {
-        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LL');
-      });
-      $(".weekday").text(function(index, dateTime) {
-        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('dddd');
-      });
-      $(".time").text(function(index, dateTime) {
-        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LT');
-      });
-      $(".calendar").text(function(index, dateTime) {
-        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").calendar();
-      });
+      //
+      // $(".date-time").text(function(index, dateTime) {
+      //   return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
+      // });
+      // $(".date").text(function(index, dateTime) {
+      //   return moment(dateTime).format('LL');
+      // });
+      // $(".weekday").text(function(index, dateTime) {
+      //   return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('dddd');
+      // });
+      // $(".time").text(function(index, dateTime) {
+      //   return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LT');
+      // });
+      // $(".calendar").text(function(index, dateTime) {
+      //   return moment(dateTime, "YYYY-MM-DD`T`hh:mm").calendar();
+      // });
       $(".fromNow").text(function(index, dateTime) {
         return moment(dateTime, "YYYY-MM-DD`T`hh:mm").fromNow();
       });
-      $(".date-weekday-time").text(function(index, dateTime) {
-        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLLL');
-      });
+      // $(".date-weekday-time").text(function(index, dateTime) {
+      //   return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLLL');
+      // });
     })
   </script>
 </div>
 
+<div th:fragment="terms" style="display: inline">
+  <!-- Button trigger modal -->
+  <a href="#" th:text="#{signup.terms2}" data-bs-toggle="modal" data-bs-target="#termsModal">
+    약관
+  </a>
 
-
+  <!-- Modal -->
+  <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel" th:text="#{signup.terms2}"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p class="ls2 lh6 bs5 ts4"><em class="emphasis">&lt; valium &gt;('https://www.valium.dev'이하 'sweetmeme')</em>은(는) 「개인정보 보호법」 제30조에 따라 정보주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보 처리방침을 수립·공개합니다.</p>
+            <p class="ls2">○ 이 개인정보처리방침은 <em class="emphasis">2021</em>년 <em class="emphasis">10</em>월 <em class="emphasis">16</em>부터 적용됩니다.</p><br>
+            <p class='lh6 bs4'><strong>제1조(개인정보의 처리 목적)<br>
+                <br>
+                <em class="emphasis">&lt; valium &gt;('https://www.valium.dev'이하 'sweetmeme')</em>은(는) 다음의 목적을 위하여 개인정보를 처리합니다. 처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며 이용 목적이 변경되는 경우에는 「개인정보 보호법」 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.</strong></p>
+            <ul class="list_indent2 mgt10">
+                <p class="ls2">1. 홈페이지 회원가입 및 관리</p>
+                <p class="ls2">회원 가입의사 확인, 회원제 서비스 제공에 따른 본인 식별·인증, 회원자격 유지·관리, 서비스 부정이용 방지 목적으로 개인정보를 처리합니다.</p>
+                <p class="ls2">2. 재화 또는 서비스 제공</p>
+                <p class="ls2">서비스 제공을 목적으로 개인정보를 처리합니다.</p>
+                <p class="ls2">3. 개인영상정보</p>
+                <p class="ls2">범죄의 예방 및 수사 등을 목적으로 개인정보를 처리합니다.</p>
+            </ul><br>
+            <p class='lh6 bs4'><strong>제2조(개인정보의 처리 및 보유 기간)</strong><br>
+                ① <em class="emphasis">&lt; valium &gt;</em>은(는) 법령에 따른 개인정보 보유·이용기간 또는 정보주체로부터 개인정보를 수집 시에 동의받은 개인정보 보유·이용기간 내에서 개인정보를 처리·보유합니다.<br>
+                ② 각각의 개인정보 처리 및 보유 기간은 다음과 같습니다.</p>
+            <ul class='list_indent2 mgt10'>
+                <li class='tt'>1.&lt;�홈페이지 회원가입 및 관리&gt;</li>
+                <li class='tt'>&lt;�홈페이지 회원가입 및 관리&gt;와 관련한 개인정보는 수집.이용에 관한 동의일로부터&lt;�지체없이 파기&gt;까지 위 이용목적을 위하여 보유.이용됩니다.</li>
+                <li>보유근거 : 지체없이 파기</li>
+                <li>관련법령 :</li>
+                <li>예외사유 :</li>
+            </ul><br>
+            <p class='lh6 bs4'><strong>제3조(개인정보의 제3자 제공)</strong><br>
+                ① <em class="emphasis">&lt; valium &gt;은(는) 개인정보를 제1조(개인정보의 처리 목적)에서 명시한 범위 내에서만 처리하며, 정보주체의 동의, 법률의 특별한 규정 등 「개인정보 보호법」 제17조 및 제18조에 해당하는 경우에만 개인정보를 제3자에게 제공합니다.</em></p>
+            <p class="sub_p mgt10"><em class="emphasis">② <span class="colorLightBlue">&lt; valium &gt;</span>은(는) 다음과 같이 개인정보를 제3자에게 제공하고 있습니다.</em></p>
+            <ul class="list_indent2 mgt10">
+                <li class="tt"><em class="emphasis">1. &lt; &gt;</em></li>
+                <li><em class="emphasis">개인정보를 제공받는 자 :</em></li>
+                <li><em class="emphasis">제공받는 자의 개인정보 이용목적 :</em></li>
+                <li><em class="emphasis">제공받는 자의 보유.이용기간:</em></li>
+            </ul><em class="emphasis"><br></em>
+            <p class='lh6 bs4'><em class="emphasis"><strong>제4조(개인정보처리 위탁)</strong><br>
+                ① <em class="emphasis">&lt; valium &gt;</em>은(는) 원활한 개인정보 업무처리를 위하여 다음과 같이 개인정보 처리업무를 위탁하고 있습니다.</em></p>
+            <ul class='list_indent2 mgt10'>
+                <li class='tt'>1. &lt; &gt;</li>
+                <li>위탁받는 자 (수탁자) :</li>
+                <li>위탁하는 업무의 내용 :</li>
+                <li>위탁기간 :</li>
+            </ul>
+            <p class='sub_p mgt10'>② <span class='colorLightBlue'>&lt; valium &gt;</span>은(는) 위탁계약 체결시 「개인정보 보호법」 제26조에 따라 위탁업무 수행목적 외 개인정보 처리금지, 기술적․관리적 보호조치, 재위탁 제한, 수탁자에 대한 관리․감독, 손해배상 등 책임에 관한 사항을 계약서 등 문서에 명시하고, 수탁자가 개인정보를 안전하게 처리하는지를 감독하고 있습니다.</p>
+            <p class='sub_p mgt10'>③ 위탁업무의 내용이나 수탁자가 변경될 경우에는 지체없이 본 개인정보 처리방침을 통하여 공개하도록 하겠습니다.</p><br>
+            <br>
+            <p class="lh6 bs4"><strong>제5조(정보주체와 법정대리인의 권리·의무 및 그 행사방법)</strong></p>
+            <p class="ls2"><br>
+                <br>
+                ① 정보주체는 valium에 대해 언제든지 개인정보 열람·정정·삭제·처리정지 요구 등의 권리를 행사할 수 있습니다.</p>
+            <p class='sub_p'>② 제1항에 따른 권리 행사는valium에 대해 「개인정보 보호법」 시행령 제41조제1항에 따라 서면, 전자우편, 모사전송(FAX) 등을 통하여 하실 수 있으며 valium은(는) 이에 대해 지체 없이 조치하겠습니다.</p>
+            <p class='sub_p'>③ 제1항에 따른 권리 행사는 정보주체의 법정대리인이나 위임을 받은 자 등 대리인을 통하여 하실 수 있습니다.이 경우 “개인정보 처리 방법에 관한 고시(제2020-7호)” 별지 제11호 서식에 따른 위임장을 제출하셔야 합니다.</p>
+            <p class='sub_p'>④ 개인정보 열람 및 처리정지 요구는 「개인정보 보호법」 제35조 제4항, 제37조 제2항에 의하여 정보주체의 권리가 제한 될 수 있습니다.</p>
+            <p class='sub_p'>⑤ 개인정보의 정정 및 삭제 요구는 다른 법령에서 그 개인정보가 수집 대상으로 명시되어 있는 경우에는 그 삭제를 요구할 수 없습니다.</p>
+            <p class='sub_p'>⑥ valium은(는) 정보주체 권리에 따른 열람의 요구, 정정·삭제의 요구, 처리정지의 요구 시 열람 등 요구를 한 자가 본인이거나 정당한 대리인인지를 확인합니다.</p><br>
+            <p class='lh6 bs4'><strong>제6조(처리하는 개인정보의 항목 작성)</strong><br>
+                ① <em class="emphasis">&lt; valium &gt;</em>은(는) 다음의 개인정보 항목을 처리하고 있습니다.</p>
+            <ul class='list_indent2 mgt10'>
+                <li class='tt'>1&lt; 홈페이지 회원가입 및 관리 &gt;</li>
+                <li>필수항목 : 이메일, 비밀번호, 쿠키</li>
+                <li>선택항목 :</li>
+            </ul><br>
+            <p class='lh6 bs4'><strong>제7조(개인정보의 파기)</strong></p>
+            <p class='ls2'><em class="emphasis"><br>
+                ① &lt; valium &gt; 은(는) 개인정보 보유기간의 경과, 처리목적 달성 등 개인정보가 불필요하게 되었을 때에는 지체없이 해당 개인정보를 파기합니다.<br>
+                ② 정보주체로부터 동의받은 개인정보 보유기간이 경과하거나 처리목적이 달성되었음에도 불구하고 다른 법령에 따라 개인정보를 계속 보존하여야 하는 경우에는, 해당 개인정보를 별도의 데이터베이스(DB)로 옮기거나 보관장소를 달리하여 보존합니다.<br>
+                1. 법령 근거 :<br>
+                2. 보존하는 개인정보 항목 : 계좌정보, 거래날짜<br>
+                ③ 개인정보 파기의 절차 및 방법은 다음과 같습니다.<br>
+                1. 파기절차<br>
+                &lt; valium &gt; 은(는) 파기 사유가 발생한 개인정보를 선정하고, &lt; valium &gt; 의 개인정보 보호책임자의 승인을 받아 개인정보를 파기합니다.<br></em></p>
+            <p class='sub_p mgt10'><em class="emphasis">2. 파기방법</em></p>
+            <p class='sub_p'><em class="emphasis">전자적 파일 형태의 정보는 기록을 재생할 수 없는 기술적 방법을 사용합니다</em></p><em class="emphasis"><br></em>
+            <p class='lh6 bs4'><em class="emphasis"><strong>제8조(개인정보의 안전성 확보 조치)<em class="emphasis"><br>
+                &lt; valium &gt;</em>은(는) 개인정보의 안전성 확보를 위해 다음과 같은 조치를 취하고 있습니다.</strong></em></p>
+            <p class='sub_p mgt10'>1. 개인정보의 암호화<br>
+                이용자의 개인정보는 비밀번호는 암호화 되어 저장 및 관리되고 있어, 본인만이 알 수 있으며 중요한 데이터는 파일 및 전송 데이터를 암호화 하거나 파일 잠금 기능을 사용하는 등의 별도 보안기능을 사용하고 있습니다.<br>
+                2. 접속기록의 보관 및 위변조 방지<br>
+                개인정보처리시스템에 접속한 기록을 최소 1년 이상 보관, 관리하고 있으며,다만, 5만명 이상의 정보주체에 관하여 개인정보를 추가하거나, 고유식별정보 또는 민감정보를 처리하는 경우에는 2년이상 보관, 관리하고 있습니다.<br>
+                또한, 접속기록이 위변조 및 도난, 분실되지 않도록 보안기능을 사용하고 있습니다.<br></p><br>
+            <p class="lh6 bs4"><strong>제9조(개인정보 자동 수집 장치의 설치•운영 및 거부에 관한 사항)</strong></p>
+            <p class="ls2"><br>
+                <br>
+                ① valium 은(는) 이용자에게 개별적인 맞춤서비스를 제공하기 위해 이용정보를 저장하고 수시로 불러오는 ‘쿠키(cookie)’를 사용합니다.<br>
+                ② 쿠키는 웹사이트를 운영하는데 이용되는 서버(http)가 이용자의 컴퓨터 브라우저에게 보내는 소량의 정보이며 이용자들의 PC 컴퓨터내의 하드디스크에 저장되기도 합니다.<br>
+                가. 쿠키의 사용 목적 : 이용자가 방문한 각 서비스와 웹 사이트들에 대한 방문 및 이용형태, 인기 검색어, 보안접속 여부, 등을 파악하여 이용자에게 최적화된 정보 제공을 위해 사용됩니다.<br>
+                나. 쿠키의 설치•운영 및 거부 : 웹브라우저 상단의 도구&gt;인터넷 옵션&gt;개인정보 메뉴의 옵션 설정을 통해 쿠키 저장을 거부 할 수 있습니다.<br>
+                다. 쿠키 저장을 거부할 경우 맞춤형 서비스 이용에 어려움이 발생할 수 있습니다.</p>
+            <p class='sub_p mgt30'><strong>제10조 (개인정보 보호책임자)</strong></p>
+            <p class='sub_p mgt10'>① <span class='colorLightBlue'>valium</span> 은(는) 개인정보 처리에 관한 업무를 총괄해서 책임지고, 개인정보 처리와 관련한 정보주체의 불만처리 및 피해구제 등을 위하여 아래와 같이 개인정보 보호책임자를 지정하고 있습니다.</p>
+            <ul class='list_indent2 mgt10'>
+                <li class='tt'>▶ 개인정보 보호책임자</li>
+                <li>성명 :valium</li>
+                <li>직책 :none</li>
+                <li>직급 :none</li>
+                <li>연락처 :none, emailconfirmation1677@gmail.com, none</li>
+            </ul>
+            <p class='sub_p'>※ 개인정보 보호 담당부서로 연결됩니다.</p>
+            <ul class='list_indent2 mgt10'>
+                <li class='tt'>▶ 개인정보 보호 담당부서</li>
+                <li>부서명 :</li>
+                <li>담당자 :</li>
+                <li>연락처 :, ,</li>
+            </ul>
+            <p class='sub_p'>② 정보주체께서는 valium 의 서비스(또는 사업)을 이용하시면서 발생한 모든 개인정보 보호 관련 문의, 불만처리, 피해구제 등에 관한 사항을 개인정보 보호책임자 및 담당부서로 문의하실 수 있습니다. valium 은(는) 정보주체의 문의에 대해 지체 없이 답변 및 처리해드릴 것입니다.</p>
+            <p class='sub_p mgt30'><strong>제11조(개인정보 열람청구)<br>
+                정보주체는 ｢개인정보 보호법｣ 제35조에 따른 개인정보의 열람 청구를 아래의 부서에 할 수 있습니다.<br>
+                &lt; valium &gt;</strong>은(는) 정보주체의 개인정보 열람청구가 신속하게 처리되도록 노력하겠습니다.</p>
+            <ul class='list_indent2 mgt10'>
+                <li class='tt'>▶ 개인정보 열람청구 접수·처리 부서</li>
+                <li>부서명 :</li>
+                <li>담당자 :</li>
+                <li>연락처 : , ,</li>
+            </ul><br>
+            <p class='lh6 bs4'><strong>제12조(권익침해 구제방법)</strong></p><br>
+            <br>
+            정보주체는 개인정보침해로 인한 구제를 받기 위하여 개인정보분쟁조정위원회, 한국인터넷진흥원 개인정보침해신고센터 등에 분쟁해결이나 상담 등을 신청할 수 있습니다. 이 밖에 기타 개인정보침해의 신고, 상담에 대하여는 아래의 기관에 문의하시기 바랍니다.<br>
+            <br>
+            1. 개인정보분쟁조정위원회 : (국번없이) 1833-6972 (www.kopico.go.kr)<br>
+            2. 개인정보침해신고센터 : (국번없이) 118 (privacy.kisa.or.kr)<br>
+            3. 대검찰청 : (국번없이) 1301 (www.spo.go.kr)<br>
+            4. 경찰청 : (국번없이) 182 (ecrm.cyber.go.kr)<br>
+            <br>
+            「개인정보보호법」제35조(개인정보의 열람), 제36조(개인정보의 정정·삭제), 제37조(개인정보의 처리정지 등)의 규정에 의한 요구에 대 하여 공공기관의 장이 행한 처분 또는 부작위로 인하여 권리 또는 이익의 침해를 받은 자는 행정심판법이 정하는 바에 따라 행정심판을 청구할 수 있습니다.<br>
+            <br>
+            ※ 행정심판에 대해 자세한 사항은 중앙행정심판위원회(www.simpan.go.kr) 홈페이지를 참고하시기 바랍니다.<br>
+            <p class='lh6 bs4'></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <!----------------------------------------------------------------------------------------->
 
 </html>

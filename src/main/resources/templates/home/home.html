@@ -24,7 +24,10 @@
                     </div>
                 </div>
             </div>
-            <section th:replace="fragments.html :: postSection"></section>
+            <div id="postSectionPlacer">
+                <section th:replace="fragments.html :: postSection"></section>
+            </div>
+
         </div>
     </div>
     <script th:src="@{/node_modules/jdenticon/dist/jdenticon.min.js}"></script>
