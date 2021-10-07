@@ -2,6 +2,7 @@ package dev.valium.sweetmeme.module.notifications.event;
 
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.notifications.NotificationType;
+import dev.valium.sweetmeme.module.post.Comment;
 import dev.valium.sweetmeme.module.post.Post;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

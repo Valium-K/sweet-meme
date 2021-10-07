@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
+    public static final int SLICE_SIZE = 10;
     private final NotificationInterceptor notificationInterceptor;
 
     @Override

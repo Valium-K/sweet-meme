@@ -84,8 +84,6 @@
 <script th:src="@{/node_modules/@yaireo/tagify/dist/tagify.min.js}"></script>
 <script id="whitelistAndValidation">
 
-  var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
-
   // getting Tag whitelist
   var tagInput = document.querySelector('input[name="tags"]');
   var tagifyForTag = new Tagify(tagInput, {
@@ -164,21 +162,13 @@
 
     if(fileSize > maxSize) {
       // TODO 에러추가 현재는 alert
-      alert('10mb 이하의 이미지를 선택해주세요.');
       $('#file').val('');
+      alert('10mb 이하의 이미지를 선택해주세요.');
     } else {
-      thumbnail();
+
     }
-
   }
 
-</script>
-<script id="thumbnailScript">
-  var thumbnail = function () {
-    document.getElementById('thumbnail').style.removeProperty('display');
-    document.getElementById('file').setAttribute('hidden', '');
-    // document.getElementById('fileHelp').setAttribute('hidden', '');
-  }
 </script>
 </body>
 </html>

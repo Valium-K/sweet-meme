@@ -1,7 +1,7 @@
 package dev.valium.sweetmeme.module.member.validator;
 
 import dev.valium.sweetmeme.infra.config.FileConfig;
-import dev.valium.sweetmeme.infra.processor.Code2State;
+import dev.valium.sweetmeme.module.processor.Code2State;
 import dev.valium.sweetmeme.module.member.form.SettingsProfileForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

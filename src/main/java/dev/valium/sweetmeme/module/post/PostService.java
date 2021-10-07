@@ -1,7 +1,7 @@
 package dev.valium.sweetmeme.module.post;
 
 import dev.valium.sweetmeme.infra.config.FileConfig;
-import dev.valium.sweetmeme.infra.processor.FileProcessor;
+import dev.valium.sweetmeme.module.processor.FileProcessor;
 import dev.valium.sweetmeme.module.notifications.NotificationType;
 import dev.valium.sweetmeme.module.post.form.CommentForm;
 import dev.valium.sweetmeme.module.member.Member;

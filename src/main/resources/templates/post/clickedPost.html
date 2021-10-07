@@ -57,10 +57,11 @@
               </div>
             </div>
           </picture>
+
           <!-- 태그 -->
           <span th:each="tag : ${tags}">
             <i class="fa fa-tag fa-lg ms-1 mt-3" aria-hidden="true"></i>
-            <button type="button" class="btn btn-secondary btn-sm m-1" th:text="${tag}"></button>
+            <a th:href="@{'/' + ${tag}}" class="btn btn-secondary btn-sm m-1" th:text="${tag}"></a>
           </span>
           <div class="ms-1 mt-4">
             <span th:text="${post.commentCount}" class="h5"></span>
@@ -105,7 +106,6 @@
             <div class="col mt-1" th:text="#{comment.anonymous}">로그인으로 댓글남기기</div>
             <div class="col-4 mt-1 text-end">
               <button type="button" class="btn btn-secondary btn-sm" th:text="#{login}" th:onclick="|window.location.href = @{/} + 'login'|" style="display: inline"></button>
-              <!--                <button type="button" class="btn btn-primary btn-sm" th:text="#{signup}" style="display: inline"></button>-->
             </div>
           </div>
         </div>
@@ -184,18 +184,18 @@
                       </div>
 
                       <div class="row justify-content-between">
-                        <div class="col-5 ">
+                        <div class="col-8">
+                          <div id="ACCEPTABLE_COMMENT_TYPES" th:text="*{ACCEPTABLE_COMMENT_TYPES}" hidden></div>
                           <!-- TODO 파일 선택 후 hidden 후 프리뷰 띄우기 -->
                           <div class="form-group">
-                            <label class="btn btn-default p-0 mt-2">
-                              <i class="fa fa-camera fa-lg" aria-hidden="true"></i>
-                              <input type="file" name="file" style="white-space: pre-line;" id="file" th:accept="*{ACCEPTABLE_COMMENT_TYPES}"
-                                     aria-describedby="fileHelp" th:field="*{file}" oninput="fileValidation()" hidden />
+                            <label class="btn btn-default p-0 mt-1">
+                              <input type="file" name="file" class="form-control" id="file" th:accept="*{ACCEPTABLE_COMMENT_TYPES}"
+                                     aria-describedby="fileHelp" th:field="*{file}" oninput="fileValidation()" />
                             </label>
                           </div>
 
                         </div>
-                        <div class="col mt-2 text-end">
+                        <div class="col-4 mt-2 text-end">
                           <span class="btn btn-secondary btn-sm" type="button" th:onclick="|hideReplyForm(${comment.id})|" th:text="#{cancel}" style="display: inline">취소</span>
                           <div class="form-group" style="display: inline">
                             <button class="btn btn-primary btn-sm" type="submit" th:text="#{upload}">업로드</button>
@@ -216,9 +216,9 @@
           </div>
 
         </div>
+
         <!-- 댓글 append div -->
         <div th:id="'comment' + ${post.id}"></div>
-
 
         <!-- 댓글 더보기 -->
         <div class="mt-2">
@@ -231,18 +231,15 @@
       </section>
     </div>
   </div>
-  <script th:src="@{/node_modules/jdenticon/dist/jdenticon.min.js}"></script>
   <script th:replace="fragments.html :: ajax-csrf-header"></script>
   <script th:replace="fragments.html :: form-validation"></script>
   <script th:replace="fragments.html :: videoAutoPlay"></script>
   <script th:replace="fragments.html :: voteAjax"></script>
-  <script>
+  <script title="more reply / comment ajax">
     var viewReply = function (commentId, postId, div) {
 
       var page = $('#reply' + commentId).children(".replyPageOffset").length - 1;
       if(page < 0 ) page = 0;
-
-      var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
 
       $.ajax({
         method: "GET",
@@ -257,7 +254,6 @@
 
     var viewComment = function (postId, div) {
       var page = $('#comment' + postId).children(".replyPageOffset").length + 1;
-      var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
 
       $.ajax({
         method: "GET",
@@ -278,7 +274,7 @@
     }
 
     function fileValidation() {
-      let innerText = document.getElementById('ACCEPTABLE_FILE_TYPES').innerText;
+      let innerText = document.getElementById('ACCEPTABLE_COMMENT_TYPES').innerText;
       let receivedType = document.getElementById('file').files[0].type;
       let acceptableTypes = innerText.split(', ');
 
@@ -291,8 +287,8 @@
       })
 
       if (!isAcceptableType) {
-        alert('업로드 할 수 없는 형식의 확장자입니다.');
         $('#file').val('');
+        alert('업로드 할 수 없는 형식의 확장자입니다.');
         return;
       }
 
@@ -301,14 +297,14 @@
 
       if(fileSize > maxSize) {
         // TODO 에러추가 현재는 alert
-        alert('10mb 이하의 이미지를 선택해주세요.');
         $('#file').val('');
+        alert('10mb 이하의 이미지를 선택해주세요.');
       } else {
-        thumbnail();
+
       }
     }
   </script>
-
+  <script th:src="@{/node_modules/jdenticon/dist/jdenticon.min.js}"></script>
 </div>
 </body>
 </html>

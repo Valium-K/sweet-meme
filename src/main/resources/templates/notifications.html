@@ -39,7 +39,6 @@
             </div>
             <script>
                 var setAllHasRead = function () {
-                    var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
 
                     $.ajax({
                         dataType: "json",
@@ -55,7 +54,6 @@
                     })
                 }
                     var deleteAllHasRead = function () {
-                        var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
 
                         $.ajax({
                             dataType: "json",

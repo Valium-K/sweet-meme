@@ -61,4 +61,7 @@ public class Comment extends BaseEntityZonedTime {
     public void subReplyCount() {
         this.replyCount--;
     }
+    public String getCommenter() {
+        return this.getCommenterInfo().getHead();
+    }
 }

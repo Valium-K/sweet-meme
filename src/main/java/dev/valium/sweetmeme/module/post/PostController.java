@@ -92,7 +92,6 @@ public class PostController extends BaseController {
         model.addAttribute(post);
         model.addAttribute("tags", tags);
         model.addAttribute("comments", comments);
-
         model.addAttribute(new CommentForm());
 
         setBaseAttributes(member, model, null);

@@ -2,9 +2,8 @@ package dev.valium.sweetmeme.module.post;
 
 import dev.valium.sweetmeme.infra.config.FileConfig;
 import dev.valium.sweetmeme.module.bases.enums.SectionType;
-import dev.valium.sweetmeme.infra.processor.FileProcessor;
+import dev.valium.sweetmeme.module.processor.FileProcessor;
 import dev.valium.sweetmeme.module.member.Member;
-import dev.valium.sweetmeme.module.post.Post;
 import dev.valium.sweetmeme.module.member.MemberRepository;
 import dev.valium.sweetmeme.module.post_tag.PostTag;
 import dev.valium.sweetmeme.module.post_tag.PostTagRepository;
@@ -20,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

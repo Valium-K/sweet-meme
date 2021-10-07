@@ -76,7 +76,7 @@
 
     .nav > .nav-item :hover{
       background-color: #11111110;
-      background-blend-mode: multiply;
+      background-blend-mode: normal;
 
     }
     .nav > .nav-item > .nav-link{
@@ -182,12 +182,10 @@
 
   </style>
 
-
   <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
   <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.bundle.js}"></script>
-  <script id="gridLazyView">
-    var gridLazyView = function () {
-
+  <script title="grid Lazy Load">
+    $(document).ready(function () {
       if(document.getElementById("side-bar-col") == null) return;
 
       if(window.innerWidth > 572) {
@@ -202,19 +200,19 @@
       document.getElementById('gridContent').classList.remove('d-none');
 
       resizer();
-    }
-  </script>
-  <script title="grid lazy load">
-    $(document).ready(function() {
-      gridLazyView();
     });
   </script>
+  <script title="context path variable">
+    let contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
+  </script>
+  <script th:src="@{/node_modules/jdenticon/dist/jdenticon.min.js}"></script>
 </head>
 <nav th:fragment="nav-bar" id="nav-bar" class="navbar fixed-top navbar-expand-sm navbar-dark bg-dark">
   <div class="container">
+    <!-- logo -->
     <a class="navbar-brand" href="#" th:href="@{/}">SweetMeme</a>
 
-
+    <!-- mobile section choose btn-->
     <a id="offCanvasToggle" class="navbar-toggler btn me-auto d-none" data-bs-toggle="offcanvas"
        href="#offcanvas" role="button" aria-controls="offcanvas">
       Section
@@ -225,14 +223,10 @@
             aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <i class="fa fa-bars" aria-hidden="true"></i>
     </button>
-
     <div class="collapse navbar-collapse" id="navbar">
-
       <!-- 좌측 컨텐츠 -->
       <ul id="nav-left-content" class="navbar-nav me-auto mb-2 mb-lg-0">
-
       </ul>
-
 
       <!-- 우측 컨텐츠 -->
       <ul class="navbar-nav .justify-content-end">
@@ -246,7 +240,8 @@
           <a class="nav-link" href="#" th:href="@{/sign-up}">Sign up</a>
         </li>
 
-        <li class="nav-item dropdown mt-2" sec:authorize="isAuthenticated()">
+        <!-- 알림 -->
+        <li class="nav-item dropdown mt-1" sec:authorize="isAuthenticated()">
           <a th:if="${hasNotification > 0}" class="nav-link" href="#" th:onclick="|notificationPeek()|" id="NotiDropdown" role="button"
              data-bs-toggle="dropdown" aria-expanded="false" style="padding: 0px; margin: 0px">
             <i class="fa fa-bell-o" aria-hidden="true"></i> notification
@@ -257,16 +252,11 @@
              data-bs-toggle="dropdown" aria-expanded="false" style="padding: 0px; margin: 0px">
             <i class="fa fa-bell-o" aria-hidden="true"></i> notification&nbsp;
           </a>
-
-
           <ul th:replace="fragments.html :: notifications"></ul>
         </li>
 
-        <script class="notificationPeekScript">
+        <script title="notification Peek ajax">
           var notificationPeek = function () {
-
-            var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
-
             $.ajax({
               method: "GET",
               url: contextPath + "/notifications/peek",
@@ -276,24 +266,25 @@
             })
           }
         </script>
-
+        &nbsp;&nbsp;&nbsp;
+        <!-- 업로드 -->
         <li class="nav-item mt-1" sec:authorize="isAuthenticated()">
-          <a class="nav-link" href="#" th:href="@{/upload/post}">
-            <i class="fa fa-plus fa-lg" style="vertical-align: text-bottom;" aria-hidden="true"></i> upload &nbsp;
+          <a class="nav-link" href="#" th:href="@{/upload/post}" style="margin: 0px; padding: 0px">
+            <i class="fa fa-plus fa-lg" aria-hidden="true"></i>
+            upload
           </a>
         </li>
-
-        <!-- 유저 드롭다운 메뉴 -->
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <!-- 유저 아바타 드롭다운-->
         <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-
           <a class="nav-link dropdown-toggle" href="#" id="dropdown07" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 0px; margin-top: 0px">
             <svg th:if="${member.memberInfo.picImage} == null" th:data-jdenticon-value="${#authentication.name}"
-                 width="30px" height="30px" style="padding: 1px; margin-top: 6px;" class="rounded border bg-light"></svg>
+                 width="30px" height="30px" class="rounded border bg-light"></svg>
             <img th:if="${member.memberInfo.picImage} != null" th:src="@{'/avatar/' + ${member.memberInfo.picImage}}"
                            width="30px" height="30px" style="padding: 0px; margin: 5px" class="rounded border"/>
-<!--            <span th:text="${member.nickname}" style="margin-top: 10px"></span>-->
           </a>
 
+          <!-- 유저 드롭다운 메뉴 -->
           <ul class="dropdown-menu dropdown-menu-light text-small shadow mt-2" aria-labelledby="dropdown07">
             <li><a class="dropdown-item my-2" th:href="@{'/user/' + ${#authentication.name} + '/home'}" th:text="#{myProfile}">내 프로필</a></li>
             <li><a class="dropdown-item my-2" th:href="@{'/settings/account'}" href="#" th:text="#{settings}">설정</a></li>
@@ -303,15 +294,15 @@
                   logout
                 </button>
               </form>
-            <li><span class="my-2" style="font-size: 12px">&nbsp;&nbsp;&nbsp;&nbsp;SWEETMEME © 2021</span></li>
+            </li>
+            <li><span class="my-2" style="font-size: 12px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SWEETMEME © 2021</span></li>
           </ul>
-          <!-- dom을 그리기 전 로딩을 마치면 jdenticon이 nickname을 못 찾아서 빈 아마타가 출력되므로 아래쪽에 배치함 -->
-          <script th:src="@{/node_modules/jdenticon/dist/jdenticon.min.js}"></script>
         </li>
       </ul>
     </div>
   </div>
-  <script id="toggleTheme" type="application/javascript">
+  <!--
+  <script title="toggle Theme" type="application/javascript">
     var toggleTheme = function toggleTheme() {
       var bodyClassList = document.body.classList;
       var sideBarClassList = document.getElementById('side-bar').classList;
@@ -335,10 +326,10 @@
       }
     }
   </script>
+  -->
 </nav>
 <ul th:fragment="notifications" class="dropdown-menu dropdown-menu-light text-small shadow dropdown-menu-lg-start" aria-labelledby="NotiDropdown">
   <div id="notificationPeek">
-<!--    <div th:replace="fragments.html :: date-time"></div>-->
     <li th:each="notification : ${notifications}">
       <a class="dropdown-item" th:style="${!notification.hasRead} ? 'background-color: #11111110;'"
          th:href="@{'/notification/post/' + ${notification.notificationType} + '/' + ${notification.originalPostId}}" th:target="_blank">
@@ -377,6 +368,7 @@
       </a>
     </li>
   </div>
+  <li><hr class="dropdown-divider"></li>
   <li>
     <a class="dropdown-item" th:text="#{notification.view-all}" style="text-align: center" th:href="@{'/notifications/all'}">
       모든 알림 보기
@@ -434,7 +426,7 @@
         <ul th:replace="fragments.html :: content(${currentMenu})"></ul>
     </div>
 
-    <script id="swipeEvent">
+    <script title="swipe Event">
       var swipeEventInit = function () {
         if(window.innerWidth <= 572) {
           window.addEventListener("touchstart", startTouch,{ passive: false });
@@ -445,7 +437,6 @@
           window.removeEventListener("touchmove", moveTouch,{ passive: false });
         }
       }
-
 
       // Swipe Up / Down / Left / Right
       var initialX = null;
@@ -540,18 +531,12 @@
 
   <hr style="color: black"/>
 
-
-  <div th:each="sectionType : ${sidebarSectionTypes}">
-    <li class="nav-item">
-      <a th:href="@{'/'+${sectionType}}" class="nav-link"
-         th:style="(${sectionType} == ${currentMenu}) ? 'background-color: #11111110;': ''">
-        <div>
-          <img th:src="@{'/sections/' + ${sectionType}}" width="20px;" height="20px;" class="rounded"/>&nbsp;
-          <span th:text="${sectionType}"style="color: black; padding: 0px; margin: 0px;"></span>
-        </div>
-      </a>
-    </li>
-  </div>
+  <li class="nav-item" th:each="sectionType : ${sidebarSectionTypes}">
+    <a th:href="@{'/'+${sectionType}}" class="nav-link" th:style="(${sectionType} == ${currentMenu}) ? 'background-color: #11111110;': ''">
+      <img th:src="@{'/sections/' + ${sectionType}}" width="20px;" height="20px;" class="rounded"/>&nbsp;
+      <span th:text="${sectionType}" th:remove="tag"></span>
+    </a>
+  </li>
 </ul>
 
 <div th:fragment="profileInfo">
@@ -567,8 +552,7 @@
     </div>
     <div class="col-10">
       <h2 th:text="${info.head}" style="display: inline" class="fw-bold "></h2>&nbsp;
-      <img th:if="${info.stateCode} != null" th:src="'https://lipis.github.io/flag-icon-css/flags/4x3/' + ${info.stateCode} + '.svg'"
-           style="width: 2rem; height: 1.5rem; vertical-align: text-bottom" class="rounded border">
+      <img th:if="${info.stateCode} != null" th:src="'https://lipis.github.io/flag-icon-css/flags/4x3/' + ${info.stateCode} + '.svg'" style="width: 2rem; height: 1.5rem; vertical-align: text-bottom" class="rounded border">
       <br/>
       [뭘 넣을지 고민 중] · <small class="text-muted" th:text="${spendDate} + ' days'"></small>
     </div>
@@ -645,7 +629,16 @@
   });
 </script>
 
-<section th:class="postSection" th:fragment="postSection">
+<!-- .postSection is used by paging -->
+<section class="postSection" th:fragment="postSection">
+  <div th:if="${#lists.isEmpty(posts)}">
+    <div style="text-align: center; height: 500px;">
+      <div class="mt-4"></div>
+      <i class="fa fa-times-circle fa-5x" aria-hidden="true" style="display: block"></i>
+      <div class="mt-2"></div>
+      <span class="p-3">There Is No Post!</span>
+    </div>
+  </div>
   <article th:each="post : ${posts}" class="mx-1">
     <header>
       <div class="row">
@@ -653,10 +646,8 @@
           <img th:src="@{'/sections/' + ${post.belongedSectionType}}" class="rounded" width="20px" height="20px" />
           <small th:text="${post.belongedSectionType}"></small><small> · </small>
           <small th:text="${#temporals.format(post.createdDate, 'yyyy-MM-dd HH:mm')}"></small>
-<!--            <small class="fromNow" th:text="${post.createdDate}"></small>-->
         </div>
         <div class="col-2 text-end">
-
           <div class="dropdown mt-2">
             <button type="button" class="btn btn-light btn-sm" id="postDropdownMenuBtn" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
@@ -688,7 +679,8 @@
     <div th:replace="fragments.html :: voteAndShareRow"></div>
     <hr/>
   </article>
-  <script th:inline="javascript" title="ajax more posts">
+
+  <script title="ajax more posts" th:inline="javascript">
     var win = $(window);
     var doc = $(document);
 
@@ -702,8 +694,6 @@
         /*]]>*/
         if(currentMenu == null) return;
 
-        var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
-
         $.ajax({
           method: "GET",
           url: contextPath + "/post/slice/" + currentMenu + "/" + page,
@@ -711,13 +701,16 @@
         }).done(function (div) {
           $('#postSectionPlacer').append(div);
         })
+
       }
     });
   </script>
+
 </section>
   <script th:fragment="videoAutoPlay">
     var videos = document.getElementsByTagName("video");
     var browserClickInit = false;
+
     window.onblur = function() {
       for(var i = 0; i < videos.length; i++) {
         var video = videos[i];
@@ -725,6 +718,7 @@
         video.pause();
       }
     };
+
     function checkScroll() {
       var fraction = 0.78;
 
@@ -745,7 +739,7 @@
             videos[i-1].pause();
             videos[i+1].pause();
           } catch (e) {
-
+            console.log('video play error');
           }
           video.play()
 
@@ -759,7 +753,6 @@
         }
       }
     }
-
 
     var toggleMute = function (e) {
       browserClickInit = true;
@@ -839,8 +832,6 @@
         }
       }
 
-      var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
-
       $.ajax({
         dataType: "json",
         autocomplete: {
@@ -868,14 +859,14 @@
       </small>
     </div>
 
+    <div id="ACCEPTABLE_COMMENT_TYPES" th:text="*{ACCEPTABLE_COMMENT_TYPES}" hidden></div>
     <div class="row justify-content-between">
-      <div class="col-6">
-        <!-- TODO 파일 선택 후 hidden 후 프리뷰 띄우기 -->
+      <div class="col-9">
+        <!-- TODO 파일 선택 후 프리뷰 append -->
         <div class="form-group">
-          <label class="btn btn-default p-0 mt-2">
-            <i class="fa fa-camera fa-lg" aria-hidden="true"></i>
-            <input type="file" name="file" style="white-space: pre-line;" id="file" th:accept="*{ACCEPTABLE_COMMENT_TYPES}"
-                   aria-describedby="fileHelp" th:field="*{file}" oninput="fileValidation()" hidden />
+          <label class="btn btn-default p-0 mt-1">
+            <input type="file" class="form-control" name="file" id="file" th:accept="*{ACCEPTABLE_COMMENT_TYPES}"
+                   aria-describedby="fileHelp" th:field="*{file}" oninput="fileValidation()" />
           </label>
         </div>
 
@@ -958,18 +949,18 @@
             </div>
 
             <div class="row justify-content-between">
-              <div class="col-5 ">
+              <div class="col-8">
                 <!-- TODO 파일 선택 후 hidden 후 프리뷰 띄우기 -->
+                <div id="ACCEPTABLE_COMMENT_TYPES" th:text="*{ACCEPTABLE_COMMENT_TYPES}" hidden></div>
                 <div class="form-group">
-                  <label class="btn btn-default p-0 mt-2">
-                    <i class="fa fa-camera fa-lg" aria-hidden="true"></i>
-                    <input type="file" name="file" style="white-space: pre-line;" id="file" th:accept="*{ACCEPTABLE_COMMENT_TYPES}"
-                           aria-describedby="fileHelp" th:field="*{file}" oninput="fileValidation()" hidden />
+                  <label class="btn btn-default p-0 mt-1">
+                    <input type="file" name="file" class="form-control" id="file" th:accept="*{ACCEPTABLE_COMMENT_TYPES}"
+                           aria-describedby="fileHelp" th:field="*{file}" oninput="fileValidation()" />
                   </label>
                 </div>
 
               </div>
-              <div class="col mt-2 text-end">
+              <div class="col-4 mt-2 text-end">
                 <span class="btn btn-secondary btn-sm" type="button" th:onclick="|hideReplyForm(${comment.id})|" th:text="#{cancel}" style="display: inline">취소</span>
                 <div class="form-group" style="display: inline">
                   <button class="btn btn-primary btn-sm" type="submit" th:text="#{upload}">업로드</button>
@@ -1025,7 +1016,6 @@
     </div>
   </div>
 
-
   <div class="col-2 mt-2 me-1 text-end">
     <!-- TODO 공유기능 추가 -->
     <button type="button" class="btn btn-outline-primary btn-sm">
@@ -1039,28 +1029,28 @@
     $(function () {
 
       moment.locale(navigator.language);
-      //
-      // $(".date-time").text(function(index, dateTime) {
-      //   return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
-      // });
-      // $(".date").text(function(index, dateTime) {
-      //   return moment(dateTime).format('LL');
-      // });
-      // $(".weekday").text(function(index, dateTime) {
-      //   return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('dddd');
-      // });
-      // $(".time").text(function(index, dateTime) {
-      //   return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LT');
-      // });
-      // $(".calendar").text(function(index, dateTime) {
-      //   return moment(dateTime, "YYYY-MM-DD`T`hh:mm").calendar();
-      // });
+
+      $(".date-time").text(function(index, dateTime) {
+        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLL');
+      });
+      $(".date").text(function(index, dateTime) {
+        return moment(dateTime).format('LL');
+      });
+      $(".weekday").text(function(index, dateTime) {
+        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('dddd');
+      });
+      $(".time").text(function(index, dateTime) {
+        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LT');
+      });
+      $(".calendar").text(function(index, dateTime) {
+        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").calendar();
+      });
       $(".fromNow").text(function(index, dateTime) {
         return moment(dateTime, "YYYY-MM-DD`T`hh:mm").fromNow();
       });
-      // $(".date-weekday-time").text(function(index, dateTime) {
-      //   return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLLL');
-      // });
+      $(".date-weekday-time").text(function(index, dateTime) {
+        return moment(dateTime, "YYYY-MM-DD`T`hh:mm").format('LLLL');
+      });
     })
   </script>
 </div>

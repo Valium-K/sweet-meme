@@ -22,9 +22,12 @@
                         <br/>
                         <p class="my-3" th:text="#{'section.' + ${sectionInfo.head.toLowerCase()} + '.description'}"></p>
                     </div>
+                    <div class="mb-2"></div>
+                    <hr/>
                 </div>
             </div>
             <div id="postSectionPlacer">
+
                 <section th:replace="fragments.html :: postSection"></section>
             </div>
 
@@ -35,6 +38,5 @@
     <script th:replace="fragments.html :: videoAutoPlay"></script>
     <script th:replace="fragments.html :: voteAjax"></script>
 </div>
-
 </body>
 </html>

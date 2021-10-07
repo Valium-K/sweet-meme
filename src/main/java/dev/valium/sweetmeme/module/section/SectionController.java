@@ -8,12 +8,17 @@ import dev.valium.sweetmeme.module.member.CurrentMember;
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.post.Post;
 import dev.valium.sweetmeme.module.post.PostRepository;
+import dev.valium.sweetmeme.module.post_tag.PostTag;
+import dev.valium.sweetmeme.module.post_tag.PostTagRepository;
 import dev.valium.sweetmeme.module.section.form.SectionTagForm;
 import dev.valium.sweetmeme.module.post_vote.PostVoteService;
+import dev.valium.sweetmeme.module.tag.Tag;
+import dev.valium.sweetmeme.module.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -27,20 +32,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static dev.valium.sweetmeme.infra.config.FileConfig.*;
+import static dev.valium.sweetmeme.infra.config.WebConfig.SLICE_SIZE;
 
 @Controller
 @Slf4j
 @RequiredArgsConstructor
-public class SectionController  extends BaseController {
+public class SectionController extends BaseController {
 
     private final PostRepository postRepository;
     private final InfoRepository infoRepository;
+    private final TagRepository tagRepository;
+    private final PostTagRepository postTagRepository;
 
     @GetMapping("/")
     public String fresh(@CurrentMember Member member, Model model) {
@@ -111,33 +117,55 @@ public class SectionController  extends BaseController {
         return "fragments :: postSection";
     }
 
-    @GetMapping("/{section}")
-    public String sectionPosts(@CurrentMember Member member, Model model, @PathVariable String section) {
+    @GetMapping("/{sectionOrTag}")
+    public String sectionPosts(@CurrentMember Member member, Model model, @PathVariable String sectionOrTag) {
 
-        setBaseAttributes(member, model, section);
-        SectionType sectionType;
+        setBaseAttributes(member, model, sectionOrTag);
+        SectionType sectionType = null;
+        List<Post> posts;
 
         try {
-            sectionType = Enum.valueOf(SectionType.class, section.toUpperCase());
+            sectionType = SectionType.valueOf(sectionOrTag.toUpperCase());
         } catch (IllegalArgumentException e) {
-            log.error("SectionController: " + e.getMessage());
-            return "home/home";
+            log.error("sectionController.sectionPosts: " + sectionOrTag + "는 없습니다.");
         }
 
-        Info infoByHead = infoRepository.findInfoByHead(sectionType.name());
-        model.addAttribute("sectionInfo", infoByHead);
+        // 섹션에서 찾아보기
+        if(sectionType != null) {
+            PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
+            posts = postRepository.findAllByBelongedSectionType(sectionType, pageRequest);
 
-        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
-        Slice<Post> posts = postRepository.findAllByBelongedSectionType(sectionType, pageRequest);
+            Info infoByHead = infoRepository.findInfoByHead(sectionType.name());
+            model.addAttribute("sectionInfo", infoByHead);
+        }
+        // tag에서 찾아보기
+        else {
+            posts = getPostSliceByTagName(0, sectionOrTag);
+        }
+
         model.addAttribute("posts", posts);
 
         return "home/home";
     }
-    @GetMapping("/post/slice/{section}/{page}")
-    public String sectionSlice(Model model, @PathVariable String section, @PathVariable int page) {
+    @GetMapping("/post/slice/{sectionOrTag}/{page}")
+    public String sectionSlice(Model model, @PathVariable String sectionOrTag, @PathVariable int page) {
 
-        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
-        Slice<Post> posts = postRepository.findAllByBelongedSectionType(SectionType.valueOf(section.toUpperCase()), pageRequest);
+        SectionType sectionType = null;
+
+        try {
+            sectionType = SectionType.valueOf(sectionOrTag.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            log.error("sectionController.sectionSlice: " + sectionOrTag + "는 없습니다.");
+        }
+
+        List<Post> posts;
+        if(sectionType != null) {
+            PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
+            posts = postRepository.findAllByBelongedSectionType(sectionType, pageRequest);
+        }
+        else {
+            posts = getPostSliceByTagName(page, sectionOrTag);
+        }
 
         model.addAttribute("posts", posts);
         model.addAttribute("FILE_URL", FILE_URL);
@@ -168,5 +196,19 @@ public class SectionController  extends BaseController {
         return Arrays.stream(SectionType.values())
                 .map(SectionType::name)
                 .anyMatch(s -> s.equals(sectionName));
+    }
+
+    private List<Post> getPostSliceByTagName(int start, String tagName) {
+        // TODO tagName verify
+        Tag tag = tagRepository.findByTagName(tagName);
+
+        if(tag == null) {
+            return new ArrayList<>();
+        }
+
+        Pageable pageRequest = PageRequest.of(start, SLICE_SIZE, Sort.by(Sort.Direction.DESC, "post.createdDate"));
+        List<PostTag> postTags = postTagRepository.findPostTagsByTagId(tag.getId(), pageRequest);
+
+        return postTags.stream().map(PostTag::getPost).collect(Collectors.toList());
     }
 }

@@ -18,7 +18,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByOriginalPosterOrderByCreatedDateDesc(Member op);
 
-    Slice<Post> findAllByBelongedSectionType(SectionType type, Pageable pageable);
+    List<Post> findAllByBelongedSectionType(SectionType type, Pageable pageable);
 
     @EntityGraph(attributePaths = {"originalPoster"}, type = EntityGraph.EntityGraphType.LOAD)
     Optional<Post> findFetchOPById(Long id);

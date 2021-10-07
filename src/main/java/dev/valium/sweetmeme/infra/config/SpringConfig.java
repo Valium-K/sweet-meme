@@ -1,6 +1,5 @@
 package dev.valium.sweetmeme.infra.config;
 
-import dev.valium.sweetmeme.infra.processor.Code2State;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,10 +7,6 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-
-import java.util.Locale;
 
 @Configuration
 @EnableJpaAuditing
@@ -56,11 +51,4 @@ public class SpringConfig {
 
         return localValidatorFactoryBean;
     }
-
-    @Bean
-    public Code2State state2Code() {
-        return new Code2State();
-    }
-
-
 }

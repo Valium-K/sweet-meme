@@ -42,7 +42,7 @@ public class CommentVoteService {
 
                 member.getUpVotedIds().add(id);
 
-                if(!member.getNickname().equals(comment.getCommenterInfo().getHead()))
+                if(!member.getNickname().equals(comment.getCommenter()))
                     eventPublisher.publishEvent(new NotificationEvent(comment.getPost(), member, NotificationType.UPVOTE_COMMENT));
             }
             else {
@@ -91,7 +91,7 @@ public class CommentVoteService {
                 commentVote.setUpVotedComment(comment);
                 commentVote.setUpVotedMember(member);
 
-                if(!member.getNickname().equals(comment.getCommenterInfo().getHead()))
+                if(!member.getNickname().equals(comment.getCommenter()))
                     eventPublisher.publishEvent(new NotificationEvent(comment.getPost(), member, NotificationType.UPVOTE_COMMENT));
 
                 commentVoteRepository.save(commentVote);

@@ -6,7 +6,7 @@ import dev.valium.sweetmeme.module.member.form.SettingsPasswordForm;
 import dev.valium.sweetmeme.module.member.form.SettingsProfileForm;
 import dev.valium.sweetmeme.module.member.validator.SettingsProfileValidator;
 import dev.valium.sweetmeme.module.bases.enums.SectionType;
-import dev.valium.sweetmeme.infra.processor.Code2State;
+import dev.valium.sweetmeme.module.processor.Code2State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class SettingsController {
 
     private final MemberService memberService;
-    private final Code2State code2State;
+    private final Code2State code2State = new Code2State();
     private final MemberRepository memberRepository;
     private final SettingsProfileValidator settingsProfileValidator;
 

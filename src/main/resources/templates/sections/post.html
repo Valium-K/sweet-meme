@@ -21,7 +21,6 @@
   <script th:replace="fragments.html :: voteAjax"></script>
   <div th:replace="fragments.html :: date-time"></div>
   <script type="text/javascript">
-    var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
 
     var login = function () {
       location.href = contextPath + '/login';

@@ -19,8 +19,6 @@
 
       <div class="row mt-4 justify-content-center">
         <div class="col-12">
-
-          <div id="ACCEPTABLE_FILE_TYPES" th:text="${ACCEPTABLE_AVATAR_TYPES}" hidden></div>
           <h2 class="mb-3" th:text="#{settings.profile}">프로필</h2>
           <form class="needs-validation" action="#" th:action="@{/settings/profile}" th:object="${settingsProfileForm}" enctype="multipart/form-data" method="post" novalidate>
 
@@ -31,9 +29,10 @@
             <div class="row justify-content-between">
               <div class="col-10">
                 <div class="mb-3 form-group">
+                  <div id="ACCEPTABLE_AVATAR_TYPES" th:text="${ACCEPTABLE_AVATAR_TYPES}" hidden></div>
                   <label for="file" class="form-label" th:text="#{settings.info.picImage}">아바타</label>
                   <input type="file" class="form-control" name="file" id="file" th:accept="${ACCEPTABLE_AVATAR_TYPES}"
-                         aria-describedby="fileHelp" th:field="*{file}" oninput="fileValidation()" />
+                         aria-describedby="fileHelp" th:field="*{file}" th:oninput="fileValidation()" />
                   <small id="fileHelp" class="form-text text-muted" th:text="#{settings.picImage.info}">
                     10mb 이하의 .jpg, .gif, .webp 형식만 선택가능합니다.
                   </small>
@@ -86,7 +85,7 @@
 <script th:replace="fragments.html :: form-validation"></script>
 <script id="fileValidation">
   function fileValidation() {
-    let innerText = document.getElementById('ACCEPTABLE_FILE_TYPES').innerText;
+    let innerText = document.getElementById('ACCEPTABLE_AVATAR_TYPES').innerText;
     let receivedType = document.getElementById('file').files[0].type;
     let acceptableTypes = innerText.split(', ');
 
@@ -115,7 +114,7 @@
   }
 </script>
 <script th:src="@{/node_modules/@yaireo/tagify/dist/tagify.min.js}"></script>
-<script>
+<script title="tagify">
   var tagify = new Tagify(document.querySelector('input[name=state]'), {
     delimiters : null,
     templates : {
@@ -399,10 +398,8 @@
     } // map tags' values to this property name, so this property will be the actual value and not the printed value on the screen
   })
 </script>
-<script>
+<script title="reset avatar and refesh">
   var resetAvatar = function () {
-
-    var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
 
     $.ajax({
       dataType: "json",
@@ -418,9 +415,7 @@
     })
   };
 </script>
-<script type="text/javascript">
-  var contextPath = $('#contextPathHolder').attr('data-contextPath') ? $('#contextPathHolder').attr('data-contextPath') : '';
-
+<script title="simple login script" type="text/javascript">
   var login = function () {
     location.href = contextPath + '/login';
   };

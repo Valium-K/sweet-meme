@@ -1,4 +1,4 @@
-package dev.valium.sweetmeme.infra.processor;
+package dev.valium.sweetmeme.module.processor;
 
 import com.luciad.imageio.webp.WebPWriteParam;
 import org.apache.commons.io.FilenameUtils;

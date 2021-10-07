@@ -1,7 +1,9 @@
 package dev.valium.sweetmeme.module.post_tag;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -10,4 +12,6 @@ import java.util.List;
 public interface PostTagRepository extends JpaRepository<PostTag, Long> {
 
     List<PostTag> findPostTagsByPostId(Long id);
+    @EntityGraph(attributePaths = {"post"}, type = EntityGraph.EntityGraphType.LOAD)
+    List<PostTag> findPostTagsByTagId(Long tagId, Pageable pageable);
 }

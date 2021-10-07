@@ -1,8 +1,8 @@
 package dev.valium.sweetmeme.module.member;
 
 import dev.valium.sweetmeme.infra.config.FileConfig;
-import dev.valium.sweetmeme.infra.processor.Code2State;
-import dev.valium.sweetmeme.infra.processor.FileProcessor;
+import dev.valium.sweetmeme.module.processor.Code2State;
+import dev.valium.sweetmeme.module.processor.FileProcessor;
 import dev.valium.sweetmeme.module.member.form.SettingsAccountForm;
 import dev.valium.sweetmeme.module.member.form.SettingsProfileForm;
 import dev.valium.sweetmeme.module.post_vote.PostVoteService;
