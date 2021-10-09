@@ -48,6 +48,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .tokenRepository(tokenRepository());
 
         http.logout()
+                .logoutUrl("/member/logout")
                 .logoutSuccessUrl("/");
     }
 

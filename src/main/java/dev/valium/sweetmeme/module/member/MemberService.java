@@ -1,6 +1,12 @@
 package dev.valium.sweetmeme.module.member;
 
 import dev.valium.sweetmeme.infra.config.FileConfig;
+import dev.valium.sweetmeme.module.info.Info;
+import dev.valium.sweetmeme.module.member.event.DeleteAccountEvent;
+import dev.valium.sweetmeme.module.member.event.DeleteAccountEventListener;
+import dev.valium.sweetmeme.module.post.Post;
+import dev.valium.sweetmeme.module.post.PostRepository;
+import dev.valium.sweetmeme.module.post.PostService;
 import dev.valium.sweetmeme.module.processor.Code2State;
 import dev.valium.sweetmeme.module.processor.FileProcessor;
 import dev.valium.sweetmeme.module.member.form.SettingsAccountForm;
@@ -8,6 +14,7 @@ import dev.valium.sweetmeme.module.member.form.SettingsProfileForm;
 import dev.valium.sweetmeme.module.post_vote.PostVoteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -31,6 +38,7 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final PostVoteService postVoteService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Member findMember(String nickname) {
         // TODO Exception 구현
@@ -159,6 +167,10 @@ public class MemberService implements UserDetailsService {
         updatePrincipal(foundMember);
 
         return foundMember;
+    }
+
+    public void deleteAccount(Member member) {
+        eventPublisher.publishEvent(new DeleteAccountEvent(member));
     }
 }
 

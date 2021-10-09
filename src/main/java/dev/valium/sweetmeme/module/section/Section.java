@@ -29,7 +29,7 @@ public class Section extends BaseEntityZonedTime {
     @JoinColumn(name = "section_info_id")
     private Info sectionInfo;
 
-    @OneToMany(mappedBy = "section")
+    @OneToMany(mappedBy = "section", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
 
     public static Section createSection(SectionType sectionType, Info info) {

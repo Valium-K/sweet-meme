@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +43,7 @@ public class CommentController {
     private final CommentVoteService commentVoteService;
     private final CommentRepository commentRepository;
     private final MemberService memberService;
+    private final CommentService commentService;
 
     @GetMapping(COMMENT_IMAGE_URL + "{file}")
     @ResponseBody
@@ -87,6 +89,14 @@ public class CommentController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/comment/{commentId}/{postId}/delete")
+    public String deleteComment(@CurrentMember Member member, @PathVariable Long commentId,  @PathVariable Long postId, HttpServletRequest request) {
+
+        commentService.deleteCommentById(member, commentId, postId, request.getLocale());
+
+        return "redirect:" + request.getHeader("Referer");
+    }
+
     @GetMapping("/reply/slice/" + "{commentId}" + "/" + "{postId}" + "/" + "{page}")
     public String viewMoreReplys(@CurrentMember Member member, Model model, @PathVariable Long commentId, @PathVariable Long postId, @PathVariable int page) {
 
@@ -102,7 +112,7 @@ public class CommentController {
 
         model.addAttribute("commentId", commentId);
         model.addAttribute("itIsLastCommentPage", true);
-
+        model.addAttribute("itIsReply", true);
         return "fragments :: comments";
     }
 

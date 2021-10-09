@@ -21,4 +21,7 @@ public interface PostVoteRepository extends JpaRepository<PostVote, Long> {
 
     @Query("select v from PostVote v join fetch v.upVotedPost p join fetch v.upVotedMember where v.upVotedMember = :member order by v.createdDate desc")
     List<PostVote> findAllByUpVotedMember(@Param("member") Member member);
+
+    void deleteAllByDownVotedPost(Post post);
+    void deleteAllByUpVotedPost(Post post);
 }

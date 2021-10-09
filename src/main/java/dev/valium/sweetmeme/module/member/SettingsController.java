@@ -10,6 +10,9 @@ import dev.valium.sweetmeme.module.processor.Code2State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +20,8 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Arrays;
@@ -71,6 +76,20 @@ public class SettingsController {
         attributes.addFlashAttribute("accountChanged", "변경사항을 적용하였습니다.");
 
         return "redirect:/settings/account";
+    }
+
+    @PostMapping("/settings/account/delete")
+    public String deleteAccount(@CurrentMember Member member, HttpServletRequest request, HttpServletResponse response) {
+        log.info("로그아웃");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if(authentication != null) {
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+        }
+
+        memberService.deleteAccount(member);
+
+        return "redirect:/";
     }
 
     @GetMapping("/settings/profile")

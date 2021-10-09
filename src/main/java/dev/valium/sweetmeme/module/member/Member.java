@@ -62,6 +62,7 @@ public class Member extends BaseEntityZonedTime {
     @Transient private List<Long> downVotedIds = new ArrayList<>();
     @Transient private List<Long> upVoteCommentIds = new ArrayList<>();
     @Transient private List<Long> downVoteCommentIds = new ArrayList<>();
+    @Transient private List<Long> CommentedIds = new ArrayList<>();
 
     public static String createEmailCheckToken() {
         return UUID.randomUUID().toString();

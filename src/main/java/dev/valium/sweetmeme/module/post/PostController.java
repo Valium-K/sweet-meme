@@ -5,6 +5,7 @@ import dev.valium.sweetmeme.module.comment_vote.CommentVoteService;
 import dev.valium.sweetmeme.module.member.CurrentMember;
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.member.MemberService;
+import dev.valium.sweetmeme.module.member_post.MemberPostRepository;
 import dev.valium.sweetmeme.module.post.form.CommentForm;
 import dev.valium.sweetmeme.module.post_vote.PostVoteService;
 import dev.valium.sweetmeme.module.tag.Tag;
@@ -24,7 +25,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -102,6 +105,12 @@ public class PostController extends BaseController {
             List<Long> downVoteCommentIds = commentVoteService.findDownVotedCommentsId(member);
             member.setDownVoteCommentIds(downVoteCommentIds);
 
+            List<Long> myComments = commentRepository.findAllByCommenterInfoAndHasBeenDeleted(member.getMemberInfo(), false)
+                    .stream()
+                    .map(Comment::getId)
+                    .collect(Collectors.toList());
+            member.setCommentedIds(myComments);
+
             memberService.updatePrincipal(member);
         }
 
@@ -110,5 +119,14 @@ public class PostController extends BaseController {
         }
 
         return "post/clickedPost";
+    }
+
+    @GetMapping("/post/delete/{postId}")
+    public String deletePost(@PathVariable Long postId, Model model, @CurrentMember Member member, HttpServletRequest request) {
+
+        postService.deletePost(member, postId);
+        // return "user/profile";
+
+        return "redirect:" + request.getHeader("Referer");
     }
 }

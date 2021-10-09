@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments.html :: head"></head>
-<body onload="gridLazyView()" class="bg-light">
+<body class="bg-light">
 
 <div id="contentPadding" style="height: 70px"></div>
 <div th:replace="fragments.html :: nav-bar"></div>
@@ -65,20 +65,35 @@
                 </div>
               </div>
               <div class="col-6 mt-2 text-end">
-                <div th:text="#{settings.delete.account}">회원탈퇴</div>
+                <button type="button" class="btn btn-danger" th:text="#{settings.delete.account}" data-bs-toggle="modal" data-bs-target="#deleteAccount">
+                  회원탈퇴
+                </button>
               </div>
             </div>
-
           </form>
+          <div class="modal fade" id="deleteAccount" tabindex="-1" aria-labelledby="deleteAccountLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" th:text="#{settings.delete.account}">회원탈퇴</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <h2 th:text="#{settings.delete.account.content}">Are you sure you want to delete your account?</h2>
+                  <small th:text="#{settings.delete.account.content2}">This will delete your account incoma and all of its content.</small>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancel}">취소</button>
+                  <form th:action="@{/settings/account/delete}" method="post">
+                    <button type="submit" class="btn btn-danger" th:text="#{settings.delete.account.confirm}" >회원탈퇴를 진행합니다</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-<!--      <h2 th:text="#{settings.membership}">맴버십 변경</h2>-->
-<!--      <div class="row mt-4 justify-content-center">-->
-<!--        <div class="col-12">-->
-<!--          asdf-->
-<!--        </div>-->
-<!--      </div>-->
 
     </div>
   </div>

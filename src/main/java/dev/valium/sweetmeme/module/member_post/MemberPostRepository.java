@@ -17,4 +17,7 @@ public interface MemberPostRepository extends JpaRepository<MemberPost, Long> {
 
     @EntityGraph(attributePaths = {"commentedPost"}, type = EntityGraph.EntityGraphType.LOAD)
     List<MemberPost> findFetchPostByCommentedMember(Member member);
+
+    void deleteAllByCommentedPost(Post post);
+    void deleteByCommentedMemberAndAndCommentedPost(Member member, Post post);
 }

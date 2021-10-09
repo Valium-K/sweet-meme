@@ -37,11 +37,11 @@ public class Post {
     private dev.valium.sweetmeme.module.bases.embeddable.Vote vote;
 
     // post <- post_tag -> tag
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
     private Set<PostTag> postTags = new HashSet<>();
 
     // post -> comment
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
     private int commentCount;
 
@@ -76,7 +76,7 @@ public class Post {
 //    @JoinColumn(name = "down_voted_member_id")
 //    private Member downVotedMember;
 
-    @OneToMany(mappedBy = "commentedPost", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "commentedPost")
     private List<MemberPost> commentedPost;
     ////////////////////////////////////////////////////
 

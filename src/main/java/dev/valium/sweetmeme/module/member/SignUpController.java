@@ -54,7 +54,6 @@ public class SignUpController extends BaseController {
         Member member = signUpService.form2Member(signUpForm);
         Info info = Info.createInfo(null, member.getNickname(), member.getNickname() + " description");
 
-        // TODO 적당한 이름 생각나면 메서드로 빼기
         member.setMemberInfo(info);
         info.setHead(member.getNickname());
 

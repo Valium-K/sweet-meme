@@ -113,7 +113,7 @@
         <!-- 댓글들 -->
         <div th:id="'post' + ${post.id}">
           <div class="replyPageOffset">
-            <div class="mt-3" th:each="comment : ${comments}">
+            <div class="my-4" th:each="comment : ${comments}">
               <div class="row mt-3">
                 <!-- 아래를 fragment로 빼면 노트가 하나 더 늘어 row가 적용이 안됨. -->
                 <!-- 해당 row를 수정할 시 fragment :: comments의 내용도 수정해야함. -->
@@ -135,6 +135,36 @@
                   <div th:if="${comment.descriptionImg} != null">
                     <img th:src="@{'/comment/' + ${comment.descriptionImg}}" width="70%" class="rounded border"/>
                   </div>
+                </div>
+                <div class="col-1" sec:authorize="isAuthenticated()">
+                  <div th:if="${member.commentedIds.contains(comment.id)}">
+                    <!-- Button trigger modal -->
+                    <a type="button" data-bs-toggle="modal" th:data-bs-target="'#' + commentDeleteModal + ${comment.id}">
+                      <i class="fa fa-times" aria-hidden="true"></i>
+                    </a>
+
+                    <!-- Modal -->
+                    <div class="modal fade" th:id="commentDeleteModal + ${comment.id}" tabindex="-1" aria-labelledby="commentDeleteModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="commentDeleteModalLabel" th:text="#{comment.delete}">코멘트 삭제</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            <p th:text="#{comment.context}">코멘트를 삭제하시겠습니까?</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancel}">취소</button>
+                            <form th:action="@{'/comment/' + ${comment.id} + '/' + ${post.id} + '/delete'}" method="post">
+                              <button type="submit" class="btn btn-danger" th:text="#{delete}"></button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
                 <!-- reply, upvote, downvote btn -->
                 <div>
@@ -164,7 +194,7 @@
                    th:onclick="|viewReply(*{comment.id}, ${post.id}, this)|" id="replyArea">
                   <i style="vertical-align: text-bottom" class="fa fa-caret-down" aria-hidden="true"></i>&nbsp;
                   <span th:text="*{comment.replyCount}"></span>
-                  <span th:text="#{reply}">리플</span>
+                  <span th:if="*{comment.parent == null}" th:text="#{reply}">리플</span>
                 </a>
 
                 <!-- reply 쓰기 및 다른사람 replys -->
@@ -240,7 +270,6 @@
 
       var page = $('#reply' + commentId).children(".replyPageOffset").length - 1;
       if(page < 0 ) page = 0;
-
       $.ajax({
         method: "GET",
         url: contextPath + '/reply/slice/' + commentId + '/' + postId + '/' + page,
@@ -254,7 +283,6 @@
 
     var viewComment = function (postId, div) {
       var page = $('#comment' + postId).children(".replyPageOffset").length + 1;
-
       $.ajax({
         method: "GET",
         url: contextPath + '/comment/slice/' + postId + '/' + page,

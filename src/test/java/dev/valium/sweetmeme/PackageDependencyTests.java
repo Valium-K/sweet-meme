@@ -62,7 +62,7 @@ public class PackageDependencyTests {
     @ArchTest
     ArchRule tagPackageRule = classes().that().resideInAPackage(TAG)
             .should().onlyBeAccessed().byClassesThat()
-            .resideInAnyPackage(TAG, POST_TAG, POST);
+            .resideInAnyPackage(TAG, POST_TAG, POST, SECTION);
 
     @ArchTest
     ArchRule homePackageRule = classes().that().resideInAPackage(HOME)

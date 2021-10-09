@@ -27,7 +27,6 @@
                 </div>
             </div>
             <div id="postSectionPlacer">
-
                 <section th:replace="fragments.html :: postSection"></section>
             </div>
 
@@ -37,6 +36,34 @@
     <script th:replace="fragments.html :: ajax-csrf-header"></script>
     <script th:replace="fragments.html :: videoAutoPlay"></script>
     <script th:replace="fragments.html :: voteAjax"></script>
+    <script title="ajax more posts" th:inline="javascript">
+        var win = $(window);
+        var doc = $(document);
+
+        win.scroll(function () {
+            if(win.scrollTop() == doc.height() - win.height()) {
+
+                var page = $('#postSectionPlacer').children(".postSection").length;
+
+                /*<![CDATA[*/
+                var currentMenu = /*[[${currentMenu}]]*/ 'default';
+                var isEmpty = /*[[${posts.isEmpty()}]]*/ 'default';
+                /*]]>*/
+
+                if(currentMenu == null) return;
+                if(isEmpty == true) return;
+
+                $.ajax({
+                    method: "GET",
+                    url: contextPath + "/post/slice/" + currentMenu + "/" + page,
+                    processData: false
+                }).done(function (div) {
+                    if(div.includes('<article'))
+                        $('#postSectionPlacer').append(div);
+                })
+            }
+        });
+    </script>
 </div>
 </body>
 </html>

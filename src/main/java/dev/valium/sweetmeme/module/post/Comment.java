@@ -35,6 +35,7 @@ public class Comment extends BaseEntityZonedTime {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    private boolean hasBeenDeleted;
 
     // 재귀(트리) - 댓글
     @ManyToOne(fetch = FetchType.LAZY)

@@ -53,17 +53,19 @@ public class SectionController extends BaseController {
         setBaseAttributes(member, model, "fresh");
 
         PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
-        Slice<Post> posts = postRepository.findAll(pageRequest);
+        List<Post> posts = postRepository.findAll(pageRequest).toList();
 
         model.addAttribute("posts", posts);
 
         return "home/home";
     }
     @GetMapping("/post/slice/fresh/{page}")
-    public String freshSlice(Model model, @PathVariable int page) {
+    public String freshSlice(@CurrentMember Member member, Model model, @PathVariable int page) {
+
+        setBaseAttributes(member, model, "fresh");
 
         PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
-        Slice<Post> posts = postRepository.findAll(pageRequest);
+        List<Post> posts = postRepository.findAll(pageRequest).toList();
 
         model.addAttribute("posts", posts);
         model.addAttribute("FILE_URL", FILE_URL);
@@ -76,17 +78,17 @@ public class SectionController extends BaseController {
         setBaseAttributes(member, model, "hot");
 
         PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
-        Slice<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusHours(6), LocalDateTime.now(), pageRequest);
+        List<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusHours(6), LocalDateTime.now(), pageRequest).toList();
 
         model.addAttribute("posts", posts);
 
         return "home/home";
     }
     @GetMapping("/post/slice/hot/{page}")
-    public String homeSlice(Model model, @PathVariable int page) {
-
-        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
-        Slice<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusHours(6), LocalDateTime.now(), pageRequest);
+    public String homeSlice(@CurrentMember Member member, Model model, @PathVariable int page) {
+        setBaseAttributes(member, model, "fresh");
+        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
+        List<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusHours(6), LocalDateTime.now(), pageRequest).toList();
 
         model.addAttribute("posts", posts);
         model.addAttribute("FILE_URL", FILE_URL);
@@ -99,17 +101,17 @@ public class SectionController extends BaseController {
         setBaseAttributes(member, model, "top");
 
         PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
-        Slice<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusDays(3), LocalDateTime.now(), pageRequest);
+        List<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusDays(3), LocalDateTime.now(), pageRequest).toList();
 
         model.addAttribute("posts", posts);
 
         return "home/home";
     }
     @GetMapping("/post/slice/top/{page}")
-    public String topSlice(Model model, @PathVariable int page) {
-
+    public String topSlice(@CurrentMember Member member, Model model, @PathVariable int page) {
+        setBaseAttributes(member, model, "fresh");
         PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
-        Slice<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusDays(3), LocalDateTime.now(), pageRequest);
+        List<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusDays(3), LocalDateTime.now(), pageRequest).toList();
 
         model.addAttribute("posts", posts);
         model.addAttribute("FILE_URL", FILE_URL);
@@ -148,8 +150,8 @@ public class SectionController extends BaseController {
         return "home/home";
     }
     @GetMapping("/post/slice/{sectionOrTag}/{page}")
-    public String sectionSlice(Model model, @PathVariable String sectionOrTag, @PathVariable int page) {
-
+    public String sectionSlice(@CurrentMember Member member, Model model, @PathVariable String sectionOrTag, @PathVariable int page) {
+        setBaseAttributes(member, model, "fresh");
         SectionType sectionType = null;
 
         try {

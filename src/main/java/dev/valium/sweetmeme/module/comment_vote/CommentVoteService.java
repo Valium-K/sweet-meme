@@ -24,8 +24,9 @@ public class CommentVoteService {
     private final ApplicationEventPublisher eventPublisher;
 
     public Member voteComment(Member member, Long id, boolean vote) throws Exception {
-        // TODO Exception 구현
-        Comment comment = commentRepository.findFetchPostAndInfoById(id).orElseThrow(() -> new Exception("comment 없음"));
+        Comment comment = commentRepository.findFetchPostAndInfoById(id).orElseThrow(
+                () -> new Exception("CommentVoteService.voteComment():  " + id + "에 해당하는 id가 없습니다.")
+        );
 
         CommentVote upVotedComment = commentVoteRepository.findUpVoteByUpVotedMemberAndUpVotedComment(member, comment);
         CommentVote downVotedComment = commentVoteRepository.findDownVoteByDownVotedMemberAndDownVotedComment(member, comment);

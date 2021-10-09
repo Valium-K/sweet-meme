@@ -24,4 +24,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findFetchOPById(Long id);
 
     Slice<Post> findAllByCreatedDateBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
+
+    List<Post> findAllByOriginalPoster(Member member);
 }

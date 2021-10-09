@@ -289,7 +289,7 @@
             <li><a class="dropdown-item my-2" th:href="@{'/user/' + ${#authentication.name} + '/home'}" th:text="#{myProfile}">내 프로필</a></li>
             <li><a class="dropdown-item my-2" th:href="@{'/settings/account'}" href="#" th:text="#{settings}">설정</a></li>
             <li>
-              <form class="form-inline my-2" action="#" th:action="@{/logout}" method="post">
+              <form class="form-inline my-2" action="#" th:action="@{/member/logout}" method="post">
                 <button class="dropdown-item" th:text="#{logout}" type="submit">
                   logout
                 </button>
@@ -301,32 +301,6 @@
       </ul>
     </div>
   </div>
-  <!--
-  <script title="toggle Theme" type="application/javascript">
-    var toggleTheme = function toggleTheme() {
-      var bodyClassList = document.body.classList;
-      var sideBarClassList = document.getElementById('side-bar').classList;
-      var navBarClassList = document.getElementById('nav-bar').classList;
-
-      if(document.body.classList.contains('bg-dark')) {
-        bodyClassList.remove('bg-dark');
-        bodyClassList.add('bg-light');
-        sideBarClassList.remove('bg-dark');
-        sideBarClassList.add('bg-light');
-        navBarClassList.remove('bg-dark');
-        navBarClassList.add('bg-light');
-      }
-      else {
-        bodyClassList.remove('bg-light');
-        bodyClassList.add('bg-dark');
-        sideBarClassList.remove('bg-light');
-        sideBarClassList.add('bg-dark');
-        navBarClassList.remove('bg-light');
-        navBarClassList.add('bg-dark');
-      }
-    }
-  </script>
-  -->
 </nav>
 <ul th:fragment="notifications" class="dropdown-menu dropdown-menu-light text-small shadow dropdown-menu-lg-start" aria-labelledby="NotiDropdown">
   <div id="notificationPeek">
@@ -629,16 +603,9 @@
   });
 </script>
 
+
 <!-- .postSection is used by paging -->
 <section class="postSection" th:fragment="postSection">
-  <div th:if="${#lists.isEmpty(posts)}">
-    <div style="text-align: center; height: 500px;">
-      <div class="mt-4"></div>
-      <i class="fa fa-times-circle fa-5x" aria-hidden="true" style="display: block"></i>
-      <div class="mt-2"></div>
-      <span class="p-3">There Is No Post!</span>
-    </div>
-  </div>
   <article th:each="post : ${posts}" class="mx-1">
     <header>
       <div class="row">
@@ -654,7 +621,7 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-light text-small shadow" aria-labelledby="postDropdownMenuBtn">
               <li><a class="dropdown-item" th:href="@{${DOWNLOAD_URL} + ${post.postImageUrl}}">download</a></li>
-              <li sec:authorize="isAuthenticated()" th:if="${profileMenu != null}"><a class="dropdown-item">delete</a></li>
+              <li sec:authorize="isAuthenticated()" th:if="${profileMenu != null}"><a class="dropdown-item" th:href="@{'/post/delete/'+${post.id}}">delete</a></li>
               <li sec:authorize="isAuthenticated()" th:if="${currentMenu != null}"><a href="#" class="dropdown-item">report</a></li>
             </ul>
           </div>
@@ -667,45 +634,21 @@
         </a>
         </div>
     </header>
-    <picture>
-      <div class="row justify-content-center rounded" style="background-color: #11111110; margin: 3px">
-        <div class="col-auto">
-          <video preload="metadata" muted autoplay loop th:if="${post.getContentType()} == 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}"
-                 style="width: 100%; max-width: 500px; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
-          <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="width: 100%; max-width: 500px; height: auto;">
-        </div>
-      </div>
+    <picture class="row justify-content-center rounded" style="background-color: #11111110;">
+      <video preload="metadata" muted autoplay loop th:if="${post.getContentType()} == 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}"
+             style="width: 100%; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
+      <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}"
+           style="width: 100%; height: auto" alt="post.webp" />
     </picture>
     <div th:replace="fragments.html :: voteAndShareRow"></div>
     <hr/>
   </article>
-
-  <script title="ajax more posts" th:inline="javascript">
-    var win = $(window);
-    var doc = $(document);
-
-    win.scroll(function () {
-      if(win.scrollTop() == doc.height() - win.height()) {
-
-        var page = $('#postSectionPlacer').children(".postSection").length;
-
-        /*<![CDATA[*/
-        var currentMenu = /*[[${currentMenu}]]*/ 'default';
-        /*]]>*/
-        if(currentMenu == null) return;
-
-        $.ajax({
-          method: "GET",
-          url: contextPath + "/post/slice/" + currentMenu + "/" + page,
-          processData: false
-        }).done(function (div) {
-          $('#postSectionPlacer').append(div);
-        })
-
-      }
-    });
-  </script>
-
+  <div th:if="${#lists.isEmpty(posts)}" style="text-align: center">
+    <div class="mt-4"></div>
+    <i class="fa fa-times-circle fa-5x" aria-hidden="true" style="display: block"></i>
+    <div class="mt-2"></div>
+    <span class="p-3">There Is No Post!</span>
+  </div>
 </section>
   <script th:fragment="videoAutoPlay">
     var videos = document.getElementsByTagName("video");
@@ -880,7 +823,7 @@
   </form>
 </div>
 <div th:fragment="comments" class="replyPageOffset">
-  <div class="mt-3" th:each="comment : ${comments}">
+  <div class="my-4" th:each="comment : ${comments}">
     <div class="row">
       <!-- 아바타 -->
       <div class="col-1">
@@ -901,10 +844,39 @@
           <img th:src="@{'/comment/' + ${comment.descriptionImg}}" width="70%" class="rounded border"/>
         </div>
       </div>
+      <div class="col-1" sec:authorize="isAuthenticated()">
+        <div th:if="${member.commentedIds.contains(comment.id)}">
+          <a type="button" data-bs-toggle="modal" th:data-bs-target="'#' + commentDeleteModal + ${comment.id}">
+            <i class="fa fa-times" aria-hidden="true"></i>
+          </a>
+
+          <!-- Modal -->
+          <div class="modal fade" th:id="commentDeleteModal + ${comment.id}" tabindex="-1" aria-labelledby="commentDeleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="commentDeleteModalLabel" th:text="#{comment.delete}">코멘트 삭제</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p th:text="#{comment.context}">코멘트를 삭제하시겠습니까?</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" th:text="#{cancel}">취소</button>
+                  <form th:action="@{'/comment/' + ${comment.id} + '/' + ${postId} + '/delete'}" th:method="post">
+                    <button type="submit" class="btn btn-danger" th:text="#{delete}"></button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
       <!-- reply, upvote, downvote btn -->
       <div>
         <div sec:authorize="isAuthenticated()" th:id="${'vote'+comment.id}" style="display: inline">
-          <a class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:onclick="|reply(${comment.id})|">
+          <a th:if="${itIsReply == null}" class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:onclick="|reply(${comment.id})|">
             reply
           </a>
           <input type="button"  class="btn btn-sm ms-1" th:classappend="${member.upVoteCommentIds.contains(comment.id)} ? 'btn-primary' : 'btn-outline-primary'"
@@ -913,7 +885,7 @@
                  th:onclick="|vote('comment', ${comment.id}, false)|" th:value="'▼ ' + ${comment.getVote().downVote}" style="padding: 0px; margin: 0px; width: 40px; height: 20px;"/>
         </div>
         <div sec:authorize="!isAuthenticated()" th:id="${'vote'+comment.id}" style="display: inline">
-          <a class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:onclick="|window.location.href = @{/} + 'login'|">
+          <a th:if="${itIsReply == null}" class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:onclick="|window.location.href = @{/} + 'login'|">
             reply
           </a>
 
@@ -926,7 +898,7 @@
 
       <!-- view # reply -->
       <a class="ms-4 mt-2" th:if="*{comment.replyCount > 0}" style="text-decoration: none; cursor: pointer"
-         th:onclick="|viewReply(*{comment.id}, this)|" id="replyArea">
+         th:onclick="|viewReply(*{comment.id}, ${postId}, this)|" id="replyArea">
         <i style="vertical-align: text-bottom" class="fa fa-caret-down" aria-hidden="true"></i>&nbsp;
         <span th:text="*{comment.replyCount}"></span>
         <span th:text="#{reply}">리플</span>
@@ -950,7 +922,6 @@
 
             <div class="row justify-content-between">
               <div class="col-8">
-                <!-- TODO 파일 선택 후 hidden 후 프리뷰 띄우기 -->
                 <div id="ACCEPTABLE_COMMENT_TYPES" th:text="*{ACCEPTABLE_COMMENT_TYPES}" hidden></div>
                 <div class="form-group">
                   <label class="btn btn-default p-0 mt-1">
@@ -997,7 +968,7 @@
   <div class="col-8 mt-2">
     <div sec:authorize="isAuthenticated()" th:id="'vote' + ${post.id}" style="display: inline">
       <div hidden>do not remove this div</div>
-      <input type="button" id="upVoteBtn" class="btn btn-sm ms-1"  th:classappend="${member.upVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
+      <input type="button" id="upVoteBtn" class="btn btn-sm ms-1" th:classappend="${member.upVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
              th:onclick="|vote('post', ${post.id}, true)|" th:value="'▲ ' + ${post.getVote().upVote}" />
       <input type="button" id="downVoteBtn" class="btn btn-sm ms-1" th:classappend="${member.downVotedIds.contains(post.id)} ? 'btn-primary' : 'btn-outline-primary'"
              th:onclick="|vote('post', ${post.id}, false)|" th:value="'▼ ' + ${post.getVote().downVote}" />

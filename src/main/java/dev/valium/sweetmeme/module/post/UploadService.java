@@ -65,7 +65,7 @@ public class UploadService {
     }
 
     private void postTagSettingsProcess(Post post, String jsonTags) throws Exception {
-        // post -> tag 태그 생성 밑 관계설정
+        // post -> tag 태그 생성 및 관계설정
         if(jsonTags != null && !"".equals(jsonTags)) {
             Set<Tag> tags = json2TagSet(jsonTags);
 

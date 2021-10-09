@@ -18,4 +18,7 @@ public interface CommentVoteRepository extends JpaRepository<CommentVote, Long> 
 
     @Query("select cv from CommentVote cv join fetch cv.downVotedComment cvd where cv.downVotedMember = :member")
     List<CommentVote> findByDownVotedMember(@Param("member") Member member);
+
+    void deleteAllByDownVotedCommentIn(List<Comment> comments);
+    void deleteAllByUpVotedCommentIn(List<Comment> comments);
 }

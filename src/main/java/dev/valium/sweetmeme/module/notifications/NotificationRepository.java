@@ -28,5 +28,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Noti
     Slice<Notification> findNotificationsByMemberId(Long memberId, Pageable pageable);
 
     boolean deleteAllByMemberIdAndAndHasRead(Long memberId, boolean hasRead);
-
+    void deleteAllByMemberId(Long memberId);
 }
