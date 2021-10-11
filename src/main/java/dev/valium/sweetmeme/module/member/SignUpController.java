@@ -1,7 +1,7 @@
 package dev.valium.sweetmeme.module.member;
 
 import dev.valium.sweetmeme.module.bases.BaseController;
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
+import dev.valium.sweetmeme.module.section.enums.SectionType;
 import dev.valium.sweetmeme.module.info.Info;
 import dev.valium.sweetmeme.module.member.form.SignUpForm;
 import dev.valium.sweetmeme.module.member.validator.SignUpFormValidator;

@@ -34,3 +34,5 @@ decorator:
 server:
   servlet:
     context-path: /valium
+
+app.host: http://localhost:8080

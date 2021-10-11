@@ -1,6 +1,6 @@
 package dev.valium.sweetmeme.module.post;
 
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
+import dev.valium.sweetmeme.module.section.enums.SectionType;
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.member_post.MemberPost;
 import dev.valium.sweetmeme.module.post_tag.PostTag;

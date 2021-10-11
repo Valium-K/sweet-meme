@@ -49,6 +49,10 @@
     .popover {
       font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     }
+    .commentHover :hover {
+      background-color: #eeeeee;
+      mix-blend-mode: normal;
+    }
   </style>
   <style id="forMobilePage">
     .container {
@@ -200,6 +204,8 @@
       document.getElementById('gridContent').classList.remove('d-none');
 
       resizer();
+
+      checkScroll();
     });
   </script>
   <script title="context path variable">
@@ -269,10 +275,15 @@
         &nbsp;&nbsp;&nbsp;
         <!-- 업로드 -->
         <li class="nav-item mt-1" sec:authorize="isAuthenticated()">
-          <a class="nav-link" href="#" th:href="@{/upload/post}" style="margin: 0px; padding: 0px">
+          <a th:if="${member.emailVerified}" class="nav-link" href="#" th:href="@{/upload/post}" style="margin: 0px; padding: 0px">
             <i class="fa fa-plus fa-lg" aria-hidden="true"></i>
             upload
           </a>
+          <a th:if="${!member.emailVerified}" class="nav-link" href="#" th:href="@{/email/verify}" style="margin: 0px; padding: 0px">
+            <i class="fa fa-plus fa-lg" aria-hidden="true"></i>
+            upload
+          </a>
+
         </li>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <!-- 유저 아바타 드롭다운-->
@@ -453,7 +464,7 @@
           }
         }
         if (Math.abs(diffX) > Math.abs(diffY)) {
-          if (diffX < -15) {
+          if (diffX < 10) {
             document.getElementById('offCanvasToggle').click();
           }
         }
@@ -461,7 +472,6 @@
         initialX = null;
         initialY = null;
 
-        e.preventDefault();
       }
     </script>
   </div>
@@ -528,7 +538,7 @@
       <h2 th:text="${info.head}" style="display: inline" class="fw-bold "></h2>&nbsp;
       <img th:if="${info.stateCode} != null" th:src="'https://lipis.github.io/flag-icon-css/flags/4x3/' + ${info.stateCode} + '.svg'" style="width: 2rem; height: 1.5rem; vertical-align: text-bottom" class="rounded border">
       <br/>
-      [뭘 넣을지 고민 중] · <small class="text-muted" th:text="${spendDate} + ' days'"></small>
+      <small class="text-muted">s p e n d · </small><small class="text-muted" th:text="${spendDate} + ' days'"></small>
     </div>
   </div>
   <p class="my-3" th:text="${info.description}"></p>
@@ -603,7 +613,6 @@
   });
 </script>
 
-
 <!-- .postSection is used by paging -->
 <section class="postSection" th:fragment="postSection">
   <article th:each="post : ${posts}" class="mx-1">
@@ -634,11 +643,11 @@
         </a>
         </div>
     </header>
-    <picture class="row justify-content-center rounded" style="background-color: #11111110;">
+    <picture class="row justify-content-center rounded m-1" style="background-color: #11111110;">
       <video preload="metadata" muted autoplay loop th:if="${post.getContentType()} == 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}"
-             style="width: 100%; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
+             style="width: 100%; max-width: 600px; height: auto; max-height: 700px; cursor: pointer;" onclick="toggleMute(this)"></video>
       <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}"
-           style="width: 100%; height: auto" alt="post.webp" />
+           style="width: 100%; max-width: 600px; height: auto;" alt="post.webp" />
     </picture>
     <div th:replace="fragments.html :: voteAndShareRow"></div>
     <hr/>
@@ -653,17 +662,13 @@
   <script th:fragment="videoAutoPlay">
     var videos = document.getElementsByTagName("video");
     var browserClickInit = false;
-
-    window.onblur = function() {
-      for(var i = 0; i < videos.length; i++) {
-        var video = videos[i];
-
-        video.pause();
-      }
-    };
+    var videoPlayScrollFlag = false;
 
     function checkScroll() {
-      var fraction = 0.78;
+      if(videoPlayScrollFlag == true) return;
+      videoPlayScrollFlag = true;
+
+      var fraction = 0.5;
 
       for(var i = 0; i < videos.length; i++) {
         var video = videos[i];
@@ -682,8 +687,9 @@
             videos[i-1].pause();
             videos[i+1].pause();
           } catch (e) {
-            console.log('video play error');
+            // console.log(e);
           }
+
           video.play()
 
           if(browserClickInit === true) {
@@ -695,8 +701,16 @@
           video.pause();
         }
       }
+      window.setTimeout(() => videoPlayScrollFlag = false, 100)
     }
 
+    window.onblur = function() {
+      for(var i = 0; i < videos.length; i++) {
+        var video = videos[i];
+
+        video.pause();
+      }
+    };
     var toggleMute = function (e) {
       browserClickInit = true;
 
@@ -823,7 +837,7 @@
   </form>
 </div>
 <div th:fragment="comments" class="replyPageOffset">
-  <div class="my-4" th:each="comment : ${comments}">
+  <div class="my-4 commentHover round" th:each="comment : ${comments}">
     <div class="row">
       <!-- 아바타 -->
       <div class="col-1">
@@ -876,9 +890,13 @@
       <!-- reply, upvote, downvote btn -->
       <div>
         <div sec:authorize="isAuthenticated()" th:id="${'vote'+comment.id}" style="display: inline">
-          <a th:if="${itIsReply == null}" class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:onclick="|reply(${comment.id})|">
+          <a th:if="${itIsReply == null} && ${member.emailVerified}" class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:onclick="|reply(${comment.id})|">
             reply
           </a>
+          <a th:if="${itIsReply == null} && ${!member.emailVerified}" class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:href="@{/email/verify}">
+            reply
+          </a>
+
           <input type="button"  class="btn btn-sm ms-1" th:classappend="${member.upVoteCommentIds.contains(comment.id)} ? 'btn-primary' : 'btn-outline-primary'"
                  th:onclick="|vote('comment', ${comment.id}, true)|" th:value="'▲ ' + ${comment.getVote().upVote}" style="padding: 0px; margin: 0px; width: 40px; height: 20px;"/>
           <input type="button" class="btn btn-sm ms-1" th:classappend="${member.downVoteCommentIds.contains(comment.id)} ? 'btn-primary' : 'btn-outline-primary'"

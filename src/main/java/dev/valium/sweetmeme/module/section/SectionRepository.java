@@ -1,6 +1,6 @@
 package dev.valium.sweetmeme.module.section;
 
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
+import dev.valium.sweetmeme.module.section.enums.SectionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 

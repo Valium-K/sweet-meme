@@ -50,11 +50,9 @@
           <!-- 본문 사진영상 -->
           <picture>
             <div class="row justify-content-center rounded mt-2" style="background-color: #11111110; margin: 3px">
-              <div class="col-auto">
                 <video preload="metadata" muted autoplay loop th:if="${post.getContentType()} == 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}"
-                       style="width: 100%; max-width: 500px; height: auto; cursor: pointer;" onclick="toggleMute(this)"></video>
-                <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="width: 100%; max-width: 500px; height: auto;">
-              </div>
+                       style="width: 100%; max-width: 600px; height: auto; max-height: 700px; cursor: pointer;" onclick="toggleMute(this)"></video>
+                <img th:if="${post.getContentType()} != 'mp4'" th:src="@{${FILE_URL} + ${post.postImageUrl}}" style="width: 100%; max-width: 600px; height: auto;">
             </div>
           </picture>
 
@@ -75,7 +73,14 @@
       <section class="p-1">
         <!-- 코멘트 남기기 -->
         <div sec:authorize="isAuthenticated()">
-          <div class="row mb-3">
+          <div th:if="${!member.emailVerified}" class="row justify-content-between">
+            <div class="col mt-1 alert alert-info alert-dismissible fade show">
+              <span th:text="#{comment.email-not-verified1}">이메일 인증이 필요한 서비스입니다.</span>&nbsp;
+              <a th:text="#{comment.email-not-verified2}" th:href="@{/email/verify}"> 여기</a>
+              <span th:text="#{comment.email-not-verified3}">를 클릭하여 인증 페이지로 이동합니다.</span>
+            </div>
+          </div>
+          <div th:if="${member.emailVerified}" class="row mb-3">
             <div class="col-1">
                 <svg th:if="${member.memberInfo.picImage} == null" th:data-jdenticon-value="${#authentication.name}"
                      width="30px" height="30px" class="rounded border bg-light"></svg>
@@ -113,7 +118,7 @@
         <!-- 댓글들 -->
         <div th:id="'post' + ${post.id}">
           <div class="replyPageOffset">
-            <div class="my-4" th:each="comment : ${comments}">
+            <div class="my-4 commentHover round" th:each="comment : ${comments}">
               <div class="row mt-3">
                 <!-- 아래를 fragment로 빼면 노트가 하나 더 늘어 row가 적용이 안됨. -->
                 <!-- 해당 row를 수정할 시 fragment :: comments의 내용도 수정해야함. -->
@@ -169,7 +174,10 @@
                 <!-- reply, upvote, downvote btn -->
                 <div>
                   <div sec:authorize="isAuthenticated()" th:id="${'vote'+comment.id}" style="display: inline">
-                    <a class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:onclick="|reply(${comment.id})|">
+                    <a th:if="${member.emailVerified}" class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:onclick="|reply(${comment.id})|">
+                      reply
+                    </a>
+                    <a th:if="${!member.emailVerified}" class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:href="@{/email/verify}">
                       reply
                     </a>
                     <input type="button" class="btn btn-sm ms-1" th:classappend="${member.upVoteCommentIds.contains(comment.id)} ? 'btn-primary' : 'btn-outline-primary'"
@@ -329,6 +337,13 @@
         alert('10mb 이하의 이미지를 선택해주세요.');
       } else {
 
+      }
+    }
+  </script>
+  <script>
+    window.onpopstate = function(event) {
+      if(event) {
+        window.close();
       }
     }
   </script>

@@ -1,8 +1,7 @@
 package dev.valium.sweetmeme.module.section;
 
-import dev.valium.sweetmeme.module.bases.BaseEntityTime;
 import dev.valium.sweetmeme.module.bases.BaseEntityZonedTime;
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
+import dev.valium.sweetmeme.module.section.enums.SectionType;
 import dev.valium.sweetmeme.module.info.Info;
 import dev.valium.sweetmeme.module.post.Post;
 import lombok.*;

@@ -1,7 +1,7 @@
 package dev.valium.sweetmeme.module.section;
 
 import dev.valium.sweetmeme.module.bases.BaseController;
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
+import dev.valium.sweetmeme.module.section.enums.SectionType;
 import dev.valium.sweetmeme.module.info.Info;
 import dev.valium.sweetmeme.module.info.InfoRepository;
 import dev.valium.sweetmeme.module.member.CurrentMember;
@@ -11,7 +11,6 @@ import dev.valium.sweetmeme.module.post.PostRepository;
 import dev.valium.sweetmeme.module.post_tag.PostTag;
 import dev.valium.sweetmeme.module.post_tag.PostTagRepository;
 import dev.valium.sweetmeme.module.section.form.SectionTagForm;
-import dev.valium.sweetmeme.module.post_vote.PostVoteService;
 import dev.valium.sweetmeme.module.tag.Tag;
 import dev.valium.sweetmeme.module.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +29,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,7 +49,7 @@ public class SectionController extends BaseController {
     public String fresh(@CurrentMember Member member, Model model) {
         setBaseAttributes(member, model, "fresh");
 
-        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
+        PageRequest pageRequest = PageRequest.of(0, SLICE_SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
         List<Post> posts = postRepository.findAll(pageRequest).toList();
 
         model.addAttribute("posts", posts);
@@ -64,7 +61,7 @@ public class SectionController extends BaseController {
 
         setBaseAttributes(member, model, "fresh");
 
-        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
+        PageRequest pageRequest = PageRequest.of(page, SLICE_SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
         List<Post> posts = postRepository.findAll(pageRequest).toList();
 
         model.addAttribute("posts", posts);
@@ -77,7 +74,7 @@ public class SectionController extends BaseController {
     public String home(@CurrentMember Member member, Model model) {
         setBaseAttributes(member, model, "hot");
 
-        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
+        PageRequest pageRequest = PageRequest.of(0, SLICE_SIZE, Sort.by(Sort.Direction.DESC, "vote.upVote", "createdDate"));
         List<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusHours(6), LocalDateTime.now(), pageRequest).toList();
 
         model.addAttribute("posts", posts);
@@ -87,7 +84,7 @@ public class SectionController extends BaseController {
     @GetMapping("/post/slice/hot/{page}")
     public String homeSlice(@CurrentMember Member member, Model model, @PathVariable int page) {
         setBaseAttributes(member, model, "fresh");
-        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
+        PageRequest pageRequest = PageRequest.of(page, SLICE_SIZE, Sort.by(Sort.Direction.DESC, "vote.upVote", "createdDate"));
         List<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusHours(6), LocalDateTime.now(), pageRequest).toList();
 
         model.addAttribute("posts", posts);
@@ -100,8 +97,8 @@ public class SectionController extends BaseController {
     public String top(@CurrentMember Member member, Model model) {
         setBaseAttributes(member, model, "top");
 
-        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
-        List<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusDays(3), LocalDateTime.now(), pageRequest).toList();
+        PageRequest pageRequest = PageRequest.of(0, SLICE_SIZE, Sort.by(Sort.Direction.DESC, "vote.upVote", "createdDate"));
+        List<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusYears(1L), LocalDateTime.now(), pageRequest).toList();
 
         model.addAttribute("posts", posts);
 
@@ -110,8 +107,8 @@ public class SectionController extends BaseController {
     @GetMapping("/post/slice/top/{page}")
     public String topSlice(@CurrentMember Member member, Model model, @PathVariable int page) {
         setBaseAttributes(member, model, "fresh");
-        PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
-        List<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusDays(3), LocalDateTime.now(), pageRequest).toList();
+        PageRequest pageRequest = PageRequest.of(page, SLICE_SIZE, Sort.by(Sort.Direction.DESC, "vote.upVote", "createdDate"));
+        List<Post> posts = postRepository.findAllByCreatedDateBetween(LocalDateTime.now().minusYears(1L), LocalDateTime.now(), pageRequest).toList();
 
         model.addAttribute("posts", posts);
         model.addAttribute("FILE_URL", FILE_URL);
@@ -134,7 +131,7 @@ public class SectionController extends BaseController {
 
         // 섹션에서 찾아보기
         if(sectionType != null) {
-            PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
+            PageRequest pageRequest = PageRequest.of(0, SLICE_SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
             posts = postRepository.findAllByBelongedSectionType(sectionType, pageRequest);
 
             Info infoByHead = infoRepository.findInfoByHead(sectionType.name());
@@ -162,7 +159,7 @@ public class SectionController extends BaseController {
 
         List<Post> posts;
         if(sectionType != null) {
-            PageRequest pageRequest = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "vote.upVote"));
+            PageRequest pageRequest = PageRequest.of(page, SLICE_SIZE, Sort.by(Sort.Direction.DESC, "createdDate"));
             posts = postRepository.findAllByBelongedSectionType(sectionType, pageRequest);
         }
         else {

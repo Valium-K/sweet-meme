@@ -1,6 +1,6 @@
 //package dev.valium.sweetmeme.infra.config;
 //
-//import dev.valium.sweetmeme.module.bases.enums.SectionType;
+//import dev.valium.sweetmeme.module.section.enums.SectionType;
 //import dev.valium.sweetmeme.module.info.Info;
 //import dev.valium.sweetmeme.module.member.MemberRepository;
 //import dev.valium.sweetmeme.module.post.CommentRepository;

@@ -1,6 +1,6 @@
 package dev.valium.sweetmeme.module.post.validator;
 
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
+import dev.valium.sweetmeme.module.section.enums.SectionType;
 import dev.valium.sweetmeme.module.post.form.UploadForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

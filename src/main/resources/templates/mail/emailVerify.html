@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+<body class="bg-light">
+<div th:replace="fragments.html :: nav-bar"></div>
+<div class="container">
+
+    <div class="py-5 text-center">
+        <p class="lead mt-4 mb-5">S w e e t M e m e</p>
+        <h2 th:text="#{email.verify}">이메일 인증</h2>
+    </div>
+    <div class="row justify-content-center">
+
+        <form class="needs-validation col-sm-6" action="#" th:object="${emailVerifyForm}" th:action="@{/email/verify}" method="post" novalidate>
+
+            <h5 th:text="#{email.verify.context}" style="text-align: center" class="mb-5">
+                해당 서비스는 이메일 인증이 필요한 서비스입니다.
+            </h5>
+
+            <div class="form-group mb-3">
+                <label for="username" th:text="#{email}">이메일</label>
+                <input id="username" type="text" th:field="*{email}" name="username" class="form-control"
+                       placeholder="your@email.com" aria-describedby="emailHelp" required>
+                <small id="emailHelp" class="form-text text-muted" th:text="#{login.email.help}">
+                    가입할 때 사용한 이메일 또는 닉네임을 입력하세요.
+                </small>
+                <small class="invalid-feedback" th:text="#{login.email.error}">이메일을 입력하세요.</small>
+                <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="display: block">
+                    중복 닉네임 혹은 짧은 닉네임 혹은 특수문자 닉네임
+                </small>
+            </div>
+
+            <div class="form-group mb-3 d-grid gap-2">
+                <button class="btn btn-primary" type="submit" aria-describedby="submitHelp" th:text="#{email.verify}">이메일 인증</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script th:replace="fragments.html :: form-validation"></script>
+</body>
+</html>

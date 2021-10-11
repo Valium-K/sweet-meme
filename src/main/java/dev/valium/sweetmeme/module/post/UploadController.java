@@ -1,7 +1,7 @@
 package dev.valium.sweetmeme.module.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
+import dev.valium.sweetmeme.module.section.enums.SectionType;
 import dev.valium.sweetmeme.module.member.CurrentMember;
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.post.form.UploadForm;

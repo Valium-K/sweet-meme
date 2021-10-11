@@ -1,8 +1,7 @@
 package dev.valium.sweetmeme.module.bases;
 
 import dev.valium.sweetmeme.module.member.Member;
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
-import dev.valium.sweetmeme.module.post_vote.PostVoteService;
+import dev.valium.sweetmeme.module.section.enums.SectionType;
 import org.springframework.ui.Model;
 
 import java.util.Arrays;

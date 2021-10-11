@@ -5,7 +5,7 @@ import dev.valium.sweetmeme.module.member.form.SettingsAccountForm;
 import dev.valium.sweetmeme.module.member.form.SettingsPasswordForm;
 import dev.valium.sweetmeme.module.member.form.SettingsProfileForm;
 import dev.valium.sweetmeme.module.member.validator.SettingsProfileValidator;
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
+import dev.valium.sweetmeme.module.section.enums.SectionType;
 import dev.valium.sweetmeme.module.processor.Code2State;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

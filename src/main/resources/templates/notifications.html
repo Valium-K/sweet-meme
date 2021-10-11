@@ -69,7 +69,7 @@
                         })
                 }
             </script>
-            <div class="rounded" style="min-height: 500px; background-color: #11111110;">
+            <div class="rounded" style="min-height: 600px; background-color: #11111110;">
                 <div class="list-group">
                     <a th:each="notification : ${notifications}" class="list-group-item" th:classappend="${!notification.hasRead} ? 'list-group-item-info':''"
                        th:href="@{'/notification/post/' + ${notification.notificationType} + '/' + ${notification.originalPostId}}" th:target="_blank">

@@ -1,7 +1,7 @@
 package dev.valium.sweetmeme.module.post;
 
 import dev.valium.sweetmeme.infra.config.FileConfig;
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
+import dev.valium.sweetmeme.module.section.enums.SectionType;
 import dev.valium.sweetmeme.module.processor.FileProcessor;
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.member.MemberRepository;

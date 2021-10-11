@@ -1,11 +1,7 @@
 package dev.valium.sweetmeme.module.post;
 
-import dev.valium.sweetmeme.module.info.Info;
-import dev.valium.sweetmeme.module.info.InfoFactory;
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.member.MemberFactory;
-import dev.valium.sweetmeme.module.section.Section;
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
 import dev.valium.sweetmeme.module.member.MemberRepository;
 import dev.valium.sweetmeme.module.member.MemberService;
 import dev.valium.sweetmeme.module.section.SectionFactory;
@@ -14,17 +10,13 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Locale;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;

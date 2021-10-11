@@ -18,7 +18,6 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final MemberPostRepository memberPostRepository;
-    private final PostRepository postRepository;
 
     public void deleteCommentById(Member member, Long commentId, Long postId, Locale locale) {
         Comment comment = commentRepository.findFetchParentAndPostCommentById(commentId);

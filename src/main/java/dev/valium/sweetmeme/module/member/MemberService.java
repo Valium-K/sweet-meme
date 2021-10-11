@@ -41,21 +41,18 @@ public class MemberService implements UserDetailsService {
     private final ApplicationEventPublisher eventPublisher;
 
     public Member findMember(String nickname) {
-        // TODO Exception 구현
         return memberRepository.findByNickname(nickname).orElseThrow(
                 () -> new IllegalArgumentException(nickname + "에 해당하는 멤버를 찾을 수 없습니다.")
         );
     }
 
     @Transactional(readOnly = true)
-    // TODO Exception 구현
     public Member findMemberAndInfo(String nickname) {
         return memberRepository.findMemberAndInfoByNickname(nickname).orElseThrow(
             () -> new IllegalArgumentException(nickname + "에 해당하는 멤버를 찾을 수 없습니다.")
         );
     }
 
-    // TODO upvotedList, downVotedList 함께 가져오기
     public void login(Member member) {
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
@@ -68,7 +65,6 @@ public class MemberService implements UserDetailsService {
         context.setAuthentication(token);
     }
 
-    // TODO 프로필 수정 시, 코멘트시, up*down vote시 업뎃 후 세션에 보관하게 바꾸기
     public void updatePrincipal(Member member) {
 
         SecurityContext context = SecurityContextHolder.getContext();
@@ -105,7 +101,6 @@ public class MemberService implements UserDetailsService {
         return new MemberUser(member);
     }
 
-    // TODO Exception 구현
     public Member updatePassword(Member member, String pw) {
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
                 () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
@@ -117,7 +112,6 @@ public class MemberService implements UserDetailsService {
         return foundMember;
     }
 
-    // TODO Exception 구현
     public Member updateMemberAccount(Member member, SettingsAccountForm form) {
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
                 () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
@@ -133,7 +127,6 @@ public class MemberService implements UserDetailsService {
         return foundMember;
     }
 
-    // TODO Exception 구현
     public Member updateProfile(Member member, SettingsProfileForm form) throws IOException {
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
                 () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
@@ -157,7 +150,6 @@ public class MemberService implements UserDetailsService {
         return foundMember;
     }
 
-    // TODO Exception 구현
     public Member resetProfileAvatar(Member member) {
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
                 () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
@@ -171,6 +163,21 @@ public class MemberService implements UserDetailsService {
 
     public void deleteAccount(Member member) {
         eventPublisher.publishEvent(new DeleteAccountEvent(member));
+    }
+
+    public void verifyEmail(String token, String email) throws Exception {
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                () -> new IllegalArgumentException(email + "에 해당하는 맴버를 찾을 수 없습니다.")
+        );
+
+        String foundToken = member.getEmailCheckToken();
+
+        if(!foundToken.equals(token)) {
+            throw new Exception(member.getEmailCheckToken() + "과 " + token + "이 일치하지 않습니다.");
+        }
+
+        member.setEmailVerified(true);
+        updatePrincipal(member);
     }
 }
 

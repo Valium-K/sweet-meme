@@ -1,14 +1,12 @@
 package dev.valium.sweetmeme.module.section;
 
-import dev.valium.sweetmeme.module.bases.enums.SectionType;
+import dev.valium.sweetmeme.module.section.enums.SectionType;
 import dev.valium.sweetmeme.module.info.Info;
-import dev.valium.sweetmeme.module.member.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
-import javax.swing.text.html.parser.Entity;
 import java.util.Arrays;
 import java.util.Locale;
 

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html :: head"></head>
+
+<body>
+<div class="container">
+  <div class="jumbotron text-center">
+    <div class="my-5"></div>
+    <p class="lead text-muted" th:text="#{email.sent}">이메일을 보냈습니다. 받은 메일함에서 인증메일을 확인하세요.</p>
+    <a th:href="@{/}" type="button" th:text="#{email.home}">홈으로 가기</a>
+  </div>
+</div>
+</body>
+</html>
