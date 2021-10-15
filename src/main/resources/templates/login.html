@@ -32,7 +32,7 @@
                 <input id="password" type="password" name="password" class="form-control"
                        aria-describedby="passwordHelp" required>
                 <small class="invalid-feedback" th:text="#{login.password.error}">패스워드를 입력하세요.</small>
-                <a th:text="#{login.password.forgot}">패스워드를 잊어버렸습니다.</a>
+                <a th:text="#{login.password.forgot}" th:href="@{/login/forgot}">패스워드를 잊어버렸습니다.</a>
             </div>
 
             <div class="form-group form-check mb-3">
