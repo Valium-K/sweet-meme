@@ -32,7 +32,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/*", "/user/**", "/post/*", "/login/forgot").permitAll()
                 .mvcMatchers(HttpMethod.GET, SECTION_URL+"*", FILE_URL+"*", DOWNLOAD_URL+"*",
                         COMMENT_IMAGE_URL+"*", "/avatar/*", "/comment/slice/**",
-                        "/reply/slice/**", "/post/slice/**", "/email/verify/check").permitAll()
+                        "/reply/slice/**", "/post/slice/**", "/email/verify/check", "/login/forgot/check").permitAll()
                 .anyRequest().authenticated();
 
         http.formLogin()
