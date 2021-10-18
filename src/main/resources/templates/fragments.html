@@ -1007,10 +1007,46 @@
 
   <div class="col-2 mt-2 me-1 text-end">
     <!-- TODO 공유기능 추가 -->
-    <button type="button" class="btn btn-outline-primary btn-sm">
+    <button type="button" class="btn btn-outline-primary btn-sm" th:onclick="|copyToClipboard(${post.id})|" data-bs-toggle="modal"
+            th:data-bs-target="'#shareModal' + ${post.id}">
       <i class="fa fa-share-alt" aria-hidden="true"></i>
     </button>
+
+    <!-- Modal -->
+    <div class="modal fade" th:id="'shareModal' + ${post.id}" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="shareModalLabel" th:text="#{clipboard.done}">클립보드에 복사되었습니다.</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div th:id="shareModalContext + ${post.id}"> post url </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
+  <script type="application/javascript">
+    var copyToClipboard = function(postId) {
+      var hostName = 'http://' + window.location.href.split('/')[2];
+      var url =  hostName + contextPath + '/post/' + postId
+
+      // inner text
+      document.getElementById('shareModalContext' + postId).innerText = url;
+      console.log(url)
+      // copy to clipboard
+      const el = document.createElement('textarea');
+      el.value = url;
+      document.body.appendChild(el);
+
+      el.select();
+      document.execCommand("copy"); //copy to clipboard
+
+      document.body.removeChild(el);
+    }
+  </script>
 </div>
 <div th:fragment="date-time">
   <script th:src="@{/node_modules/moment/min/moment-with-locales.js}"></script>
