@@ -45,7 +45,7 @@ Spring Security를 이용한 Login 및 remember-me, Spring mail을 이용한 패
 ### Sign up
 회원가입 기능.
 
-![img_2.png](sweetmeme/readMeRes/img_2.png)
+![img_2.png](readMeRes/img_2.png)
 
 ### My Profile
 모든 종합항목, 자신의 포스트, 코맨트, 업보트한 포스트를 볼 수 있다.
