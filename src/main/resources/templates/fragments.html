@@ -894,10 +894,10 @@
       <!-- reply, upvote, downvote btn -->
       <div>
         <div sec:authorize="isAuthenticated()" th:id="${'vote'+comment.id}" style="display: inline">
-          <a th:if="${itIsReply == null} && ${member.emailVerified}" class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:onclick="|reply(${comment.id})|">
+          <a th:if="${itIsReply == null && member.emailVerified}" class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:onclick="|reply(${comment.id})|">
             reply
           </a>
-          <a th:if="${itIsReply == null} && ${!member.emailVerified}" class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:href="@{/email/verify}">
+          <a th:if="${itIsReply == null && !member.emailVerified}" class="mt-1" style="text-decoration: none; cursor: pointer" type="button" th:href="@{/email/verify}">
             reply
           </a>
 

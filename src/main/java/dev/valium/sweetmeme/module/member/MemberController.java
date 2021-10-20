@@ -58,17 +58,7 @@ public class MemberController extends BaseController {
             return "forgotPassword";
         }
 
-        // send email;
-        Context context = new Context();
-
-        context.setVariable("link", "?token=" + foundMember.getEmailCheckToken() + "&email=" + foundMember.getEmail());
-        context.setVariable("host", applicationProperties.getHost() + request.getContextPath());
-        context.setLocale(request.getLocale());
-
-        String message = templateEngine.process("mail/sentPasswordForgotEmail", context);
-        EmailMessage emailMessage = new EmailMessage(foundMember.getEmail(), messageSource.getMessage("email.forgot.subject",
-                null, "스윗밈 패스워드 초기화 메일입니다.", request.getLocale()), message);
-
+        EmailMessage emailMessage = createForgotEmailMessage(request, foundMember);
         emailService.send(emailMessage);
 
         return "mail/emailSent";
@@ -90,5 +80,19 @@ public class MemberController extends BaseController {
         setBaseAttributes(member, model, "password");
 
         return "redirect:/settings/password";
+    }
+
+    private EmailMessage createForgotEmailMessage(HttpServletRequest request, Member foundMember) {
+        // send email;
+        Context context = new Context();
+
+        context.setVariable("link", "?token=" + foundMember.getEmailCheckToken() + "&email=" + foundMember.getEmail());
+        context.setVariable("host", applicationProperties.getHost() + request.getContextPath());
+        context.setLocale(request.getLocale());
+
+        String message = templateEngine.process("mail/sentPasswordForgotEmail", context);
+        EmailMessage emailMessage = new EmailMessage(foundMember.getEmail(), messageSource.getMessage("email.forgot.subject",
+                null, "스윗밈 패스워드 초기화 메일입니다.", request.getLocale()), message);
+        return emailMessage;
     }
 }
