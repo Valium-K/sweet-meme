@@ -33,6 +33,6 @@ decorator:
 
 server:
   servlet:
-    context-path: /valium
+    context-path: /sweetmeme
 
-app.host: http://localhost:8080
+app.host: http://valium.dev:58443
