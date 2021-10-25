@@ -85,7 +85,7 @@ class LoginControllerTest {
 
     @Test
     public void 로그아웃() throws Exception {
-        mockMvc.perform(post("/logout")
+        mockMvc.perform(post("/member/logout")
                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"))
