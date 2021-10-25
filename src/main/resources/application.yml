@@ -35,4 +35,4 @@ server:
   servlet:
     context-path: /sweetmeme
 
-app.host: http://valium.dev:58443
+app.host: http://valium.dev:8080

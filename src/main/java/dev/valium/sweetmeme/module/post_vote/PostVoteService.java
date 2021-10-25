@@ -5,6 +5,7 @@ import dev.valium.sweetmeme.module.notifications.NotificationType;
 import dev.valium.sweetmeme.module.post.Post;
 import dev.valium.sweetmeme.module.post.PostRepository;
 import dev.valium.sweetmeme.module.notifications.event.NotificationEvent;
+import dev.valium.sweetmeme.module.post.exceptions.NoSuchPostException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,8 @@ public class PostVoteService {
     private final PostVoteRepository postVoteRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public Member votePost(Member member, Long id, boolean vote) throws Exception {
-        Post post = postRepository.findFetchOPById(id).orElseThrow(() -> new Exception("post 없음"));
+    public Member votePost(Member member, Long id, boolean vote) throws NoSuchPostException {
+        Post post = postRepository.findFetchOPById(id).orElseThrow(() -> new NoSuchPostException(id));
 
         PostVote upPostVote = postVoteRepository.findUpVoteByUpVotedMemberAndUpVotedPost(member, post);
         PostVote downPostVote = postVoteRepository.findDownVoteByDownVotedMemberAndDownVotedPost(member, post);

@@ -3,6 +3,7 @@ package dev.valium.sweetmeme.module.post_vote;
 import dev.valium.sweetmeme.module.member.CurrentMember;
 import dev.valium.sweetmeme.module.member.Member;
 import dev.valium.sweetmeme.module.member.MemberService;
+import dev.valium.sweetmeme.module.post.exceptions.NoSuchPostException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,7 +22,7 @@ public class PostVoteController {
 
     @PostMapping("/post/{id}/vote")
     @ResponseBody
-    public ResponseEntity votePost(@CurrentMember Member member, @RequestBody Map<String, String> params) throws Exception {
+    public ResponseEntity votePost(@CurrentMember Member member, @RequestBody Map<String, String> params) throws NoSuchPostException {
         Long id = Long.valueOf(params.get("id"));
         boolean vote = Boolean.parseBoolean(params.get("vote"));
 
