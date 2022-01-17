@@ -70,15 +70,15 @@ public class UploadService {
             Set<Tag> tags = json2TagSet(jsonTags);
 
             tags.forEach(tag -> {
-                PostTag postTag = new PostTag(post, 0l); // 0l: temp data
+                PostTag postTag = new PostTag(post, new Tag("tempData")); // 0l: temp data
 
                 Tag foundTag = tagRepository.findByTagName(tag.getTagName());
                 if(foundTag == null) {
                     Tag save = tagRepository.save(tag);
-                    postTag.setTagId(save.getId());
+                    postTag.setTag(save);
                 }
                 else {
-                    postTag.setTagId(foundTag.getId());
+                    postTag.setTag(foundTag);
                 }
                 postTagRepository.save(postTag);
             });

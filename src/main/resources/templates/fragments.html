@@ -540,7 +540,7 @@
     </div>
     <div class="col-10">
       <h2 th:text="${info.head}" style="display: inline" class="fw-bold "></h2>&nbsp;
-      <img th:if="${info.stateCode} != null" th:src="'https://lipis.github.io/flag-icon-css/flags/4x3/' + ${info.stateCode} + '.svg'" style="width: 2rem; height: 1.5rem; vertical-align: text-bottom" class="rounded border">
+      <img th:if="${info.stateCode} != null" th:src="'https://github.com/lipis/flag-icons/tree/main/flags/4x3/' + ${info.stateCode} + '.svg'" style="width: 2rem; height: 1.5rem; vertical-align: text-bottom" class="rounded border">
       <br/>
       <small class="text-muted">s p e n d · </small><small class="text-muted" th:text="${spendDate} + ' days'"></small>
     </div>

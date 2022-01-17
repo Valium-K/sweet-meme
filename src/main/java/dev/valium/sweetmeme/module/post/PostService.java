@@ -99,11 +99,11 @@ public class PostService {
 
     public List<Tag> findTags(Post post) {
 
-        List<Long> tagIds = postTagRepository.findPostTagsByPostId(post.getId()).stream()
-                .map(PostTag::getTagId)
+        List<Tag> tags = postTagRepository.findPostTagsByPostId(post.getId()).stream()
+                .map(PostTag::getTag)
                 .collect(Collectors.toList());
 
-        List<Tag> tags = tagRepository.findByTagIds(tagIds);
+        // List<Tag> tagss = tagRepository.findByTagIds(tags);
 
         return tags;
     }

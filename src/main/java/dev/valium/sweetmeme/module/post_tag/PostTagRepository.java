@@ -12,6 +12,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public interface PostTagRepository extends JpaRepository<PostTag, Long> {
 
+    @EntityGraph(attributePaths = {"tag"}, type = EntityGraph.EntityGraphType.LOAD)
     List<PostTag> findPostTagsByPostId(Long id);
     @EntityGraph(attributePaths = {"post"}, type = EntityGraph.EntityGraphType.LOAD)
     List<PostTag> findPostTagsByTagId(Long tagId, Pageable pageable);
