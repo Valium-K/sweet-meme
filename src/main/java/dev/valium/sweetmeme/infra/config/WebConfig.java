@@ -15,7 +15,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
+    // post의 Async 로딩시 한번에 긁어올 db row의 수
     public static final int SLICE_SIZE = 5;
+    // 알림의 aSYNC 로딩시 한번에 긁어올 db row의 수
+    public static final int NOTI_PEEK_SIZE = 5;
     private final NotificationInterceptor notificationInterceptor;
 
     @Override

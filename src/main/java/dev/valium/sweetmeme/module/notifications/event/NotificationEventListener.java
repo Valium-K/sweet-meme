@@ -31,9 +31,13 @@ public class NotificationEventListener {
         Post post = notificationEvent.getPost();
         NotificationType type = notificationEvent.getType();
 
+        // 코멘트 && 코멘트 알림 허용일 때
         if(type.equals(NotificationType.COMMENT) && post.getOriginalPoster().isReplyAlert()) {
             publishNotification(member, post, type);
         }
+        // 업보트 && 업보트 알림 허용일 때
+        // 현재 NotificationType이 UPVOTE_POST, UPVOTE_COMMENT, COMMENT 라서 comment가 아니면으로 처리했다.
+        // NotificationType이 추가될 경우 아래 로직은 변경 돼야한다.
         else if(!type.equals(NotificationType.COMMENT) && post.getOriginalPoster().isUpvoteAlert()) {
             publishNotification(member, post, type);
         }

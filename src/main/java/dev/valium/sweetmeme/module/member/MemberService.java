@@ -4,6 +4,7 @@ import dev.valium.sweetmeme.infra.config.FileConfig;
 import dev.valium.sweetmeme.module.info.Info;
 import dev.valium.sweetmeme.module.member.event.DeleteAccountEvent;
 import dev.valium.sweetmeme.module.member.event.DeleteAccountEventListener;
+import dev.valium.sweetmeme.module.member.exceptions.NoSuchMemberException;
 import dev.valium.sweetmeme.module.post.Post;
 import dev.valium.sweetmeme.module.post.PostRepository;
 import dev.valium.sweetmeme.module.post.PostService;
@@ -42,14 +43,14 @@ public class MemberService implements UserDetailsService {
 
     public Member findMember(String nickname) {
         return memberRepository.findByNickname(nickname).orElseThrow(
-                () -> new IllegalArgumentException(nickname + "에 해당하는 멤버를 찾을 수 없습니다.")
+                () -> new NoSuchMemberException(nickname)
         );
     }
 
     @Transactional(readOnly = true)
     public Member findMemberAndInfo(String nickname) {
         return memberRepository.findMemberAndInfoByNickname(nickname).orElseThrow(
-            () -> new IllegalArgumentException(nickname + "에 해당하는 멤버를 찾을 수 없습니다.")
+            () -> new NoSuchMemberException(nickname)
         );
     }
 
@@ -89,6 +90,7 @@ public class MemberService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
+        // info까지 긁어온다
         Member member = memberRepository.findMemberAndInfoByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email)
         );
@@ -103,7 +105,7 @@ public class MemberService implements UserDetailsService {
 
     public Member updatePassword(Member member, String pw) {
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
-                () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
+                () -> new NoSuchMemberException(member.getId())
         );
 
         foundMember.setPassword(passwordEncoder.encode(pw));
@@ -114,7 +116,7 @@ public class MemberService implements UserDetailsService {
 
     public Member updateMemberAccount(Member member, SettingsAccountForm form) {
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
-                () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
+                () -> new NoSuchMemberException(member.getId())
         );
 
         foundMember.setNickname(form.getNickname());
@@ -129,7 +131,7 @@ public class MemberService implements UserDetailsService {
 
     public Member updateProfile(Member member, SettingsProfileForm form) throws IOException {
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
-                () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
+                () -> new NoSuchMemberException(member.getId())
         );
 
         if(!form.getFile().isEmpty()) {
@@ -152,7 +154,7 @@ public class MemberService implements UserDetailsService {
 
     public Member resetProfileAvatar(Member member) {
         Member foundMember = memberRepository.findById(member.getId()).orElseThrow(
-                () -> new IllegalArgumentException(member.getId() + "에 해당하는 멤버를 찾을 수 없습니다.")
+                () -> new NoSuchMemberException(member.getId())
         );
 
         foundMember.getMemberInfo().setPicImage(null);
@@ -167,7 +169,7 @@ public class MemberService implements UserDetailsService {
 
     public void verifyEmail(String token, String email) throws Exception {
         Member member = memberRepository.findByEmail(email).orElseThrow(
-                () -> new IllegalArgumentException(email + "에 해당하는 맴버를 찾을 수 없습니다.")
+                () -> new NoSuchMemberException(email)
         );
 
         String foundToken = member.getEmailCheckToken();

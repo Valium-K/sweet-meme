@@ -23,6 +23,9 @@ import org.thymeleaf.context.Context;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+/**
+ * 회원가입 인증 email controller
+ */
 @Slf4j
 @Controller
 @RequiredArgsConstructor

@@ -4,6 +4,10 @@ import lombok.*;
 
 import javax.persistence.*;
 
+/**
+ * Info entity는 member, section의 info에 공통으로 쓰임에 주의한다.
+ * head는 맴버 이름의 cache거나 section의 이름으로 쓰인다.
+ */
 @Entity
 @Getter @Setter
 @Builder

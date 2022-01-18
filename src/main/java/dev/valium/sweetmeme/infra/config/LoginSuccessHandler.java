@@ -13,6 +13,14 @@ import java.io.IOException;
 
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
+    /**
+     * 로그인 완료 후 이전페이지로 돌아가도록 재정의
+     * @param request
+     * @param response
+     * @param authentication
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                    Authentication authentication) throws ServletException, IOException {

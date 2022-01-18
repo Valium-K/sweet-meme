@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+/**
+ * 메일 인증 서비스 구현체
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
+// 현제 인코딩 옵션은 강제 True
 public class FileProcessor {
     public static String transferFile(String path, MultipartFile file, boolean encode) throws IOException {
         String newFileName = UUID.randomUUID().toString().replace("-", "");

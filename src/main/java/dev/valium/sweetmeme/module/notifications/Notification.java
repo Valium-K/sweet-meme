@@ -17,11 +17,21 @@ import java.time.ZonedDateTime;
 
 @Entity
 @Getter @Setter
-@EqualsAndHashCode(of = {"notificationType", "memberId", "originalPostId"}, callSuper = false)
+@EqualsAndHashCode(of = {"notificationType", "originalPostId"}, callSuper = false)
 @Builder @AllArgsConstructor
 @IdClass(NotificationId.class)
 public class Notification extends BaseEntityZonedTime implements Serializable {
 
+    /**
+     * "notificationType", "originalPostId"를 후보키로 잡았다.
+     *
+     * memberId가 쓴 originalPost의 notificationType으로 해당 member에게 알림을 띄운다.
+     * 이 때, 알림은 notificationType 중 하나가 되며 그것의 counter를 저장하고 있고,
+     * 마지막으로 Action을 한 사용자의 InfoId를 저장하고있다.
+     *
+     * 알림의 형식은 "[lastVoteOrCommenter]등 [voteOrCommentCounter]명이 [notificationType] 했습니다." 가된다.
+     *
+     */
 //    @Id @GeneratedValue
 //    private Long id;
 
@@ -41,7 +51,6 @@ public class Notification extends BaseEntityZonedTime implements Serializable {
     /**
      * 알림을 받을 맴버 id
      */
-    @Id @JoinColumn(name = "member_id")
     private Long memberId;
 
     @Id @JoinColumn(name = "original_post_id")

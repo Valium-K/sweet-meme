@@ -20,6 +20,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static dev.valium.sweetmeme.infra.config.WebConfig.NOTI_PEEK_SIZE;
+
 @Controller
 @AllArgsConstructor
 public class NotificationController {
@@ -27,10 +29,11 @@ public class NotificationController {
     private final NotificationRepository notificationRepository;
     private final NotificationService notificationService;
 
+    // 비동기 알림확인
     @GetMapping("/notifications/peek")
     public String peekNotifications(@CurrentMember Member member, Model model) {
 
-        PageRequest pageRequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "lastModifiedDate"));
+        PageRequest pageRequest = PageRequest.of(0, NOTI_PEEK_SIZE, Sort.by(Sort.Direction.DESC, "lastModifiedDate"));
         Slice<Notification> notificationSlice = notificationRepository.findNotificationsByMemberId(member.getId(), pageRequest);
 
         model.addAttribute("notifications", notificationSlice);

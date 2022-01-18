@@ -1,6 +1,7 @@
 package dev.valium.sweetmeme.module.bases.enums;
 
 public enum Membership {
+    // TODO 구현필요
     /**
      * NEW: 이메일 인증 안한 멤버
      * USER: 이메일 인증 한 멤버

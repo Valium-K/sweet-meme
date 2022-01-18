@@ -11,7 +11,9 @@ import java.util.stream.Collectors;
 import static dev.valium.sweetmeme.infra.config.FileConfig.DOWNLOAD_URL;
 import static dev.valium.sweetmeme.infra.config.FileConfig.FILE_URL;
 
-
+/**
+ * 컨트롤러의 공통기능 클래스
+ */
 public class BaseController {
 
     protected void setBaseAttributes(Member member, Model model, String currentMenu) {

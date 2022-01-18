@@ -37,7 +37,7 @@ public class DeleteAccountEventListener {
         Member member = deleteAccountEvent.getMember();
         List<Post> posts = postRepository.findAllByOriginalPoster(member);
 
-        // TODO in query, batch 최적화 가능
+        // TODO in query / batch 최적화 가능
         posts.forEach(p -> {
             postService.deletePost(member, p.getId());
         });

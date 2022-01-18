@@ -1,6 +1,8 @@
 package dev.valium.sweetmeme.infra.config;
 
-
+/**
+ * 경로 및 타입 상수 설정 클래스
+ */
 public class FileConfig {
     private static final String ABSOLUTE_PATH = "D:/sweetmeme/";
 

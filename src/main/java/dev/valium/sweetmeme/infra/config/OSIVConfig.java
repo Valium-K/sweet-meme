@@ -8,6 +8,10 @@ import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 @Configuration
 public class OSIVConfig {
 
+    /**
+     * 현재 전체 경로에 대해 open session in veiw를 설정했음
+     * @return
+     */
     @Bean
     public FilterRegistrationBean registerOpenEntityManagerInViewFilterBean() {
         FilterRegistrationBean registrationBean = new FilterRegistrationBean();

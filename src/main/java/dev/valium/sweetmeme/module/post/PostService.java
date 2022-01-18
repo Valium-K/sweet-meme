@@ -4,6 +4,7 @@ import dev.valium.sweetmeme.infra.config.FileConfig;
 import dev.valium.sweetmeme.module.comment_vote.CommentVoteRepository;
 import dev.valium.sweetmeme.module.member_post.MemberPost;
 import dev.valium.sweetmeme.module.member_post.MemberPostRepository;
+import dev.valium.sweetmeme.module.post.exceptions.NoSuchPostException;
 import dev.valium.sweetmeme.module.post_vote.PostVote;
 import dev.valium.sweetmeme.module.post_vote.PostVoteRepository;
 import dev.valium.sweetmeme.module.processor.FileProcessor;
@@ -47,10 +48,9 @@ public class PostService {
     private final MemberPostRepository memberPostRepository;
     private final CommentVoteRepository commentVoteRepository;
 
-    // TODO Excpetion 구현
     public Post findPostById(Long id) {
         return postRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException(id + "에 해당하는 post를 찾을 수 없습니다.")
+                () -> new NoSuchPostException(id)
         );
     }
 
@@ -72,7 +72,7 @@ public class PostService {
     }
 
     private Comment setComment(Long postId, CommentForm form, Member member) throws IOException {
-        Post post = postRepository.findFetchOPById(postId).orElseThrow(() -> new IllegalArgumentException(postId + "id의 포스트가 없음"));
+        Post post = postRepository.findFetchOPById(postId).orElseThrow(() -> new NoSuchPostException(postId));
 
         Comment comment = Comment.create(member.getMemberInfo());
 
@@ -115,21 +115,26 @@ public class PostService {
     public void deletePost(Member member, Long postId) {
 
         Post post = postRepository.findFetchOPById(postId).orElseThrow(() -> {
-            log.error("PostService.deletePost(): " + postId + "에 해당하는 post가 없습니다.");
-            return new IllegalArgumentException();
+            // log.error("PostService.deletePost(): " + postId + "에 해당하는 post가 없습니다.");
+            return new NoSuchPostException(postId);
         });
 
         if(!post.getOriginalPoster().getId().equals(member.getId())) {
             return;
         }
+        // 1. postVote 삭제
         postVoteRepository.deleteAllByUpVotedPost(post);
         postVoteRepository.deleteAllByDownVotedPost(post);
 
+        // 2. tag 삭제
         postTagRepository.deleteAllByPost(post);
 
+        // 3. memberPost 삭제
         memberPostRepository.deleteAllByCommentedPost(post);
 
-        for(int i = 0;true;i+=DELETE_COMMENT_BATCH_SIZE) {
+        // 4. commentVote의 삭제
+        // Post의 comment를 DELETE_COMMENT_BATCH_SIZE만큼 가져와 delete한다.
+        for(int i = 0; true; i += DELETE_COMMENT_BATCH_SIZE) {
             Pageable pageRequest = PageRequest.of(i, DELETE_COMMENT_BATCH_SIZE, Sort.by("createdDate"));
             Slice<Comment> comments = commentRepository.findAllByPost(post, pageRequest);
 
@@ -140,8 +145,10 @@ public class PostService {
                 break;
         }
 
+        // 5. comment 삭제
         commentRepository.deleteAllByPost(post);
 
+        // 6. post 삭제
         postRepository.delete(post);
     }
 }

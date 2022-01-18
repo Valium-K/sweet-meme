@@ -19,6 +19,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final MemberPostRepository memberPostRepository;
 
+    // 부모 comment에 대한 삭제 요청은 내용을 "해당 내용은 삭제 되었습니다."로 바꾼다.
     public void deleteCommentById(Member member, Long commentId, Long postId, Locale locale) {
         Comment comment = commentRepository.findFetchParentAndPostCommentById(commentId);
         memberPostRepository.deleteByCommentedMemberAndAndCommentedPost(member, comment.getPost());

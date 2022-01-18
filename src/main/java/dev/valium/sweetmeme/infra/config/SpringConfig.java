@@ -15,14 +15,9 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 public class SpringConfig {
 
     /**
-     * for createdBy and lastModifiedBY
+     * bcrypt 방식 password 암호화
      * @return
      */
-//    @Bean
-//    public AuditorAware<String> auditorProvider() {
-//        return () -> Optional.of(UUID.randomUUID().toString());
-//    }
-
     @Bean
     public static BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -39,13 +34,11 @@ public class SpringConfig {
         return messageSource;
     }
 
-//    @Bean
-//    public LocaleResolver localeResolver() {
-//        SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
-//        sessionLocaleResolver.setDefaultLocale(Locale.KOREA);
-//        return sessionLocaleResolver;
-//    }
 
+    /**
+     * 지역화를 적용한 예외처리 - view에 지역화된 예외처리를 위해 bean을 추가
+     * @return
+     */
     @Bean
     public LocalValidatorFactoryBean localValidatorFactoryBean() {
         LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
@@ -54,8 +47,28 @@ public class SpringConfig {
         return localValidatorFactoryBean;
     }
 
+    /**
+     * 이메일 인증 bean
+     * @return
+     */
     @Bean
     public JavaMailSender javaMailSender() {
         return new JavaMailSenderImpl();
     }
+
+//    @Bean
+//    public LocaleResolver localeResolver() {
+//        SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
+//        sessionLocaleResolver.setDefaultLocale(Locale.KOREA);
+//        return sessionLocaleResolver;
+//    }
+
+//    /**
+//     * for createdBy and lastModifiedBY
+//     * @return
+//     */
+//    @Bean
+//    public AuditorAware<String> auditorProvider() {
+//        return () -> Optional.of(UUID.randomUUID().toString());
+//    }
 }

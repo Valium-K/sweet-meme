@@ -1,3 +1,9 @@
+/**
+ * 초기 개발 단계 때 사용한 db 값들
+ *
+ * section table에는 적어도 하나의 row가 존재해야한다.
+ * 없어도 동작은 하지만 upload시 section 선택을 못 해 upload가 불가능 하도록 설계했다.
+ */
 //package dev.valium.sweetmeme.infra.config;
 //
 //import dev.valium.sweetmeme.module.section.enums.SectionType;

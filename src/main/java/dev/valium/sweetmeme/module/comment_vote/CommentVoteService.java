@@ -23,15 +23,24 @@ public class CommentVoteService {
     private final CommentRepository commentRepository;
     private final ApplicationEventPublisher eventPublisher;
 
+    /**
+     * 긁어온 CommentVote의 null값 여부를 이용해 좋아요, 싫어요를 판별 후 presist 한다
+     * @param member
+     * @param id
+     * @param vote
+     * @return
+     * @throws Exception
+     */
     public Member voteComment(Member member, Long id, boolean vote) throws Exception {
         Comment comment = commentRepository.findFetchPostAndInfoById(id).orElseThrow(
-                () -> new Exception("CommentVoteService.voteComment():  " + id + "에 해당하는 id가 없습니다.")
+                () -> new Exception("CommentVoteService.voteComment(): " + id + "에 해당하는 id가 없습니다.")
         );
 
         CommentVote upVotedComment = commentVoteRepository.findUpVoteByUpVotedMemberAndUpVotedComment(member, comment);
         CommentVote downVotedComment = commentVoteRepository.findDownVoteByDownVotedMemberAndDownVotedComment(member, comment);
 
-        // 첫 보트
+        // TODO 코드가 깔끔하지 못 하다. 디자인 패턴을 적용 할 수 있을까?
+        // 첫 vote일 경우
         if(downVotedComment == null && upVotedComment == null) {
             CommentVote commentVote = new CommentVote();
 
@@ -56,7 +65,7 @@ public class CommentVoteService {
             }
             commentVoteRepository.save(commentVote);
         }
-        // upvote한 comment
+        // upvote했던 comment일 경우
         else if(upVotedComment != null && downVotedComment == null) {
 
             member.getUpVotedIds().remove(id);
@@ -79,7 +88,7 @@ public class CommentVoteService {
                 commentVoteRepository.save(commentVote);
             }
         }
-        // downvote한 comment
+        // downvote했던 comment일 경우
         else {
             member.getDownVotedIds().remove(id);
 
