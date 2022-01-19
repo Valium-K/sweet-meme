@@ -31,8 +31,8 @@ decorator:
     p6spy:
       enable-logging: true
 
-server:
-  servlet:
-    context-path: /sweetmeme
+#server:
+#  servlet:
+#    context-path: /sweetmeme
 
-app.host: http://valium.dev:8080
+app.host: https://valium.dev
