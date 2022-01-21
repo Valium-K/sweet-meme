@@ -5,6 +5,7 @@ package dev.valium.sweetmeme.infra.config;
  */
 public class FileConfig {
     private static final String ABSOLUTE_PATH = "D:/sweetmeme/";
+    // private static final String ABSOLUTE_PATH = "/root/sweetmeme/";
 
     // uploaded files
     public static final String ABSOLUTE_UPLOAD_PATH = ABSOLUTE_PATH + "image/";
