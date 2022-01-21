@@ -19,7 +19,7 @@ spring:
       max-file-size: 10485760
       max-request-size: 10485760
       file-size-threshold: 0
-#      location: /data/upload_temp
+      location: /root/sweetmeme/upload_temp
 
 logging:
   level:
