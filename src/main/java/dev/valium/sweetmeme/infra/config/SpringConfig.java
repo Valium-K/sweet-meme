@@ -9,6 +9,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+
+import java.util.Locale;
 
 @Configuration
 @EnableJpaAuditing
@@ -30,6 +34,7 @@ public class SpringConfig {
         messageSource.setBasename("classpath:/messages");
         messageSource.setDefaultEncoding("UTF-8");
         messageSource.setCacheSeconds(3);
+        messageSource.setDefaultLocale(Locale.US);
 
         return messageSource;
     }
@@ -47,14 +52,7 @@ public class SpringConfig {
         return localValidatorFactoryBean;
     }
 
-    /**
-     * 이메일 인증 bean
-     * @return
-     */
-    @Bean
-    public JavaMailSender javaMailSender() {
-        return new JavaMailSenderImpl();
-    }
+
 
 //    @Bean
 //    public LocaleResolver localeResolver() {
