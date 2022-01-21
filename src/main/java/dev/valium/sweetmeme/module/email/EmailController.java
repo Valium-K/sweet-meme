@@ -47,8 +47,12 @@ public class EmailController extends BaseController {
     @PostMapping("/email/verify")
     public String emailVerify(@CurrentMember Member member, Model model,
                               @Valid EmailVerifyForm form, BindingResult result) {
-
         if(result.hasErrors()) {
+            setBaseAttributes(member, model, "emailVerify");
+            return "mail/emailVerify";
+        }
+
+        if(!member.getEmail().equals(form.getEmail())) {
             setBaseAttributes(member, model, "emailVerify");
             result.rejectValue("email", "email.verify.email-error", new Object[]{}, "등록된 이메일과 일치하지 않습니다.");
             return "mail/emailVerify";
