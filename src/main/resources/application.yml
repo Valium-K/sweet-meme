@@ -6,7 +6,7 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
@@ -19,8 +19,7 @@ spring:
       max-file-size: 10485760
       max-request-size: 10485760
       file-size-threshold: 0
-      location: /data/upload_temp
-
+#      location: /data/upload_temp
 
 logging:
   level:
@@ -31,8 +30,9 @@ decorator:
     p6spy:
       enable-logging: true
 
-#server:
-#  servlet:
-#    context-path: /sweetmeme
+server:
+  servlet:
+    context-path: /sweetmeme
 
-app.host: https://valium.dev
+#app.host: https://valium.dev
+app.host: http://localhost:8080
