@@ -2,6 +2,7 @@ package dev.valium.sweetmeme.infra.email;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import javax.mail.internet.MimeMessage;
  * 메일 인증 서비스 구현체
  */
 @Slf4j
+@Profile("dev, linux")
 @Component
 @RequiredArgsConstructor
 public class HtmlEmailServiceImpl implements EmailService {
