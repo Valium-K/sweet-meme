@@ -40,7 +40,7 @@ out/
 
 ### SECURE SMTP###
 src/main/resources/application-dev.yml
-
+src/main/resources/application-linux.yml
 ### NPM ###
 src/main/resources/static/node_modules
 src/main/resources/static/node
