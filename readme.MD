@@ -78,7 +78,7 @@ Spring Security를 이용한 Login 및 remember-me, Spring mail을 이용한 패
 ![img_1.png](readMeRes/img_1.png)
 
 ### Sign up
-회원가입 기능.    
+사용자 비밀번호는 BCrypt 암호화 후 저장된다.     
 [관련 코드 바로가기](src/main/java/dev/valium/sweetmeme/module/member)
 
 ![img_2.png](readMeRes/img_2.png)
