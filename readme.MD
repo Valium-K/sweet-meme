@@ -1,6 +1,6 @@
 # SweetMeme
 
-![img.png](img.png)
+![img.png](readMeRes/ians.png)
 
 -----------------------
 
