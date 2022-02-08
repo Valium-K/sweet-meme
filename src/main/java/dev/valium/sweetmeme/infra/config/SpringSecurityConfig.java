@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
@@ -50,6 +51,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.logout()
                 .logoutUrl("/member/logout")
                 .logoutSuccessUrl("/");
+
+        // https://stackoverflow.com/questions/52982246/spring-thymeleaf-throws-cannot-create-a-session-after-the-response-has-been-com
+        // 타임리프가 자동으로 hidden csrf를 생성하는데, 문제는 세션이 만들어지기 전에 이러한 행동을 취한다면,
+        // Cannot create a session after the response has been committed 에러로 이어진다.
+        // 해결법은 특정 페이지의 csrf를 제거하거나 아래 설정을 추가하는 것이다.
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
     }
 
     @Override
