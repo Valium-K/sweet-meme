@@ -740,12 +740,6 @@
 
       var upVoteBtn = $('#vote'+id).children().eq(1).get(0);
       var downVoteBtn = $('#vote'+id).children().eq(2).get(0);
-
-      if($('#vote'+id).children().eq(2).get(0) === undefined) {
-        upVoteBtn = $('#vote'+id).children().eq(0).get(0);
-        downVoteBtn = $('#vote'+id).children().eq(1).get(0);
-      }
-
       var upVote = upVoteBtn.classList.contains(clicked);
       var downVote = downVoteBtn.classList.contains(clicked);
       var upVoteCount = upVoteBtn.value.split(' ')[1];
