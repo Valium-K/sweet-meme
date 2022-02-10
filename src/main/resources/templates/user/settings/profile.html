@@ -124,7 +124,7 @@
                         <x title='remove tag' class='tagify__tag__removeBtn'></x>
                         <div>
                             ${tagData.code ?
-                  `<img onerror="this.style.visibility='hidden'" src='https://lipis.github.io/flag-icon-css/flags/4x3/${tagData.code.toLowerCase()}.svg'>` : ''
+                  `<img style="vertical-align: sub" onerror="this.style.visibility='hidden'" src='https://flagicons.lipis.dev/flags/4x3/${tagData.code.toLowerCase()}.svg'>` : ''
           }
                             <span class='tagify__tag-text'>${tagData.value}</span>
                         </div>
@@ -136,8 +136,8 @@
       dropdownItem : function(tagData){
         try{
           return `<div class='tagify__dropdown__item ${tagData.class ? tagData.class : ""}' tagifySuggestionIdx="${tagData.tagifySuggestionIdx}">
-                            <img onerror="this.style.visibility = 'hidden'"
-                                src='https://lipis.github.io/flag-icon-css/flags/4x3/${tagData.code.toLowerCase()}.svg'>
+                            <img style="vertical-align: sub" onerror="this.style.visibility = 'hidden'"
+                                src='https://flagicons.lipis.dev/flags/4x3/${tagData.code.toLowerCase()}.svg'>
                             <span>${tagData.value}</span>
                         </div>`
         }

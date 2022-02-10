@@ -134,7 +134,7 @@
                 <!-- 코멘트 -->
                 <div class="col ms-1 mb-2">
                   <span class="fw-bold" th:text="${comment.commenterInfo.head}"></span>
-                  <img th:if="${comment.commenterInfo.stateCode} != null" th:src="'https://lipis.github.io/flag-icon-css/flags/4x3/' + ${comment.commenterInfo.stateCode} + '.svg'"
+                  <img th:if="${comment.commenterInfo.stateCode} != null" th:src="'https://flagicons.lipis.dev/flags/4x3/' + ${comment.commenterInfo.stateCode} + '.svg'"
                        style="width: 25px; height: 18px; vertical-align: text-bottom" class="rounded border">
                   <div style="white-space: pre-line;" class="mt-2" th:text="${comment.content}"></div>
                   <div th:if="${comment.descriptionImg} != null">
