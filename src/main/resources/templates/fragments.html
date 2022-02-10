@@ -247,9 +247,9 @@
           <a class="nav-link" href="#" th:href="@{/login}">Log in</a>
         </li>
 
-<!--        <li class="nav-item" sec:authorize="!isAuthenticated()">-->
-<!--          <a class="nav-link" href="#" th:href="@{/sign-up}">Sign up</a>-->
-<!--        </li>-->
+        <li class="nav-item" sec:authorize="!isAuthenticated()">
+          <a class="nav-link" href="#" th:href="@{/sign-up}">Sign up</a>
+        </li>
 
         <!-- 알림 -->
         <li class="nav-item dropdown mt-1" sec:authorize="isAuthenticated()">
@@ -541,7 +541,7 @@
     </div>
     <div class="col-10">
       <h2 th:text="${info.head}" style="display: inline" class="fw-bold "></h2>&nbsp;
-      <img th:if="${info.stateCode} != null" th:src="'https://github.com/lipis/flag-icons/tree/main/flags/4x3/' + ${info.stateCode} + '.svg'" style="width: 2rem; height: 1.5rem; vertical-align: text-bottom" class="rounded border">
+      <img th:if="${info.stateCode} != null" th:src="'https://flagicons.lipis.dev/flags/4x3/' + ${info.stateCode} + '.svg'" style="width: 2rem; height: 1.5rem; vertical-align: text-bottom" class="rounded border">
       <br/>
       <small class="text-muted">s p e n d · </small><small class="text-muted" th:text="${spendDate} + ' days'"></small>
     </div>
@@ -862,7 +862,7 @@
       <!-- 코멘트 -->
       <div class="col ms-1 mb-2">
         <span class="fw-bold" th:text="${comment.commenterInfo.head}"></span>
-        <img th:if="${comment.commenterInfo.stateCode} != null" th:src="'https://lipis.github.io/flag-icon-css/flags/4x3/' + ${comment.commenterInfo.stateCode} + '.svg'"
+        <img th:if="${comment.commenterInfo.stateCode} != null" th:src="'https://flagicons.lipis.dev/flags/4x3/' + ${comment.commenterInfo.stateCode} + '.svg'"
              style="width: 25px; height: 18px; vertical-align: text-bottom" class="rounded border">
         <div style="white-space: pre-line;" class="mt-2" th:text="${comment.content}"></div>
         <div th:if="${comment.descriptionImg} != null">
