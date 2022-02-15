@@ -25,8 +25,6 @@ import java.util.*;
 @RequiredArgsConstructor
 @Transactional
 public class UploadService {
-
-    // TODO 윈도우에서 봐도 \가 아닌 /로 보인다. DB상에서만 그런걸수도 있으니 나중에 확인할 것.
     private final String ABSOLUTE_UPLOAD_PATH = FileConfig.ABSOLUTE_UPLOAD_PATH;
 
     private final MemberRepository memberRepository;
@@ -110,5 +108,4 @@ public class UploadService {
         // 앞 validation에서 검증 완료
         return outputs;
     }
-
 }

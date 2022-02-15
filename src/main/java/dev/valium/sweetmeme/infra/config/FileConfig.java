@@ -1,11 +1,19 @@
 package dev.valium.sweetmeme.infra.config;
 
+import dev.valium.sweetmeme.module.processor.EnvProcessor;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+
 /**
  * 경로 및 타입 상수 설정 클래스
  */
+@Configuration
 public class FileConfig {
-    private static final String ABSOLUTE_PATH = "D:/sweetmeme/";
-    // private static final String ABSOLUTE_PATH = "/root/sweetmeme/";
+    public FileConfig() {
+        if ("linux".equals(EnvProcessor.getActiveProfile())) ABSOLUTE_PATH = "/root/sweetmeme/";
+    }
+
+    public static String ABSOLUTE_PATH = "D:/sweetmeme/";
 
     // uploaded files
     public static final String ABSOLUTE_UPLOAD_PATH = ABSOLUTE_PATH + "image/";
@@ -25,7 +33,4 @@ public class FileConfig {
     public static final String ACCEPTABLE_COMMENT_TYPES = "image/jpg, image/png, image/jpeg, image/gif, image/webp";
     public static final String ABSOLUTE_COMMENT_IMAGE_PATH = ABSOLUTE_PATH + "comment/";
     public static final String COMMENT_IMAGE_URL = "/comment/";
-
-
-
 }

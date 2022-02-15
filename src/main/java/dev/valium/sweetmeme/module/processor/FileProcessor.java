@@ -1,7 +1,13 @@
 package dev.valium.sweetmeme.module.processor;
 
 import com.luciad.imageio.webp.WebPWriteParam;
+import dev.valium.sweetmeme.module.processor.fileUploader.FileUploader;
+import dev.valium.sweetmeme.module.processor.fileUploader.FileUploaderFactory;
+import dev.valium.sweetmeme.module.processor.fileUploader.FileUploaderLinux;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,83 +21,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
-// 현제 인코딩 옵션은 강제 True
+@RequiredArgsConstructor
 public class FileProcessor {
+
     public static String transferFile(String path, MultipartFile file, boolean encode) throws IOException {
-        String newFileName = UUID.randomUUID().toString().replace("-", "");
-        String fileType = FilenameUtils.getExtension(file.getOriginalFilename());
+        String activeEnv = EnvProcessor.getActiveProfile();
+        FileUploader fileUploader = FileUploaderFactory.getInstance(activeEnv);
 
-        if ("mp4".equals(fileType) || "webp".equals(fileType)) {
-            File newFile = new File(path, newFileName + "." + fileType);
-
-            if(!newFile.exists()){
-                newFile.mkdir();
-            }
-
-            file.transferTo(newFile);
-
-            return newFile.getName();
-        }
-        else if("gif".equals(fileType)) {
-            File newFile = new File(path, newFileName + "." + fileType);
-
-            if(!newFile.exists()){
-                newFile.mkdir();
-            }
-
-            file.transferTo(newFile);
-
-            // TODO Exception 구현
-            try {
-                gif2webp(newFile);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return newFileName + ".webp";
-        }
-        else {
-            image2webp(file,  path, newFileName);
-
-            return newFileName + ".webp";
-        }
-    }
-
-    private static void gif2webp(File file) throws IOException, InterruptedException {
-        // TODO Linux용 코드 추가 요망
-        File gif2webp = ResourceUtils.getFile("classpath:static/webp/gif2webp.exe");
-        String gif2webpAbsPath = gif2webp.getAbsolutePath();
-
-        String gifAbsPath = file.getAbsolutePath();
-        String webpAbsPath = gifAbsPath.substring(0, gifAbsPath.length() - 3) + "webp";
-
-        Process process = new ProcessBuilder(gif2webpAbsPath, "-lossy", gifAbsPath, "-o", webpAbsPath).start();
-
-        process.waitFor();
-        process.destroy();
-        file.delete();
-    }
-
-    private static void image2webp(MultipartFile file, String path, String fileName) throws IOException {
-
-        // BufferedImage read = ImageIO.read(file.getInputStream());
-        File newFile = new File(path, fileName + ".webp");
-
-        // Obtain an image to encode from somewhere
-        BufferedImage image = ImageIO.read(file.getInputStream());
-
-        // Obtain a WebP ImageWriter instance
-        ImageWriter writer = ImageIO.getImageWritersByMIMEType("image/webp").next();
-
-        // Configure encoding parameters
-        WebPWriteParam writeParam = new WebPWriteParam(writer.getLocale());
-        writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-        writeParam.setCompressionType(writeParam.getCompressionTypes()[WebPWriteParam.LOSSY_COMPRESSION]);
-
-        // Configure the output on the ImageWriter
-        writer.setOutput(new FileImageOutputStream(newFile));
-
-        // Encode
-        writer.write(null, new IIOImage(image, null, null), writeParam);
+        // It returns file name.
+        // 현제 인코딩 옵션은 강제 True
+        return fileUploader.uploadFile(path, file, encode);
     }
 }
